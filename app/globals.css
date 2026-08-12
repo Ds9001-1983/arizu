@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/* ==================================================================
+   ARIZU Design-Tokens
+   Farben aus dem Logo gemessen (nicht geraten): Navy #0B1A2F, Gold
+   #C99B46. Der Flyer nutzt minimal abweichende Werte (#011C39 /
+   #CE9949) — das Logo gilt als kanonisch, der Flyer-Navy lebt als
+   Band-Ton weiter, statt ihn wegzuwerfen.
+
+   Bewusst KEIN prefers-color-scheme-Dark-Schema: eine Handwerks-/
+   Dienstleistungsseite soll bei jedem Kunden identisch und
+   wiedererkennbar aussehen — Navy/Gold IST das Farbschema.
+   ================================================================== */
+
+@theme {
+  /* Marke */
+  --color-navy: #0b1a2f;
+  --color-navy-band: #011c39; /* Bänder/Footer, Ton aus dem Flyer */
+  --color-navy-deep: #060f1c; /* tiefste Stufe, abgeleitet */
+  --color-navy-soft: #16283f; /* Karten auf Navy */
+
+  --color-gold: #c99b46;
+  --color-gold-soft: #e0bc7a; /* Hover, Icon-Ringe */
+  /* Text-Gold auf hellem Grund. #a87c31 erreichte nur 3,2–3,8:1 und fiel
+     damit unter die WCAG-AA-Schwelle von 4,5:1 für normalen Text (per
+     Lighthouse nachgewiesen). Dieser Ton hält Hue 38,9° und Sättigung des
+     Marken-Golds, ist aber dunkler: 4,6–5,4:1 auf allen hellen Flächen. */
+  --color-gold-deep: #876527;
+
+  /* Flächen — warmes Off-White statt reinem Weiß */
+  --color-shell: #f5f3ef;
+  --color-mist: #e8e5df;
+  --color-surface: #ffffff;
+
+  /* Text */
+  --color-ink: #0b1a2f;
+  --color-ink-muted: #4a5568;
+
+  /* Kanten statt Schatten: hält den Look editorial statt Shadcn-Default */
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+
+  /* Rhythmus */
+  --spacing-section: 6.5rem;
+}
+
+@theme inline {
+  --font-display: var(--font-archivo);
+  --font-sans: var(--font-manrope);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-shell);
+    color: var(--color-ink);
+    font-family: var(--font-sans), sans-serif;
+    font-feature-settings: "ss01", "cv01";
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Display-Schnitt: eng gesetzt, damit große Headlines nicht auseinanderfallen */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* Fokus sichtbar in Gold — Barrierefreiheit ohne den Look zu brechen */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-navy);
+  }
+}
+
+/* Rechtstexte: eigene Typografie, damit Impressum, Datenschutz und AGB
+   lesbar bleiben, ohne jede Überschrift einzeln zu bekleiden. */
+@layer components {
+  .legal h2 {
+    margin-top: 2.25rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .legal h2:first-child {
+    margin-top: 0;
+  }
+
+  .legal p,
+  .legal li {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--color-ink-muted);
+  }
+
+  .legal p {
+    margin-bottom: 0.9rem;
+  }
+
+  .legal ul {
+    margin: 0 0 1rem 1.15rem;
+    list-style: disc;
+  }
+
+  .legal li {
+    margin-bottom: 0.4rem;
+    padding-left: 0.25rem;
+  }
+
+  .legal strong {
+    color: var(--color-navy);
+  }
+
+  .legal a {
+    color: var(--color-navy);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .legal a:hover {
+    color: var(--color-gold-deep);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

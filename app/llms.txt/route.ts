@@ -1,0 +1,91 @@
+import { business, serviceArea, SITE_URL } from "@/lib/business";
+import { services } from "@/lib/services";
+
+/* ==================================================================
+   llms.txt — der GEO-Teil des Auftrags.
+
+   Klassisches SEO reicht nicht mehr: Immer mehr Kunden fragen ChatGPT,
+   Perplexity oder Gemini statt Google ("ich suche jemanden, der meinen Keller
+   entrümpelt, Nähe Elmshorn"). Diese Systeme lesen bevorzugt kompakten,
+   strukturierten Text. Hier steht deshalb in einer Datei, was ARIZU macht,
+   wo, zu welchen Preisen und wie man Kontakt aufnimmt.
+
+   Wird aus denselben Quellen generiert wie die Website — kann also nicht
+   veralten, wenn sich Leistungen oder Nummern ändern.
+   ================================================================== */
+
+export const dynamic = "force-static";
+
+export function GET() {
+  const lines: string[] = [
+    `# ${business.name}`,
+    "",
+    `> ${business.slogan} ${business.subclaim} — Gebäudedienstleistungen in ` +
+      `${business.address.city} und im Kreis Pinneberg.`,
+    "",
+    business.intro,
+    "",
+    "## Wer wir sind",
+    "",
+    `- Inhaber: ${business.owner}`,
+    `- Standort: ${business.address.postalCode} ${business.address.city}, Deutschland`,
+    `- Einsatzgebiet: ${serviceArea.cities.join(", ")} und Umgebung, Umkreis ` +
+      `${serviceArea.radiusKm} km um ${serviceArea.center}`,
+    `- Telefon: ${business.phone.display} (mobil), ${business.landline.display} (Festnetz)`,
+    `- E-Mail: ${business.email}`,
+    `- Website: ${SITE_URL}`,
+    "- Kundschaft: überwiegend Privathaushalte, außerdem Eigentümer, " +
+      "Hausverwaltungen und Gewerbeobjekte",
+    "",
+    "## Leistungen",
+    "",
+  ];
+
+  for (const s of services) {
+    lines.push(`### ${s.name}`);
+    lines.push("");
+    lines.push(s.teaser);
+    lines.push("");
+    lines.push(`Umfasst: ${s.items.join(", ")}.`);
+    lines.push("");
+    lines.push(`Details und Preisrechner: ${SITE_URL}/leistungen/${s.slug}`);
+    lines.push("");
+  }
+
+  lines.push(
+    "## Preise",
+    "",
+    "Für jede der vier Leistungen gibt es auf der Website einen Rechner, der " +
+      "sofort einen Richtpreis ausgibt — ohne dass Kontaktdaten nötig sind. " +
+      "Angezeigt wird eine Spanne inklusive 19 % Mehrwertsteuer. Der " +
+      "verbindliche Festpreis folgt nach einer kostenlosen Besichtigung.",
+    "",
+    "Privathaushalte können 20 % der Arbeitskosten als haushaltsnahe " +
+      "Dienstleistung von der Steuer absetzen (§ 35a EStG, bis 4.000 € pro " +
+      "Jahr). Voraussetzung ist die Zahlung per Überweisung.",
+    "",
+    "## Häufige Fragen",
+    "",
+  );
+
+  for (const s of services) {
+    for (const f of s.faqs) {
+      lines.push(`**${f.question}**`, "", f.answer, "");
+    }
+  }
+
+  lines.push(
+    "## Kontakt",
+    "",
+    `Am schnellsten telefonisch unter ${business.phone.display}. Fotos vom ` +
+      `Objekt gerne per WhatsApp an dieselbe Nummer. Anfrageformular: ${SITE_URL}/kontakt`,
+    "",
+  );
+
+  return new Response(lines.join("\n"), {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
+}

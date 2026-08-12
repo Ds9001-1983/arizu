@@ -1,0 +1,239 @@
+{
+  "project": "arizu",
+  "type": "standard_business",
+  "client": {
+    "brand": "ARIZU Gebäudedienstleistungen",
+    "industry": "Gebäudedienstleistung (Reinigung, Gartenpflege, Objektbetreuung, Entrümpelung)",
+    "language": "de",
+    "existingUrl": null,
+    "logoPath": "public/brand/logo-arizu.svg",
+    "brandColors": ["#0B1A2F", "#C99B46", "#F5F3EF", "#011C39", "#E8E5DF"]
+  },
+  "assets": [
+    {
+      "id": "img-hero",
+      "type": "static_image",
+      "ai_disclosure": {
+        "required": true,
+        "reason": "photorealistic_real_motif",
+        "badge": { "position": "top-left", "label": "KI-generiert" },
+        "metadata_tagged": true,
+        "metadata_target": "asset_file",
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-12T15:40:00+02:00",
+        "evidence_screenshot": "qa-reports/ai-disclosure/img-hero.png"
+      },
+      "generation": {
+        "keyframe": {
+          "model": "gpt_image_2",
+          "prompt": "Modernes dreigeschossiges Mehrfamilienhaus in einer norddeutschen Kleinstadt, gepflasterter Weg, geschnittene Hecken, junge Birken, helles bedecktes Tageslicht, 35 mm, dokumentarisch",
+          "negative": "Text, Schilder, Logos, Wasserzeichen, Personen",
+          "aspectRatio": "16:9"
+        }
+      },
+      "output": {
+        "desktop": { "file": "public/images/hero-gebaeude.webp", "width": 1344, "height": 752, "kb": 159 }
+      }
+    },
+    {
+      "id": "img-objektbetreuung",
+      "type": "static_image",
+      "ai_disclosure": {
+        "required": true,
+        "reason": "photorealistic_real_motif",
+        "badge": { "position": "top-right", "label": "KI-generiert" },
+        "metadata_tagged": true,
+        "metadata_target": "asset_file",
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-12T15:40:00+02:00",
+        "evidence_screenshot": "qa-reports/ai-disclosure/img-objektbetreuung.png"
+      },
+      "generation": {
+        "keyframe": {
+          "model": "gpt_image_2",
+          "prompt": "Behandschuhte Hände mit Checkliste vor Hauseingang und Briefkastenanlage, kein Gesicht im Bild, bedecktes Tageslicht, 50 mm",
+          "negative": "Gesichter, lesbarer Text, Logos, Wasserzeichen",
+          "aspectRatio": "4:5"
+        }
+      },
+      "output": {
+        "desktop": { "file": "public/images/objektbetreuung.webp", "width": 880, "height": 1168, "kb": 30 }
+      }
+    },
+    {
+      "id": "img-gebaeudereinigung",
+      "type": "static_image",
+      "ai_disclosure": {
+        "required": true,
+        "reason": "photorealistic_real_motif",
+        "badge": { "position": "top-right", "label": "KI-generiert" },
+        "metadata_tagged": true,
+        "metadata_target": "asset_file",
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-12T15:40:00+02:00",
+        "evidence_screenshot": "qa-reports/ai-disclosure/img-gebaeudereinigung.png"
+      },
+      "generation": {
+        "keyframe": {
+          "model": "gpt_image_2",
+          "prompt": "Treppenhaus wird mit Flachmopp gereinigt, gelbes Warnschild, blauer Eimer, Tageslicht vom Treppenabsatz, 35 mm",
+          "negative": "Personen, Text, Logos, Wasserzeichen",
+          "aspectRatio": "4:5"
+        }
+      },
+      "output": {
+        "desktop": { "file": "public/images/gebaeudereinigung.webp", "width": 880, "height": 1168, "kb": 50 }
+      }
+    },
+    {
+      "id": "img-gartenpflege",
+      "type": "static_image",
+      "ai_disclosure": {
+        "required": true,
+        "reason": "photorealistic_real_motif",
+        "badge": { "position": "top-right", "label": "KI-generiert" },
+        "metadata_tagged": true,
+        "metadata_target": "asset_file",
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-12T15:40:00+02:00",
+        "evidence_screenshot": "qa-reports/ai-disclosure/img-gartenpflege.png"
+      },
+      "generation": {
+        "keyframe": {
+          "model": "gpt_image_2",
+          "prompt": "Heckenschnitt mit elektrischer Heckenschere an dichter Ligusterhecke, Schnittgut auf dem Rasen, bedecktes Tageslicht, 50 mm",
+          "negative": "Gesichter, Text, Logos, Wasserzeichen",
+          "aspectRatio": "4:5"
+        }
+      },
+      "output": {
+        "desktop": { "file": "public/images/gartenpflege.webp", "width": 880, "height": 1168, "kb": 150 }
+      }
+    },
+    {
+      "id": "img-entruempelung",
+      "type": "static_image",
+      "ai_disclosure": {
+        "required": true,
+        "reason": "photorealistic_real_motif",
+        "badge": { "position": "top-right", "label": "KI-generiert" },
+        "metadata_tagged": true,
+        "metadata_target": "asset_file",
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-12T15:40:00+02:00",
+        "evidence_screenshot": "qa-reports/ai-disclosure/img-entruempelung.png"
+      },
+      "generation": {
+        "keyframe": {
+          "model": "gpt_image_2",
+          "prompt": "Leergeräumtes Zimmer nach Entrümpelung, gestapelte Umzugskartons, ein verbliebener Sessel, Dielenboden, Tageslicht durch großes Fenster, ruhige respektvolle Stimmung, 35 mm",
+          "negative": "Personen, Text, Logos, Wasserzeichen",
+          "aspectRatio": "4:5"
+        }
+      },
+      "output": {
+        "desktop": { "file": "public/images/entruempelung.webp", "width": 880, "height": 1168, "kb": 51 }
+      }
+    },
+    {
+      "id": "logo-arizu",
+      "type": "static_image",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "assistive_edit_exempt",
+        "decided_at": "2026-08-12T15:40:00+02:00"
+      }
+    },
+    {
+      "id": "og-image",
+      "type": "static_image",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "not_ai_generated",
+        "decided_at": "2026-08-12T15:40:00+02:00"
+      }
+    },
+    {
+      "id": "logo-watermark-hero",
+      "type": "static_image",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "stylized_exempt",
+        "decided_at": "2026-08-12T15:40:00+02:00"
+      }
+    }
+  ],
+  "modules": [
+    { "type": "trust_bar", "after": "hero" },
+    { "type": "service_grid", "after": "trust_bar" },
+    { "type": "price_configurator_tabs", "after": "service_grid" },
+    { "type": "reasons_grid", "after": "price_configurator_tabs" },
+    { "type": "tax_benefit_band", "after": "reasons_grid" },
+    { "type": "faq", "after": "tax_benefit_band" },
+    { "type": "lead_form", "after": "faq" }
+  ],
+  "performanceBudget": {
+    "lcp_max_ms": 2500,
+    "cls_max": 0.1,
+    "inp_max_ms": 200,
+    "initial_js_kb_max": 150,
+    "total_mb_max": 3,
+    "lighthouseScore_min": 85,
+    "accessibilityScore_min": 95
+  },
+  "qaChecks": {
+    "stufe": 1,
+    "breakpoints": [390, 768, 1024, 1440],
+    "interactions": [
+      "konfigurator-eingabe-aendert-preis",
+      "konfigurator-uebergabe-an-lead-formular",
+      "mobil-menue-oeffnen",
+      "faq-aufklappen",
+      "ai-badge-sichtbar"
+    ]
+  },
+  "aiTransparency": {
+    "chatbot": { "enabled": false, "noticeImplemented": false },
+    "policyDeliveredAt": null,
+    "policyPath": "docs/ki-transparenz-policy.md",
+    "evidenceDir": "qa-reports/ai-disclosure"
+  },
+  "seo": {
+    "title": "ARIZU Gebäudedienstleistungen Elmshorn",
+    "description": "Gebäudereinigung, Gartenpflege, Objektbetreuung und Entrümpelung in Elmshorn und im Kreis Pinneberg. Richtpreis in 60 Sekunden online berechnen.",
+    "canonical": "https://www.arizu-gebaeudedienstleistungen.de",
+    "robots": "index, follow",
+    "structuredData": {
+      "type": "LocalBusiness",
+      "additional": ["HomeAndConstructionBusiness", "Service", "FAQPage", "BreadcrumbList"]
+    }
+  },
+  "versioning": {
+    "current": "0.1.0",
+    "created": "2026-08-12T14:20:00+02:00",
+    "lastModified": "2026-08-12T15:40:00+02:00",
+    "status": "draft",
+    "changelog": [
+      {
+        "version": "0.1.0",
+        "date": "2026-08-12",
+        "changes": [
+          "Projekt aufgesetzt: Next.js 16, Tailwind 4, Archivo/Manrope",
+          "Logo aus Arians JPEG freigestellt und als Montserrat-700-Konturen neu gebaut, Lockups und Favicon abgeleitet",
+          "Preislogik für vier Leistungen aus Marktrecherche, Minimum-Ansatz, alle Werte als VERIFY markiert",
+          "Konfigurator mit Übergabe an Lead-Formular und WhatsApp",
+          "Lead-Pipeline: Neon-Speicher, HTML-Mail an Betrieb und Kunde, Demo-Modus ohne Secrets",
+          "Interner Bereich /intern mit PBKDF2-Login und Lead-Bearbeitung",
+          "SEO/GEO: LocalBusiness, Service, FAQPage, BreadcrumbList, sitemap, robots, llms.txt, OG-Bild",
+          "Fünf KI-Bilder erzeugt, mit Badge und IPTC-Metadaten gekennzeichnet"
+        ]
+      }
+    ]
+  },
+  "deploy": {
+    "platform": "vercel",
+    "plan": "Pro Standard",
+    "domain": "arizu-gebaeudedienstleistungen.de",
+    "region": "fra1"
+  }
+}

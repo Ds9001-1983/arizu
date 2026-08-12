@@ -1,0 +1,59 @@
+{
+  "capTop": 215,
+  "capBottom": 533,
+  "width": 1414,
+  "height": 536,
+  "letters": [
+    {
+      "char": "A",
+      "x0": 3,
+      "x1": 329,
+      "width": 327,
+      "top": 215,
+      "bottom": 528,
+      "colour": "navy"
+    },
+    {
+      "char": "R",
+      "x0": 380,
+      "x1": 648,
+      "width": 269,
+      "top": 215,
+      "bottom": 528,
+      "colour": "navy"
+    },
+    {
+      "char": "I",
+      "x0": 686,
+      "x1": 757,
+      "width": 72,
+      "top": 215,
+      "bottom": 528,
+      "colour": "navy"
+    },
+    {
+      "char": "Z",
+      "x0": 812,
+      "x1": 1065,
+      "width": 254,
+      "top": 215,
+      "bottom": 528,
+      "colour": "gold"
+    },
+    {
+      "char": "U",
+      "x0": 1124,
+      "x1": 1410,
+      "width": 287,
+      "top": 215,
+      "bottom": 533,
+      "colour": "navy"
+    }
+  ],
+  "roofBox": [
+    681,
+    2,
+    1067,
+    195
+  ]
+}
