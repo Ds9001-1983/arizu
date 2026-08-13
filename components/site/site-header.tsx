@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, Phone, X } from "lucide-react";
-import { glassSurface } from "@/components/ai/ai-media-badge";
 import { business } from "@/lib/business";
 import { services } from "@/lib/services";
 import { cn } from "@/lib/utils";
@@ -85,10 +84,10 @@ export function SiteHeader() {
                 deshalb dauerhaft sichtbar, ab sm mit Nummer im Klartext. */}
             <a
               href={business.phone.href}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-sm px-4 py-2.5 text-sm font-semibold text-white transition-colors",
-                solid || open ? "bg-navy hover:bg-navy-band" : glassSurface,
-              )}
+              // Durchgehend deckendes Navy, auch über dem Hero: Der Anruf ist
+              // die wichtigste Aktion auf der Seite und soll nicht mit dem
+              // Bild verschwimmen.
+              className="inline-flex items-center gap-2 rounded-sm bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-band"
             >
               <Phone className="size-4 shrink-0" aria-hidden />
               <span className="hidden sm:inline">{business.phone.display}</span>

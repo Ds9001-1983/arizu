@@ -12,13 +12,18 @@ import { AiMediaBadge } from "@/components/ai/ai-media-badge";
    2. Das Video legt sich erst darüber, wenn es abspielbereit ist, und blendet
       weich ein. Fällt es aus, bleibt das Standbild — kein schwarzes Loch.
 
-   Drei Fälle, in denen gar kein Video geladen wird:
+   Das Video läuft auch auf dem Handy — dort aber in einer eigenen, deutlich
+   leichteren Fassung (854 px breit, 0,19 MB statt 0,54 MB). Auf einem
+   Handydisplay ist der Unterschied nicht zu sehen, im Datenvolumen schon.
+   Ein <source media="…"> im <video> wäre der naheliegende Weg, funktioniert
+   aber nicht: Browser werten das media-Attribut nur in <picture> aus, in
+   <video> wird schlicht die erste Quelle genommen. Deshalb entscheidet hier
+   JavaScript.
+
+   Zwei Fälle, in denen gar kein Video geladen wird:
      * `prefers-reduced-motion` — Bewegtbild im Vollbild ist genau das, was
        Menschen mit vestibulären Beschwerden meiden wollen
-     * schmale Viewports — auf dem Handy kommt der Verkehr aus Google und
-       eBay-Kleinanzeigen, oft mobil; mehrere Megabyte Video wären dort
-       respektlos gegenüber dem Datenvolumen
-     * `Save-Data` im Browser aktiviert
+     * `Save-Data` im Browser aktiviert — wer das setzt, hat es so gemeint
 
    Der KI-Hinweis liegt als DOM-Element über dem Video, nicht eingebrannt:
    bleibt bei jeder Pixeldichte scharf, ist per Playwright nachweisbar und
@@ -31,38 +36,45 @@ export function HeroMedia({
   poster,
   posterMobile,
   video,
+  videoMobile,
   alt,
   assetId,
 }: {
   poster: string;
   posterMobile: string;
   video?: string;
+  videoMobile?: string;
   alt: string;
   assetId: string;
 }) {
-  const [videoAn, setVideoAn] = useState(false);
+  const [quelle, setQuelle] = useState<string | null>(null);
   const [bereit, setBereit] = useState(false);
 
   useEffect(() => {
     if (!video) return;
 
     const wenigerBewegung = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const breitGenug = window.matchMedia("(min-width: 768px)");
+    const schmal = window.matchMedia("(max-width: 767px)");
     const sparmodus =
       (navigator as Navigator & { connection?: NetworkInformation }).connection
         ?.saveData === true;
 
-    const pruefen = () =>
-      setVideoAn(!wenigerBewegung.matches && breitGenug.matches && !sparmodus);
+    const pruefen = () => {
+      if (wenigerBewegung.matches || sparmodus) {
+        setQuelle(null);
+        return;
+      }
+      setQuelle(schmal.matches ? (videoMobile ?? video) : video);
+    };
 
     pruefen();
     wenigerBewegung.addEventListener("change", pruefen);
-    breitGenug.addEventListener("change", pruefen);
+    schmal.addEventListener("change", pruefen);
     return () => {
       wenigerBewegung.removeEventListener("change", pruefen);
-      breitGenug.removeEventListener("change", pruefen);
+      schmal.removeEventListener("change", pruefen);
     };
-  }, [video]);
+  }, [video, videoMobile]);
 
   return (
     <figure className="absolute inset-0 m-0 overflow-hidden">
@@ -79,9 +91,10 @@ export function HeroMedia({
         />
       </picture>
 
-      {videoAn && video && (
+      {quelle && (
         <video
-          src={video}
+          key={quelle}
+          src={quelle}
           poster={poster}
           autoPlay
           muted

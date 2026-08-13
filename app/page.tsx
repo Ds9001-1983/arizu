@@ -45,6 +45,7 @@ export default function Home() {
           poster="/images/hero-gebaeude.webp"
           posterMobile="/images/hero-gebaeude-mobil.webp"
           video="/video/hero-gebaeude.mp4"
+          videoMobile="/video/hero-gebaeude-mobil.mp4"
         />
 
         <Container wide className="relative z-10 pt-32 pb-14 sm:pb-20">

@@ -59,11 +59,12 @@
           "hinweis": "Poster ist das erste Videobild — dadurch ist der Übergang vom Standbild ins Video unsichtbar."
         },
         "mobile": {
-          "file": "public/images/hero-gebaeude-mobil.webp",
-          "width": 800,
-          "height": 448,
-          "kb": 53,
-          "hinweis": "Unter 768px, bei prefers-reduced-motion und bei aktivem Save-Data wird gar kein Video geladen, nur dieses Bild."
+          "file": "public/video/hero-gebaeude-mobil.mp4",
+          "width": 854,
+          "height": 480,
+          "kb": 195,
+          "poster": "public/images/hero-gebaeude-mobil.webp",
+          "hinweis": "Eigene, leichtere Videofassung fürs Handy. Kein Video bei prefers-reduced-motion oder aktivem Save-Data."
         }
       }
     },
@@ -307,11 +308,20 @@
     }
   },
   "versioning": {
-    "current": "0.2.0",
+    "current": "0.3.0",
     "created": "2026-08-12T14:20:00+02:00",
-    "lastModified": "2026-08-13T08:35:00+02:00",
+    "lastModified": "2026-08-13T09:20:00+02:00",
     "status": "draft",
     "changelog": [
+      {
+        "version": "0.3.0",
+        "date": "2026-08-13",
+        "changes": [
+          "KI-Badge kompakter: 128,3x26,0 px auf 98,2x18,6 px",
+          "Hero-Video läuft jetzt auch auf dem Handy, mit eigener 0,19-MB-Fassung",
+          "Anrufbutton im Header durchgehend deckend statt Glas über dem Hero"
+        ]
+      },
       {
         "version": "0.2.0",
         "date": "2026-08-13",
