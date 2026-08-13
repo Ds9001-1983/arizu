@@ -10,6 +10,10 @@ import { whatsappHref } from "./business";
 
 export type AnfrageDaten = {
   name: string;
+  /* Adresse des EINSATZORTES, nicht zwingend die Wohnadresse des Kunden.
+     Bei Entrümpelungen ist es häufig die Wohnung eines Angehörigen, bei
+     Objektbetreuung das verwaltete Haus. Deshalb steht sie in der Nachricht
+     auch beim Auftrag und nicht im Kontaktblock. */
   strasse: string;
   plz: string;
   ort: string;
@@ -31,7 +35,7 @@ export type AnfrageDaten = {
 };
 
 /**
- * Adresse in deutscher Lesereihenfolge: Straße zuerst, dann PLZ und Ort.
+ * Einsatzort in deutscher Lesereihenfolge: Straße zuerst, dann PLZ und Ort.
  * "Römerstraße 23, 51674 Wiehl"
  */
 export function adresseEinzeilig(d: {
@@ -73,6 +77,10 @@ export function whatsappText(d: AnfrageDaten): string {
     }
   }
 
+  // Der Einsatzort gehört zum Auftrag, nicht zu den Kontaktdaten — sonst
+  // liest Arian ihn als Wohnadresse des Anfragenden. Das ist er oft nicht.
+  block.push("", "📍 *Einsatzort*", adresseEinzeilig(d));
+
   if (d.richtpreis) {
     block.push(
       "",
@@ -83,13 +91,7 @@ export function whatsappText(d: AnfrageDaten): string {
 
   if (d.message) block.push("", `📝 ${d.message}`);
 
-  block.push(
-    "",
-    "*Meine Kontaktdaten*",
-    `👤 ${d.name}`,
-    `📍 ${adresseEinzeilig(d)}`,
-    `📞 ${d.phone}`,
-  );
+  block.push("", "*Meine Kontaktdaten*", `👤 ${d.name}`, `📞 ${d.phone}`);
   if (d.email) block.push(`✉️ ${d.email}`);
 
   block.push("", "Bitte melden Sie sich für einen Termin vor Ort. Danke!");

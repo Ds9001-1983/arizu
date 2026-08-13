@@ -150,6 +150,16 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
         </div>
       </div>
 
+      {/* Einsatzort, nicht Wohnadresse — siehe Konfigurator. */}
+      <div className="border-t border-mist pt-5">
+        <p className="font-sans text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+          Wo soll gearbeitet werden?
+        </p>
+        <p className="mt-1.5 text-xs text-ink-muted">
+          Adresse des Objekts — muss nicht Ihre eigene Adresse sein.
+        </p>
+      </div>
+
       <div>
         <label htmlFor="strasse" className={LABEL}>
           Straße und Hausnummer <span className="text-gold-deep">*</span>

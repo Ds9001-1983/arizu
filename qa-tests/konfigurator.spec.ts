@@ -114,10 +114,14 @@ test("WhatsApp-Nachricht enthält Name, Adresse und die Konfigurator-Daten", asy
   expect(text).toContain("📦 *Entrümpelung*");
   expect(text).toMatch(/^• Zu räumende Fläche: \d+ m²$/m);
   expect(text).toMatch(/💶 Ihr Rechner nennt \*ca\. .* € – .* €\*/);
+  // Einsatzort gehört zum Auftrag, nicht zu den Kontaktdaten — er ist oft
+  // nicht die Wohnadresse des Anfragenden.
+  expect(text).toContain("📍 *Einsatzort*");
+  // Straße vor Ort — deutsche Lesereihenfolge
+  expect(text).toContain("Römerstraße 23, 51674 Wiehl");
+  expect(text.indexOf("*Einsatzort*")).toBeLessThan(text.indexOf("*Meine Kontaktdaten*"));
   expect(text).toContain("*Meine Kontaktdaten*");
   expect(text).toContain("👤 Dennis Sasse");
-  // Straße vor Ort — deutsche Lesereihenfolge
-  expect(text).toContain("📍 Römerstraße 23, 51674 Wiehl");
   expect(text).toContain("📞 0179 5272126");
   expect(text).toContain("Bitte melden Sie sich für einen Termin vor Ort.");
 });
@@ -170,7 +174,21 @@ test("Abgeschickte Anfrage bestätigt mit Namen und Ort", async ({ page }) => {
   await rechner(page).getByRole("button", { name: "Anfrage senden" }).click();
 
   await expect(page.getByRole("heading", { name: /Danke, Dennis/ })).toBeVisible();
-  await expect(page.getByText(/Termin bei Ihnen in Wiehl/)).toBeVisible();
+  await expect(page.getByText(/Termin am Objekt in Wiehl/)).toBeVisible();
+});
+
+test("Adressblock ist als Einsatzort ausgewiesen, nicht als Wohnadresse", async ({
+  page,
+}) => {
+  await page.goto("/leistungen/entruempelung");
+  const k = rechner(page);
+  await k.getByRole("button", { name: "Unverbindlich anfragen" }).click();
+
+  await expect(k.getByText("Wo soll gearbeitet werden?")).toBeVisible();
+  await expect(
+    k.getByText("Adresse des Objekts — muss nicht Ihre eigene Adresse sein."),
+  ).toBeVisible();
+  await expect(k.getByText("Wie erreichen wir Sie?")).toBeVisible();
 });
 
 test("Zurück zum Rechner behält die Eingaben", async ({ page }) => {

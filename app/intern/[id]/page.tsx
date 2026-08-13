@@ -148,6 +148,10 @@ export default async function LeadDetail({
             </div>
           </div>
 
+          <p className="pt-2 font-sans text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+            Einsatzort
+          </p>
+
           <div>
             <label htmlFor="strasse" className={label}>
               Straße und Hausnummer

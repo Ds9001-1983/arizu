@@ -288,9 +288,9 @@ export function Konfigurator({
         </h3>
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
           Wir melden uns in der Regel noch am selben Werktag telefonisch und
-          vereinbaren einen Termin bei Ihnen in {felder.ort}. Vor Ort sehen wir uns
-          alles an und nennen Ihnen den verbindlichen Festpreis — kostenlos und
-          ohne Verpflichtung.
+          vereinbaren einen Termin am Objekt in {felder.ort}. Vor Ort sehen wir
+          uns alles an und nennen Ihnen den verbindlichen Festpreis — kostenlos
+          und ohne Verpflichtung.
         </p>
         <p className="mt-6 text-sm text-ink-muted">
           Wenn es eilt, erreichen Sie uns direkt unter{" "}
@@ -515,6 +515,19 @@ export function Konfigurator({
                 {fehler.name && <Err>{fehler.name}</Err>}
               </div>
 
+              {/* Eigene Überschrift, weil der Einsatzort oft NICHT die
+                  Wohnadresse ist: bei Entrümpelungen die Wohnung eines
+                  Angehörigen, bei Objektbetreuung das verwaltete Haus. Ohne
+                  den Hinweis tragen Leute reflexhaft ihre eigene ein. */}
+              <div className="border-t border-mist pt-5">
+                <p className="font-sans text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+                  Wo soll gearbeitet werden?
+                </p>
+                <p className="mt-1.5 text-xs text-ink-muted">
+                  Adresse des Objekts — muss nicht Ihre eigene Adresse sein.
+                </p>
+              </div>
+
               <div>
                 <label htmlFor={`k-${slug}-strasse`} className="mb-1.5 block text-sm font-semibold text-navy">
                   Straße und Hausnummer <span className="text-gold-deep">*</span>
@@ -561,6 +574,12 @@ export function Konfigurator({
                   />
                   {fehler.ort && <Err>{fehler.ort}</Err>}
                 </div>
+              </div>
+
+              <div className="border-t border-mist pt-5">
+                <p className="font-sans text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+                  Wie erreichen wir Sie?
+                </p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -673,8 +692,8 @@ export function Konfigurator({
             </button>
 
             <p className="mt-5 text-xs leading-relaxed text-ink-muted">
-              Ihre Adresse brauchen wir, um Anfahrt und Aufwand einzuschätzen —
-              wir schicken Ihnen nichts zu und geben nichts weiter.
+              Die Adresse des Objekts brauchen wir, um Anfahrt und Aufwand
+              einzuschätzen — wir schicken Ihnen nichts zu und geben nichts weiter.
             </p>
 
             {/* Echte Vorschau statt Versprechen: Wer seine Adresse eintippt,

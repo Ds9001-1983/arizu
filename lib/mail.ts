@@ -145,11 +145,13 @@ function internalHtml(lead: LeadMail): string {
         )
       : "",
     serviceName ? row("Leistung", esc(serviceName)) : "",
-    // Adresse als Kartenlink: Arian schaut sich vor dem Rückruf meist an,
+    // Einsatzort als Kartenlink: Arian schaut sich vor dem Rückruf meist an,
     // wo das Objekt liegt — das entscheidet über Anfahrt und Terminplanung.
+    // Bewusst "Einsatzort", nicht "Adresse": Es ist oft nicht die Anschrift
+    // des Anfragenden, sondern die Wohnung eines Angehörigen.
     lead.strasse || lead.ort
       ? row(
-          "Adresse",
+          "Einsatzort",
           `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
             [lead.strasse, `${lead.plz ?? ""} ${lead.ort ?? ""}`.trim()]
               .filter(Boolean)
