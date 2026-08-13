@@ -67,8 +67,12 @@ export function AiMediaBadge({
     <span
       data-ai-badge={assetId}
       className={cn(
-        "pointer-events-none absolute z-20 flex items-center gap-1.5 rounded-full",
-        "px-3 py-1.5 text-[0.72rem] font-semibold tracking-wide text-white",
+        "pointer-events-none absolute z-20 flex items-center gap-1 rounded-full",
+        // Kompakt gehalten: Schrift und Innenabstände rund 20 % kleiner als
+        // zuvor, senkrecht bewusst noch etwas enger. `leading-none` nimmt die
+        // Zeilenbox-Luft raus — ohne das bliebe die Pille trotz kleinerer
+        // Werte hoch, weil die Zeilenhöhe den Innenraum aufspannt.
+        "px-2.5 py-[3px] text-[0.66rem] leading-none font-semibold tracking-wide text-white",
         // Textschatten: hält die Schrift auch dort lesbar, wo unter dem Glas
         // eine sehr helle Stelle liegt (weiße Fassade, Treppenhauswand).
         "[text-shadow:0_1px_3px_rgba(0,0,0,0.55)]",
@@ -76,7 +80,7 @@ export function AiMediaBadge({
         POSITION_CLASSES[position],
       )}
     >
-      <span aria-hidden="true" className="text-[0.68rem] text-[#ffd89a]">
+      <span aria-hidden="true" className="text-[0.62rem] leading-none text-[#ffd89a]">
         ✦
       </span>
       {label}
