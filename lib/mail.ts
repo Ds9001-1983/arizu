@@ -173,11 +173,15 @@ function internalHtml(lead: LeadMail): string {
       : "",
   ].join("");
 
-  const waText = encodeURIComponent(
-    `Hallo ${lead.name}, hier ist ${business.owner} von ${business.shortName}. ` +
-      "Sie haben eine Anfrage über unsere Website geschickt.",
-  );
+  // api.whatsapp.com statt wa.me — wa.me zerstoert beim Weiterleiten
+  // Sonderzeichen und Emojis (siehe whatsappHref in lib/business.ts).
   const waNumber = lead.phone.replace(/[^\d]/g, "").replace(/^0/, "49");
+  const waHref =
+    `https://api.whatsapp.com/send?phone=${waNumber}&text=` +
+    encodeURIComponent(
+      `Hallo ${lead.name}, hier ist ${business.owner} von ${business.shortName}. ` +
+        "Sie haben eine Anfrage über unsere Website geschickt.",
+    );
 
   const inner = `
     <tr><td style="padding:30px 32px 8px">
@@ -196,7 +200,7 @@ function internalHtml(lead: LeadMail): string {
                 font:700 14px/1 Arial,sans-serif;padding:14px 22px;margin:0 8px 8px 0">
         Jetzt anrufen
       </a>
-      <a href="https://wa.me/${waNumber}?text=${waText}"
+      <a href="${waHref}"
          style="display:inline-block;background:${GOLD};color:${NAVY};text-decoration:none;
                 font:700 14px/1 Arial,sans-serif;padding:14px 22px;margin:0 8px 8px 0">
         Per WhatsApp antworten

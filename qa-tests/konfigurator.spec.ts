@@ -136,6 +136,23 @@ test("Vorschau zeigt genau die Nachricht, die verschickt wird", async ({ page })
   expect((await whatsappNachricht(page)).trim()).toBe(vorschau);
 });
 
+test("Kein wa.me — WhatsApp läuft über api.whatsapp.com", async ({ page }) => {
+  /* wa.me antwortet mit einem 302 und kodiert die Nachricht dabei um: aus
+     dem Emoji 📦 (%F0%9F%93%A6) wird %EF%BF%BD, beim Kunden steht ein
+     Fragezeichen im Chat. Betroffen sind auch ✉ und ☎. Dieser Test hält den
+     kurzen Link draußen, falls ihn jemand für hübscher hält. */
+  for (const pfad of ["/", "/leistungen/entruempelung", "/kontakt"]) {
+    await page.goto(pfad);
+    const links = await page.locator('a[href*="whatsapp"], a[href*="wa.me"]').all();
+    expect(links.length).toBeGreaterThan(0);
+    for (const l of links) {
+      const href = (await l.getAttribute("href")) ?? "";
+      expect(href, `wa.me auf ${pfad}`).not.toContain("wa.me");
+      expect(href).toContain("api.whatsapp.com/send");
+    }
+  }
+});
+
 test("WhatsApp-Link ohne Angaben schickt nichts los", async ({ page }) => {
   await page.goto("/leistungen/entruempelung");
   await rechner(page).getByRole("button", { name: "Unverbindlich anfragen" }).click();

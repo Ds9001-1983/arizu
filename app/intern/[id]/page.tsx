@@ -92,7 +92,7 @@ export default async function LeadDetail({
             </a>
           )}
           <a
-            href={`https://wa.me/${waNumber}`}
+            href={`https://api.whatsapp.com/send?phone=${waNumber}`}
             target="_blank"
             rel="noopener"
             className="inline-flex items-center gap-2 rounded-sm border border-mist px-5 py-3 font-display text-sm font-bold text-navy hover:border-gold"

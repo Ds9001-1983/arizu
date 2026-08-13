@@ -3,7 +3,7 @@ import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
 import { SectionHeading } from "@/components/site/section-heading";
-import { business, serviceArea } from "@/lib/business";
+import { business, serviceArea, whatsappHref } from "@/lib/business";
 
 export const metadata: Metadata = {
   title: `Kontakt — ${business.shortName} ${business.address.city}`,
@@ -45,7 +45,7 @@ export default function KontaktPage() {
                 icon: MessageCircle,
                 title: "WhatsApp",
                 value: "Foto senden",
-                href: business.whatsapp.hrefPrefilled,
+                href: whatsappHref("Hallo ARIZU, ich habe eine Anfrage:"),
                 hint: "Keller, Garten, Wohnung zeigen",
               },
               {

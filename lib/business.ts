@@ -48,10 +48,6 @@ export const business = {
   whatsappEnabled: true,
   whatsapp: {
     number: "491795272126",
-    href: "https://wa.me/491795272126",
-    hrefPrefilled:
-      "https://wa.me/491795272126?text=" +
-      encodeURIComponent("Hallo ARIZU, ich habe eine Anfrage:"),
   },
 
   // VERIFY: Wunsch-Adresse bestaetigen. Der Entwurf zeigt nur die Domain
@@ -116,6 +112,21 @@ export const serviceArea = {
     { start: 22523, end: 22589 }, // Hamburg West/Elbvororte
   ],
 } as const;
+
+/**
+ * WhatsApp-Link mit optional vorbefuellter Nachricht.
+ *
+ * Bewusst api.whatsapp.com statt des kuerzeren wa.me: wa.me antwortet mit
+ * einem 302 und kodiert die Nachricht dabei um. Gemessen am 13.08.2026 wird
+ * aus dem korrekt kodierten `%F0%9F%93%A6` (Emoji) ein `%EF%BF%BD`, also das
+ * Ersatzzeichen — beim Kunden steht dann ein Fragezeichen im Chat. Betroffen
+ * sind nicht nur Emojis, auch ✉ und ☎ gehen verloren.
+ * api.whatsapp.com/send antwortet direkt mit 200 und laesst den Text in Ruhe.
+ */
+export function whatsappHref(text?: string): string {
+  const base = `https://api.whatsapp.com/send?phone=${business.whatsapp.number}`;
+  return text ? `${base}&text=${encodeURIComponent(text)}` : base;
+}
 
 /** „0179 52 72 126" -> fuer aria-label lesbar machen. */
 export function spokenPhone(display: string): string {

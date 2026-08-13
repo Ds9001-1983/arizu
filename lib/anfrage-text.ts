@@ -1,4 +1,4 @@
-import { business } from "./business";
+import { whatsappHref } from "./business";
 
 /* ==================================================================
    Der Text, der die Anfrage beschreibt — an genau einer Stelle formuliert.
@@ -97,7 +97,7 @@ export function whatsappText(d: AnfrageDaten): string {
   return block.join("\n");
 }
 
-/** Fertiger wa.me-Link mit vorbefüllter Nachricht. */
+/** Fertiger WhatsApp-Link mit vorbefüllter Nachricht. */
 export function whatsappLink(d: AnfrageDaten): string {
-  return `${business.whatsapp.href}?text=${encodeURIComponent(whatsappText(d))}`;
+  return whatsappHref(whatsappText(d));
 }
