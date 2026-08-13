@@ -7,18 +7,27 @@
     "language": "de",
     "existingUrl": null,
     "logoPath": "public/brand/logo-arizu.svg",
-    "brandColors": ["#0B1A2F", "#C99B46", "#F5F3EF", "#011C39", "#E8E5DF"]
+    "brandColors": [
+      "#0B1A2F",
+      "#C99B46",
+      "#F5F3EF",
+      "#011C39",
+      "#E8E5DF"
+    ]
   },
   "assets": [
     {
       "id": "img-hero",
-      "type": "static_image",
+      "type": "hero_video",
       "ai_disclosure": {
         "required": true,
         "reason": "photorealistic_real_motif",
-        "badge": { "position": "top-left", "label": "KI-generiert" },
+        "badge": {
+          "position": "bottom-right",
+          "label": "KI-generiert"
+        },
         "metadata_tagged": true,
-        "metadata_target": "asset_file",
+        "metadata_target": "masters",
         "digital_source_type": "trainedAlgorithmicMedia",
         "decided_at": "2026-08-12T15:40:00+02:00",
         "evidence_screenshot": "qa-reports/ai-disclosure/img-hero.png"
@@ -29,10 +38,33 @@
           "prompt": "Modernes dreigeschossiges Mehrfamilienhaus in einer norddeutschen Kleinstadt, gepflasterter Weg, geschnittene Hecken, junge Birken, helles bedecktes Tageslicht, 35 mm, dokumentarisch",
           "negative": "Text, Schilder, Logos, Wasserzeichen, Personen",
           "aspectRatio": "16:9"
+        },
+        "motion": {
+          "model": "seedance_2_0",
+          "prompt": "Langsame, gleichmäßige Kamerafahrt an der Fassade entlang nach rechts, sanfte Parallaxe zwischen Birke im Vordergrund und Fassade, leichte Blattbewegung, bedecktes Tageslicht, kein Zoom, kein Wackeln, keine Personen",
+          "genre": "auto",
+          "duration": 5,
+          "fps": 24
         }
       },
       "output": {
-        "desktop": { "file": "public/images/hero-gebaeude.webp", "width": 1344, "height": 752, "kb": 159 }
+        "desktop": {
+          "file": "public/video/hero-gebaeude.mp4",
+          "width": 1280,
+          "height": 720,
+          "kb": 553,
+          "silent": true,
+          "faststart": true,
+          "poster": "public/images/hero-gebaeude.webp",
+          "hinweis": "Poster ist das erste Videobild — dadurch ist der Übergang vom Standbild ins Video unsichtbar."
+        },
+        "mobile": {
+          "file": "public/images/hero-gebaeude-mobil.webp",
+          "width": 800,
+          "height": 448,
+          "kb": 53,
+          "hinweis": "Unter 768px, bei prefers-reduced-motion und bei aktivem Save-Data wird gar kein Video geladen, nur dieses Bild."
+        }
       }
     },
     {
@@ -41,7 +73,10 @@
       "ai_disclosure": {
         "required": true,
         "reason": "photorealistic_real_motif",
-        "badge": { "position": "top-right", "label": "KI-generiert" },
+        "badge": {
+          "position": "top-right",
+          "label": "KI-generiert"
+        },
         "metadata_tagged": true,
         "metadata_target": "asset_file",
         "digital_source_type": "trainedAlgorithmicMedia",
@@ -57,7 +92,12 @@
         }
       },
       "output": {
-        "desktop": { "file": "public/images/objektbetreuung.webp", "width": 880, "height": 1168, "kb": 30 }
+        "desktop": {
+          "file": "public/images/objektbetreuung.webp",
+          "width": 880,
+          "height": 1168,
+          "kb": 30
+        }
       }
     },
     {
@@ -66,7 +106,10 @@
       "ai_disclosure": {
         "required": true,
         "reason": "photorealistic_real_motif",
-        "badge": { "position": "top-right", "label": "KI-generiert" },
+        "badge": {
+          "position": "top-right",
+          "label": "KI-generiert"
+        },
         "metadata_tagged": true,
         "metadata_target": "asset_file",
         "digital_source_type": "trainedAlgorithmicMedia",
@@ -82,7 +125,12 @@
         }
       },
       "output": {
-        "desktop": { "file": "public/images/gebaeudereinigung.webp", "width": 880, "height": 1168, "kb": 50 }
+        "desktop": {
+          "file": "public/images/gebaeudereinigung.webp",
+          "width": 880,
+          "height": 1168,
+          "kb": 50
+        }
       }
     },
     {
@@ -91,7 +139,10 @@
       "ai_disclosure": {
         "required": true,
         "reason": "photorealistic_real_motif",
-        "badge": { "position": "top-right", "label": "KI-generiert" },
+        "badge": {
+          "position": "top-right",
+          "label": "KI-generiert"
+        },
         "metadata_tagged": true,
         "metadata_target": "asset_file",
         "digital_source_type": "trainedAlgorithmicMedia",
@@ -107,7 +158,12 @@
         }
       },
       "output": {
-        "desktop": { "file": "public/images/gartenpflege.webp", "width": 880, "height": 1168, "kb": 150 }
+        "desktop": {
+          "file": "public/images/gartenpflege.webp",
+          "width": 880,
+          "height": 1168,
+          "kb": 150
+        }
       }
     },
     {
@@ -116,7 +172,10 @@
       "ai_disclosure": {
         "required": true,
         "reason": "photorealistic_real_motif",
-        "badge": { "position": "top-right", "label": "KI-generiert" },
+        "badge": {
+          "position": "top-right",
+          "label": "KI-generiert"
+        },
         "metadata_tagged": true,
         "metadata_target": "asset_file",
         "digital_source_type": "trainedAlgorithmicMedia",
@@ -132,7 +191,12 @@
         }
       },
       "output": {
-        "desktop": { "file": "public/images/entruempelung.webp", "width": 880, "height": 1168, "kb": 51 }
+        "desktop": {
+          "file": "public/images/entruempelung.webp",
+          "width": 880,
+          "height": 1168,
+          "kb": 51
+        }
       }
     },
     {
@@ -164,13 +228,34 @@
     }
   ],
   "modules": [
-    { "type": "trust_bar", "after": "hero" },
-    { "type": "service_grid", "after": "trust_bar" },
-    { "type": "price_configurator_tabs", "after": "service_grid" },
-    { "type": "reasons_grid", "after": "price_configurator_tabs" },
-    { "type": "tax_benefit_band", "after": "reasons_grid" },
-    { "type": "faq", "after": "tax_benefit_band" },
-    { "type": "lead_form", "after": "faq" }
+    {
+      "type": "trust_bar",
+      "after": "hero"
+    },
+    {
+      "type": "service_grid",
+      "after": "trust_bar"
+    },
+    {
+      "type": "price_configurator_tabs",
+      "after": "service_grid"
+    },
+    {
+      "type": "reasons_grid",
+      "after": "price_configurator_tabs"
+    },
+    {
+      "type": "tax_benefit_band",
+      "after": "reasons_grid"
+    },
+    {
+      "type": "faq",
+      "after": "tax_benefit_band"
+    },
+    {
+      "type": "lead_form",
+      "after": "faq"
+    }
   ],
   "performanceBudget": {
     "lcp_max_ms": 2500,
@@ -183,7 +268,12 @@
   },
   "qaChecks": {
     "stufe": 1,
-    "breakpoints": [390, 768, 1024, 1440],
+    "breakpoints": [
+      390,
+      768,
+      1024,
+      1440
+    ],
     "interactions": [
       "konfigurator-eingabe-aendert-preis",
       "konfigurator-uebergabe-an-lead-formular",
@@ -193,7 +283,10 @@
     ]
   },
   "aiTransparency": {
-    "chatbot": { "enabled": false, "noticeImplemented": false },
+    "chatbot": {
+      "enabled": false,
+      "noticeImplemented": false
+    },
     "policyDeliveredAt": null,
     "policyPath": "docs/ki-transparenz-policy.md",
     "evidenceDir": "qa-reports/ai-disclosure"
@@ -205,15 +298,32 @@
     "robots": "index, follow",
     "structuredData": {
       "type": "LocalBusiness",
-      "additional": ["HomeAndConstructionBusiness", "Service", "FAQPage", "BreadcrumbList"]
+      "additional": [
+        "HomeAndConstructionBusiness",
+        "Service",
+        "FAQPage",
+        "BreadcrumbList"
+      ]
     }
   },
   "versioning": {
-    "current": "0.1.0",
+    "current": "0.2.0",
     "created": "2026-08-12T14:20:00+02:00",
-    "lastModified": "2026-08-12T15:40:00+02:00",
+    "lastModified": "2026-08-13T08:35:00+02:00",
     "status": "draft",
     "changelog": [
+      {
+        "version": "0.2.0",
+        "date": "2026-08-13",
+        "changes": [
+          "KI-Badge auf helle Glasoptik umgestellt (backdrop-blur, Sättigungsanhebung, Lichtkante, Innenschein)",
+          "Hero komplett neu: vollflächiges Bewegtbild statt geteilter Bühne, Text links im Verlauf",
+          "Hero-Video mit seedance_2_0 aus dem bestehenden Standbild erzeugt, 6 MB auf 0,54 MB gebracht",
+          "Video wird nur geladen bei genug Breite, ohne prefers-reduced-motion und ohne Save-Data",
+          "Header läuft jetzt über dem Hero und schaltet Logo und Navigation dort auf Weiß",
+          "Schriften selbst gehostet statt über next/font/google (Google lieferte 404)"
+        ]
+      },
       {
         "version": "0.1.0",
         "date": "2026-08-12",

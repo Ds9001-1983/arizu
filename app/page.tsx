@@ -1,18 +1,19 @@
 import Link from "next/link";
 import { ArrowRight, BadgeEuro, Handshake, Leaf, Phone, ShieldCheck, Sparkles } from "lucide-react";
-import { AiMedia } from "@/components/ai/ai-media";
 import { JsonLd } from "@/components/seo/json-ld";
 import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
+import { HeroMedia } from "@/components/site/hero-media";
 import { KonfiguratorTabs } from "@/components/site/konfigurator-tabs";
-import { LogoIcon } from "@/components/site/logo";
 import { SectionHeading } from "@/components/site/section-heading";
 import { ServiceGrid } from "@/components/site/service-grid";
 import { TrustBar } from "@/components/site/trust-bar";
-import { business, serviceArea } from "@/lib/business";
+import { glassSurface } from "@/components/ai/ai-media-badge";
+import { business } from "@/lib/business";
 import { faqSchema, localBusinessSchema } from "@/lib/seo";
 import { services } from "@/lib/services";
+import { cn } from "@/lib/utils";
 
 /* „Warum ARIZU?" — Wortlaut aus dem Designentwurf. */
 const reasons = [
@@ -33,113 +34,66 @@ export default function Home() {
       <JsonLd data={[localBusinessSchema(), faqSchema(homeFaqs)]} />
 
       {/* ------------------------------------------------------------- Hero */}
-      <section className="relative overflow-hidden bg-shell pt-10 pb-0 sm:pt-16">
-        <Container wide>
-          <div className="grid items-stretch gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
-            <div className="max-w-2xl py-8 lg:py-16">
-              <p className="font-sans text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-gold-deep">
-                Gebäudedienstleistungen · {business.address.city}{" & "}Kreis Pinneberg
-              </p>
+      {/* Vollflächig statt geteilter Bühne: Mit Bewegtbild wirkt ein
+          Split-Layout zerrissen, und das Gebäude ist das Verkaufsargument —
+          es soll die ganze Breite bekommen. Der Text sitzt links unten im
+          dunkelsten Teil des Verlaufs. */}
+      <section className="relative isolate flex min-h-[clamp(34rem,80svh,44rem)] items-end overflow-hidden mt-[calc(var(--header-h)*-1)]">
+        <HeroMedia
+          assetId="img-hero"
+          alt="Modernes Mehrfamilienhaus mit gepflegtem Weg und geschnittenen Hecken"
+          poster="/images/hero-gebaeude.webp"
+          posterMobile="/images/hero-gebaeude-mobil.webp"
+          video="/video/hero-gebaeude.mp4"
+        />
 
-              <h1 className="mt-5 font-display text-[2.6rem] font-extrabold leading-[0.98] text-navy sm:text-6xl lg:text-[4.2rem]">
-                Alles aus
-                <br />
-                einer Hand.
-              </h1>
+        <Container wide className="relative z-10 pt-32 pb-14 sm:pb-20">
+          <div className="max-w-2xl">
+            <p className="font-sans text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-gold-soft">
+              Gebäudedienstleistungen · {business.address.city}{" & "}Kreis Pinneberg
+            </p>
 
-              <p className="mt-5 font-display text-lg font-bold text-gold-deep">
-                {business.subclaim}
-              </p>
+            <h1 className="mt-5 font-display text-[2.7rem] font-extrabold leading-[0.98] text-white sm:text-6xl lg:text-[4.4rem]">
+              Alles aus
+              <br />
+              einer Hand.
+            </h1>
 
-              <p className="mt-6 max-w-lg text-[1.05rem] leading-relaxed text-ink-muted">
-                {business.intro}
-              </p>
+            <p className="mt-5 font-display text-lg font-bold text-gold-soft">
+              {business.subclaim}
+            </p>
 
-              <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Link
-                  href="#richtpreis"
-                  className="inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-4 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
-                >
-                  Richtpreis in 60 Sekunden
-                  <ArrowRight className="size-4" aria-hidden />
-                </Link>
-                <a
-                  href={business.phone.href}
-                  className="inline-flex items-center gap-2 rounded-sm border border-navy/20 px-6 py-4 font-display text-sm font-bold text-navy transition-colors hover:border-gold hover:text-gold-deep"
-                >
-                  <Phone className="size-4" aria-hidden />
-                  {business.phone.display}
-                </a>
-              </div>
+            <p className="mt-5 max-w-lg text-[1.05rem] leading-relaxed text-white/80">
+              {business.intro}
+            </p>
 
-              <p className="mt-6 text-sm text-ink-muted">
-                Besichtigung und Angebot kostenlos · Antwort in der Regel am
-                selben Werktag
-              </p>
-            </div>
-
-            {/* Rechte Bühne: läuft absichtlich in den Seitenrand hinein und
-                bricht damit das mittige „Headline + Button"-Schema auf.
-                Das Dach-Z aus dem Logo dient als Bildmarke im Großformat. */}
-            <div className="relative -mr-5 min-h-[26rem] overflow-hidden rounded-tl-sm bg-navy sm:-mr-8 lg:mr-[calc(50%-50vw)]">
-              <AiMedia
-                assetId="img-hero"
-                className="absolute inset-0 rounded-none"
-                badgePosition="top-left"
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                href="#richtpreis"
+                className="inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-4 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
               >
-                {/* Bewusst <picture> statt next/image: Der Optimizer ist
-                    projektweit aus (er würde die KI-Metadaten strippen) und
-                    erzeugt damit auch kein srcSet. Ohne Mobilvariante lud das
-                    Handy die 162-KB-Desktopdatei und verdrängte dabei die
-                    Fontdateien — gemessen: LCP 3,9 s, obwohl das LCP-Element
-                    ein Textabsatz ist. Die 62-KB-Variante löst das Rennen auf. */}
-                <picture>
-                  <source
-                    media="(max-width: 640px)"
-                    srcSet="/images/hero-gebaeude-mobil.webp"
-                    width={800}
-                    height={448}
-                  />
-                  <img
-                    src="/images/hero-gebaeude.webp"
-                    alt="Modernes Mehrfamilienhaus mit gepflegtem Weg und geschnittenen Hecken"
-                    width={1344}
-                    height={752}
-                    fetchPriority="high"
-                    decoding="async"
-                    className="h-full w-full object-cover"
-                  />
-                </picture>
-                {/* Navy-Verlauf von unten: hält die Liste lesbar, ohne das
-                    Motiv zuzudecken. Reine Deckfläche würde das Bild entwerten. */}
-                <div
-                  className="absolute inset-0 bg-gradient-to-t from-navy via-navy/85 to-navy/25"
-                  aria-hidden
-                />
-              </AiMedia>
-
-              <LogoIcon
-                className="pointer-events-none absolute -right-16 -top-10 h-[130%] w-auto opacity-[0.08] [--logo-accent:#ffffff] [--logo-ink:transparent]"
-                label=""
-              />
-              <div className="relative flex h-full min-h-[26rem] flex-col justify-end gap-8 p-8 sm:p-12">
-                <ul className="space-y-5">
-                  {[
-                    "Preis online sehen, bevor Sie anrufen",
-                    "Ein Ansprechpartner für Reinigung, Garten, Objekt und Räumung",
-                    `Im Einsatz in ${serviceArea.cities.slice(0, 4).join(", ")} und Umgebung`,
-                  ].map((line) => (
-                    <li key={line} className="flex gap-3.5 text-white">
-                      <span
-                        className="mt-2 size-2 shrink-0 rotate-45 bg-gold"
-                        aria-hidden
-                      />
-                      <span className="text-[1.05rem] leading-snug">{line}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                Richtpreis in 60 Sekunden
+                <ArrowRight className="size-4" aria-hidden />
+              </Link>
+              {/* Dieselbe Glasoptik wie beim KI-Hinweis — auf dem Bewegtbild
+                  trägt eine Glasfläche besser als ein flacher Rahmen. */}
+              <a
+                href={business.phone.href}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-sm px-6 py-4 font-display text-sm font-bold text-white transition-colors hover:text-gold-soft",
+                  glassSurface,
+                )}
+              >
+                <Phone className="size-4" aria-hidden />
+                {business.phone.display}
+              </a>
             </div>
+
+            <p className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/75">
+              <span className="size-2 rotate-45 bg-gold" aria-hidden />
+              Preis online sehen, bevor Sie anrufen — Besichtigung und Angebot
+              kostenlos
+            </p>
           </div>
         </Container>
       </section>

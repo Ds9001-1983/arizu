@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, Phone, X } from "lucide-react";
+import { glassSurface } from "@/components/ai/ai-media-badge";
 import { business } from "@/lib/business";
 import { services } from "@/lib/services";
 import { cn } from "@/lib/utils";
@@ -44,14 +45,22 @@ export function SiteHeader() {
       )}
     >
       <Container>
-        <div className="flex items-center justify-between gap-6 py-4">
+        <div className="flex h-[var(--header-h)] items-center justify-between gap-6">
           <Link
             href="/"
             className="shrink-0"
             aria-label={`${business.name} — zur Startseite`}
             onClick={() => setOpen(false)}
           >
-            <LogoWordmark className="h-8 w-auto sm:h-9" />
+            {/* Über dem dunklen Hero muss die Wortmarke weiß laufen, sonst
+                verschwindet Navy auf Navy. Dieselbe SVG-Quelle, nur andere
+                CSS-Variable. */}
+            <LogoWordmark
+              className={cn(
+                "h-8 w-auto transition-[--logo-ink] duration-300 sm:h-9",
+                !solid && !open && "[--logo-ink:#ffffff]",
+              )}
+            />
           </Link>
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Hauptnavigation">
@@ -59,7 +68,12 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm font-medium text-navy/80 transition-colors hover:text-gold-deep"
+                className={cn(
+                  "text-sm font-medium transition-colors",
+                  solid || open
+                    ? "text-navy/80 hover:text-gold-deep"
+                    : "text-white/85 hover:text-gold-soft",
+                )}
               >
                 {item.label}
               </Link>
@@ -71,7 +85,10 @@ export function SiteHeader() {
                 deshalb dauerhaft sichtbar, ab sm mit Nummer im Klartext. */}
             <a
               href={business.phone.href}
-              className="inline-flex items-center gap-2 rounded-sm bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-band"
+              className={cn(
+                "inline-flex items-center gap-2 rounded-sm px-4 py-2.5 text-sm font-semibold text-white transition-colors",
+                solid || open ? "bg-navy hover:bg-navy-band" : glassSurface,
+              )}
             >
               <Phone className="size-4 shrink-0" aria-hidden />
               <span className="hidden sm:inline">{business.phone.display}</span>
@@ -81,7 +98,12 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
-              className="inline-flex size-11 items-center justify-center rounded-sm border border-mist text-navy lg:hidden"
+              className={cn(
+                "inline-flex size-11 items-center justify-center rounded-sm lg:hidden",
+                solid || open
+                  ? "border border-mist text-navy"
+                  : "border border-white/30 text-white",
+              )}
               aria-expanded={open}
               aria-controls="mobil-navigation"
               aria-label={open ? "Menü schließen" : "Menü öffnen"}

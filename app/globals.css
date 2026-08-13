@@ -43,6 +43,12 @@
 
   /* Rhythmus */
   --spacing-section: 6.5rem;
+
+  /* Feste Headerhöhe. Der Hero auf der Startseite zieht sich exakt um diesen
+     Wert nach oben, damit das Bild hinter dem Header durchläuft und die
+     helle Navigation darauf lesbar wird. Ohne festen Wert wäre die Zahl vom
+     gerenderten Logo abhängig (74 px am Desktop, 76 px mobil gemessen). */
+  --header-h: 76px;
 }
 
 @theme inline {
