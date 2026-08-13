@@ -131,8 +131,17 @@ export default async function InternPage() {
                       <Phone className="size-4" aria-hidden />
                       {lead.phone}
                     </a>
-                    {lead.objekt && (
-                      <span className="text-ink-muted">{lead.objekt}</span>
+                    {(lead.strasse || lead.ort) && (
+                      <span className="text-ink-muted">
+                        {[lead.strasse, [lead.plz, lead.ort].filter(Boolean).join(" ")]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </span>
+                    )}
+                    {lead.source === "whatsapp" && (
+                      <span className="rounded-xs bg-mist px-2 py-0.5 text-xs text-ink-muted">
+                        über WhatsApp
+                      </span>
                     )}
                     <Link
                       href={`/intern/${lead.id}`}

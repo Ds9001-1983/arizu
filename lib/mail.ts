@@ -78,10 +78,13 @@ export type LeadMail = {
   name: string;
   phone: string;
   email?: string;
-  objekt?: string;
+  strasse?: string;
+  plz?: string;
+  ort?: string;
   message?: string;
   service?: string;
   konfigurator?: string;
+  source?: string;
 };
 
 function row(label: string, value: string): string {
@@ -142,9 +145,32 @@ function internalHtml(lead: LeadMail): string {
         )
       : "",
     serviceName ? row("Leistung", esc(serviceName)) : "",
-    lead.objekt ? row("Objekt", esc(lead.objekt)) : "",
+    // Adresse als Kartenlink: Arian schaut sich vor dem Rückruf meist an,
+    // wo das Objekt liegt — das entscheidet über Anfahrt und Terminplanung.
+    lead.strasse || lead.ort
+      ? row(
+          "Adresse",
+          `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            [lead.strasse, `${lead.plz ?? ""} ${lead.ort ?? ""}`.trim()]
+              .filter(Boolean)
+              .join(", "),
+          )}" style="color:${NAVY};text-decoration:underline">${esc(
+            [lead.strasse, `${lead.plz ?? ""} ${lead.ort ?? ""}`.trim()]
+              .filter(Boolean)
+              .join(", "),
+          )}</a>`,
+        )
+      : "",
     lead.konfigurator ? row("Aus dem Konfigurator", nl2br(lead.konfigurator)) : "",
     lead.message ? row("Nachricht", nl2br(lead.message)) : "",
+    lead.source === "whatsapp"
+      ? row(
+          "Hinweis",
+          "Der Kunde hat zusätzlich WhatsApp geöffnet. Falls dort keine " +
+            "Nachricht ankam, hat er sie nicht abgeschickt — die Angaben hier " +
+            "sind trotzdem vollständig.",
+        )
+      : "",
   ].join("");
 
   const waText = encodeURIComponent(

@@ -308,11 +308,22 @@
     }
   },
   "versioning": {
-    "current": "0.3.0",
+    "current": "0.4.0",
     "created": "2026-08-12T14:20:00+02:00",
-    "lastModified": "2026-08-13T09:20:00+02:00",
+    "lastModified": "2026-08-13T10:40:00+02:00",
     "status": "draft",
     "changelog": [
+      {
+        "version": "0.4.0",
+        "date": "2026-08-13",
+        "changes": [
+          "Konfigurator ist zweistufig: Rechnen, dann Angaben — kein Sprung mehr ins Formular am Seitenende",
+          "Name, Straße, PLZ, Ort und Telefon sind Pflicht, bevor eine Anfrage rausgeht",
+          "WhatsApp-Nachricht enthält jetzt Absender und Adresse, nicht nur die Rechnerdaten",
+          "Adresse strukturiert statt Freitext — bis in Mail, Lead-Inbox und Kartenlink",
+          "Anfragen tragen ihre Herkunft (Formular oder WhatsApp)"
+        ]
+      },
       {
         "version": "0.3.0",
         "date": "2026-08-13",

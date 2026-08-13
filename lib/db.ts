@@ -29,10 +29,13 @@ export type LeadRow = {
   name: string;
   phone: string;
   email: string | null;
-  objekt: string | null;
+  strasse: string | null;
+  plz: string | null;
+  ort: string | null;
   message: string | null;
   service: string | null;
   konfigurator: string | null;
+  source: string | null;
   status: LeadStatus;
   note: string | null;
 };
@@ -46,14 +49,25 @@ export async function initSchema(): Promise<void> {
       name          text        not null,
       phone         text        not null,
       email         text,
-      objekt        text,
+      strasse       text,
+      plz           text,
+      ort           text,
       message       text,
       service       text,
       konfigurator  text,
+      source        text,
       status        text        not null default 'neu',
       note          text
     )
   `;
+  // Nachträglich hinzugekommene Spalten. Ausgeschrieben statt in einer
+  // Schleife, weil der Neon-Treiber ausschließlich Tagged Templates annimmt —
+  // ein zusammengebauter String würde hier gar nicht erst kompilieren, und
+  // das ist gut so: Spaltennamen aus Variablen wären ein SQL-Injection-Weg.
+  await q`alter table leads add column if not exists strasse text`;
+  await q`alter table leads add column if not exists plz text`;
+  await q`alter table leads add column if not exists ort text`;
+  await q`alter table leads add column if not exists source text`;
   // Die Inbox sortiert immer nach Eingang — dafür ein Index, damit das auch
   // bei einigen Tausend Leads schnell bleibt.
   await q`create index if not exists leads_created_at_idx on leads (created_at desc)`;
@@ -63,16 +77,21 @@ export async function insertLead(lead: {
   name: string;
   phone: string;
   email?: string | null;
-  objekt?: string | null;
+  strasse?: string | null;
+  plz?: string | null;
+  ort?: string | null;
   message?: string | null;
   service?: string | null;
   konfigurator?: string | null;
+  source?: string | null;
 }): Promise<number> {
   const q = sql();
   const rows = (await q`
-    insert into leads (name, phone, email, objekt, message, service, konfigurator)
-    values (${lead.name}, ${lead.phone}, ${lead.email ?? null}, ${lead.objekt ?? null},
-            ${lead.message ?? null}, ${lead.service ?? null}, ${lead.konfigurator ?? null})
+    insert into leads (name, phone, email, strasse, plz, ort, message, service,
+                       konfigurator, source)
+    values (${lead.name}, ${lead.phone}, ${lead.email ?? null}, ${lead.strasse ?? null},
+            ${lead.plz ?? null}, ${lead.ort ?? null}, ${lead.message ?? null},
+            ${lead.service ?? null}, ${lead.konfigurator ?? null}, ${lead.source ?? null})
     returning id
   `) as { id: number }[];
   return rows[0].id;
@@ -81,8 +100,8 @@ export async function insertLead(lead: {
 export async function listLeads(limit = 200): Promise<LeadRow[]> {
   const q = sql();
   return (await q`
-    select id, created_at, name, phone, email, objekt, message, service,
-           konfigurator, status, note
+    select id, created_at, name, phone, email, strasse, plz, ort, message,
+           service, konfigurator, source, status, note
       from leads
      order by created_at desc
      limit ${limit}
@@ -92,8 +111,8 @@ export async function listLeads(limit = 200): Promise<LeadRow[]> {
 export async function getLead(id: number): Promise<LeadRow | undefined> {
   const q = sql();
   const rows = (await q`
-    select id, created_at, name, phone, email, objekt, message, service,
-           konfigurator, status, note
+    select id, created_at, name, phone, email, strasse, plz, ort, message,
+           service, konfigurator, source, status, note
       from leads
      where id = ${id}
   `) as LeadRow[];
@@ -111,7 +130,9 @@ export async function updateLead(
     name?: string;
     phone?: string;
     email?: string | null;
-    objekt?: string | null;
+    strasse?: string | null;
+    plz?: string | null;
+    ort?: string | null;
     konfigurator?: string | null;
     status?: LeadStatus;
     note?: string | null;
@@ -124,7 +145,9 @@ export async function updateLead(
       name         = coalesce(${patch.name ?? null}, name),
       phone        = coalesce(${patch.phone ?? null}, phone),
       email        = coalesce(${patch.email ?? null}, email),
-      objekt       = coalesce(${patch.objekt ?? null}, objekt),
+      strasse      = coalesce(${patch.strasse ?? null}, strasse),
+      plz          = coalesce(${patch.plz ?? null}, plz),
+      ort          = coalesce(${patch.ort ?? null}, ort),
       konfigurator = coalesce(${patch.konfigurator ?? null}, konfigurator),
       status       = coalesce(${patch.status ?? null}, status),
       note         = coalesce(${patch.note ?? null}, note)

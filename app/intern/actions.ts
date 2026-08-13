@@ -76,7 +76,9 @@ export async function saveLead(formData: FormData) {
     name: String(formData.get("name") ?? "") || undefined,
     phone: String(formData.get("phone") ?? "") || undefined,
     email: String(formData.get("email") ?? "") || undefined,
-    objekt: String(formData.get("objekt") ?? "") || undefined,
+    strasse: String(formData.get("strasse") ?? "") || undefined,
+    plz: String(formData.get("plz") ?? "") || undefined,
+    ort: String(formData.get("ort") ?? "") || undefined,
     // Das Feld, das Arian beim Kunden korrigiert: „sind doch 74 m², nicht 60".
     konfigurator: String(formData.get("konfigurator") ?? "") || undefined,
     note: String(formData.get("note") ?? "") || undefined,

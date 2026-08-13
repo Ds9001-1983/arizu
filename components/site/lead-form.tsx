@@ -1,67 +1,49 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { ArrowRight, CheckCircle2, Phone } from "lucide-react";
 import { business } from "@/lib/business";
 import { services } from "@/lib/services";
-import { cn } from "@/lib/utils";
 
 /* ==================================================================
-   Anfrageformular.
+   Allgemeines Anfrageformular am Seitenende.
+
+   Es ist der Weg für alle, die keinen Preis ausrechnen wollen, sondern
+   einfach eine Frage haben. Anfragen AUS dem Konfigurator laufen nicht mehr
+   hier durch — der bringt seinen eigenen zweiten Schritt mit. Vorher wurde
+   das Ergebnis als Fließtext in eine Textarea geschoben; das war eine
+   Zwischenlösung und sah auch danach aus.
 
    Bewusst OHNE react-hook-form, zod und @hookform/resolvers im Client:
    Diese drei zusammen lagen bei rund 100 KB im Initial-Bundle und rissen das
-   Performance-Budget (150 KB) — gemessen wurden 256 KB, mobiler LCP 4,1 s.
-   Für sieben Felder leisten sie nichts, was die native Constraint-Validation
-   des Browsers nicht auch kann.
+   Performance-Budget von 150 KB. Für sieben Felder leisten sie nichts, was
+   die native Constraint-Validation des Browsers nicht auch kann.
 
-   Wichtig: Die Validierung hier ist reine Bequemlichkeit für den Nutzer. Die
-   verbindliche Prüfung passiert weiter mit zod in app/api/lead/route.ts —
-   Clientprüfungen sind keine Sicherheitsgrenze und waren es nie.
+   Wichtig: Die Prüfung hier ist Bequemlichkeit für den Nutzer. Verbindlich
+   geprüft wird mit zod in app/api/lead/route.ts — Clientprüfungen sind keine
+   Sicherheitsgrenze und waren es nie.
    ================================================================== */
 
 type Status = "idle" | "sending" | "done" | "error";
-type Errors = Partial<Record<"name" | "phone" | "email" | "consent", string>>;
+type Errors = Partial<
+  Record<"name" | "strasse" | "plz" | "ort" | "phone" | "email" | "consent", string>
+>;
 
 const FELD =
   "w-full rounded-sm border border-mist bg-surface px-4 py-3 text-[0.95rem] text-navy placeholder:text-ink-muted/60 focus:border-gold focus:outline-none";
+const LABEL = "mb-1.5 block text-sm font-semibold text-navy";
 
 export function LeadForm({ defaultService }: { defaultService?: string }) {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Errors>({});
   const [serverError, setServerError] = useState<string | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-  const konfiguratorRef = useRef<HTMLTextAreaElement>(null);
 
-  // Der Konfigurator schickt sein Ergebnis per CustomEvent herüber, statt den
-  // State über die halbe Seite durchzureichen. Beide können dadurch
-  // unabhängig voneinander auf jeder Seite stehen.
-  useEffect(() => {
-    const onResult = (e: Event) => {
-      const detail = (e as CustomEvent<{ service?: string; text: string }>).detail;
-      const form = formRef.current;
-      if (!form) return;
-
-      const feld = form.elements.namedItem("konfigurator") as HTMLTextAreaElement | null;
-      if (feld) feld.value = detail.text;
-
-      const auswahl = form.elements.namedItem("service") as HTMLSelectElement | null;
-      if (auswahl && detail.service) auswahl.value = detail.service;
-
-      konfiguratorRef.current?.classList.add("ring-2", "ring-gold");
-      window.setTimeout(
-        () => konfiguratorRef.current?.classList.remove("ring-2", "ring-gold"),
-        1600,
-      );
-    };
-    window.addEventListener("arizu:konfigurator", onResult);
-    return () => window.removeEventListener("arizu:konfigurator", onResult);
-  }, []);
-
-  /** Gleiche Regeln wie im Server-Schema, nur mit deutschen Hinweistexten. */
   function validate(data: Record<string, string>): Errors {
     const e: Errors = {};
     if (data.name.trim().length < 2) e.name = "Bitte geben Sie Ihren Namen an.";
+    if (data.strasse.trim().length < 3) e.strasse = "Bitte Straße und Hausnummer angeben.";
+    if (!/^\d{5}$/.test(data.plz.trim())) e.plz = "Fünfstellige Postleitzahl.";
+    if (data.ort.trim().length < 2) e.ort = "Bitte den Ort angeben.";
     if (data.phone.trim().length < 6)
       e.phone = "Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen.";
     if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email.trim()))
@@ -84,7 +66,6 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
     const found = validate(data);
     setErrors(found);
     if (Object.keys(found).length > 0) {
-      // Zum ersten Fehler springen — auf dem Handy sonst unsichtbar.
       const first = Object.keys(found)[0];
       (form.elements.namedItem(first) as HTMLElement | null)?.focus();
       return;
@@ -96,7 +77,7 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, consent: true }),
+        body: JSON.stringify({ ...data, source: "formular", consent: true }),
       });
       const json = (await res.json()) as { ok: boolean; error?: string };
       if (!res.ok || !json.ok) throw new Error(json.error ?? "Unbekannter Fehler");
@@ -128,7 +109,7 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
   }
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} className="space-y-5" noValidate>
+    <form onSubmit={onSubmit} className="space-y-5" noValidate>
       {/* Honeypot — visuell und für Screenreader entfernt, Bots füllen ihn trotzdem. */}
       <div className="absolute left-[-9999px]" aria-hidden>
         <label htmlFor="website">Website</label>
@@ -137,7 +118,7 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className="mb-1.5 block text-sm font-semibold text-navy">
+          <label htmlFor="name" className={LABEL}>
             Name <span className="text-gold-deep">*</span>
           </label>
           <input
@@ -145,16 +126,14 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
             name="name"
             autoComplete="name"
             required
-            minLength={2}
             aria-invalid={Boolean(errors.name)}
-            aria-describedby={errors.name ? "name-fehler" : undefined}
             className={FELD}
           />
-          {errors.name && <Err id="name-fehler">{errors.name}</Err>}
+          {errors.name && <Err>{errors.name}</Err>}
         </div>
 
         <div>
-          <label htmlFor="phone" className="mb-1.5 block text-sm font-semibold text-navy">
+          <label htmlFor="phone" className={LABEL}>
             Telefon <span className="text-gold-deep">*</span>
           </label>
           <input
@@ -164,16 +143,64 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
             autoComplete="tel"
             inputMode="tel"
             required
-            minLength={6}
             aria-invalid={Boolean(errors.phone)}
-            aria-describedby={errors.phone ? "phone-fehler" : undefined}
             className={FELD}
           />
-          {errors.phone && <Err id="phone-fehler">{errors.phone}</Err>}
+          {errors.phone && <Err>{errors.phone}</Err>}
         </div>
+      </div>
 
+      <div>
+        <label htmlFor="strasse" className={LABEL}>
+          Straße und Hausnummer <span className="text-gold-deep">*</span>
+        </label>
+        <input
+          id="strasse"
+          name="strasse"
+          autoComplete="street-address"
+          required
+          aria-invalid={Boolean(errors.strasse)}
+          className={FELD}
+        />
+        {errors.strasse && <Err>{errors.strasse}</Err>}
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-[8rem_1fr]">
         <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-navy">
+          <label htmlFor="plz" className={LABEL}>
+            PLZ <span className="text-gold-deep">*</span>
+          </label>
+          <input
+            id="plz"
+            name="plz"
+            inputMode="numeric"
+            maxLength={5}
+            autoComplete="postal-code"
+            required
+            aria-invalid={Boolean(errors.plz)}
+            className={FELD}
+          />
+          {errors.plz && <Err>{errors.plz}</Err>}
+        </div>
+        <div>
+          <label htmlFor="ort" className={LABEL}>
+            Ort <span className="text-gold-deep">*</span>
+          </label>
+          <input
+            id="ort"
+            name="ort"
+            autoComplete="address-level2"
+            required
+            aria-invalid={Boolean(errors.ort)}
+            className={FELD}
+          />
+          {errors.ort && <Err>{errors.ort}</Err>}
+        </div>
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label htmlFor="email" className={LABEL}>
             E-Mail
           </label>
           <input
@@ -182,17 +209,16 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
             type="email"
             autoComplete="email"
             aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? "email-fehler" : "email-hinweis"}
             className={FELD}
           />
-          <p id="email-hinweis" className="mt-1 text-xs text-ink-muted">
+          <p className="mt-1 text-xs text-ink-muted">
             Für die Bestätigung Ihrer Anfrage — sonst rufen wir einfach an.
           </p>
-          {errors.email && <Err id="email-fehler">{errors.email}</Err>}
+          {errors.email && <Err>{errors.email}</Err>}
         </div>
 
         <div>
-          <label htmlFor="service" className="mb-1.5 block text-sm font-semibold text-navy">
+          <label htmlFor="service" className={LABEL}>
             Worum geht es?
           </label>
           <select
@@ -212,36 +238,7 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
       </div>
 
       <div>
-        <label htmlFor="objekt" className="mb-1.5 block text-sm font-semibold text-navy">
-          Wo ist das Objekt?
-        </label>
-        <input
-          id="objekt"
-          name="objekt"
-          className={FELD}
-          placeholder="Straße und Ort — für die Einschätzung der Anfahrt"
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="konfigurator"
-          className="mb-1.5 block text-sm font-semibold text-navy"
-        >
-          Ihre Angaben aus dem Konfigurator
-        </label>
-        <textarea
-          id="konfigurator"
-          name="konfigurator"
-          ref={konfiguratorRef}
-          rows={3}
-          className={cn(FELD, "transition-shadow")}
-          placeholder="Wird automatisch ausgefüllt, sobald Sie oben auf „Unverbindlich anfragen“ klicken."
-        />
-      </div>
-
-      <div>
-        <label htmlFor="message" className="mb-1.5 block text-sm font-semibold text-navy">
+        <label htmlFor="message" className={LABEL}>
           Ihre Nachricht
         </label>
         <textarea id="message" name="message" rows={4} className={FELD} />
@@ -252,7 +249,6 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
           type="checkbox"
           name="consent"
           required
-          aria-describedby={errors.consent ? "consent-fehler" : undefined}
           className="mt-0.5 size-4 shrink-0 accent-gold"
         />
         <span>
@@ -264,7 +260,7 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
           . <span className="text-gold-deep">*</span>
         </span>
       </label>
-      {errors.consent && <Err id="consent-fehler">{errors.consent}</Err>}
+      {errors.consent && <Err>{errors.consent}</Err>}
 
       {status === "error" && (
         <p className="rounded-sm border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
@@ -296,9 +292,9 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
   );
 }
 
-function Err({ id, children }: { id: string; children: React.ReactNode }) {
+function Err({ children }: { children: React.ReactNode }) {
   return (
-    <p id={id} role="alert" className="mt-1.5 text-sm text-red-700">
+    <p role="alert" className="mt-1.5 text-sm text-red-700">
       {children}
     </p>
   );

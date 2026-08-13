@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CheckCircle2, MessageCircle, Phone } from "lucide-react";
+import { ArrowLeft, CheckCircle2, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Container } from "@/components/site/container";
 import { dbConfigured, getLead } from "@/lib/db";
 import { getService, services } from "@/lib/services";
@@ -76,6 +76,21 @@ export default async function LeadDetail({
             <Phone className="size-4" aria-hidden />
             Anrufen
           </a>
+          {(lead.strasse || lead.ort) && (
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                [lead.strasse, [lead.plz, lead.ort].filter(Boolean).join(" ")]
+                  .filter(Boolean)
+                  .join(", "),
+              )}`}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-2 rounded-sm border border-mist px-5 py-3 font-display text-sm font-bold text-navy hover:border-gold"
+            >
+              <MapPin className="size-4" aria-hidden />
+              Auf Karte zeigen
+            </a>
+          )}
           <a
             href={`https://wa.me/${waNumber}`}
             target="_blank"
@@ -134,15 +149,30 @@ export default async function LeadDetail({
           </div>
 
           <div>
-            <label htmlFor="objekt" className={label}>
-              Objekt
+            <label htmlFor="strasse" className={label}>
+              Straße und Hausnummer
             </label>
             <input
-              id="objekt"
-              name="objekt"
-              defaultValue={lead.objekt ?? ""}
+              id="strasse"
+              name="strasse"
+              defaultValue={lead.strasse ?? ""}
               className={field}
             />
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-[8rem_1fr]">
+            <div>
+              <label htmlFor="plz" className={label}>
+                PLZ
+              </label>
+              <input id="plz" name="plz" defaultValue={lead.plz ?? ""} className={field} />
+            </div>
+            <div>
+              <label htmlFor="ort" className={label}>
+                Ort
+              </label>
+              <input id="ort" name="ort" defaultValue={lead.ort ?? ""} className={field} />
+            </div>
           </div>
 
           <div>

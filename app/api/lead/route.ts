@@ -61,10 +61,13 @@ export async function POST(request: Request) {
     name: data.name,
     phone: data.phone,
     email: data.email || undefined,
-    objekt: data.objekt || undefined,
+    strasse: data.strasse,
+    plz: data.plz,
+    ort: data.ort,
     message: data.message || undefined,
     service: data.service || undefined,
     konfigurator: data.konfigurator || undefined,
+    source: data.source || "formular",
   };
 
   // Reihenfolge und Fehlerbehandlung sind hier das Wesentliche: Ein Lead darf
