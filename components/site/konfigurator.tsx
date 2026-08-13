@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, CheckCircle2, Info, MessageCircle, Phone } from "lucide-react";
-import { adresseEinzeilig, whatsappLink } from "@/lib/anfrage-text";
+import { whatsappLink, whatsappText, type AnfrageDaten } from "@/lib/anfrage-text";
 import { business } from "@/lib/business";
 import {
   type Values,
@@ -99,16 +99,28 @@ export function Konfigurator({
     };
   }, [spec, values]);
 
-  const preisZeile =
-    `ca. ${euro(result.range.low)} – ${euro(result.range.high)} ${result.unit} inkl. MwSt.`;
+  const preisKurz = `ca. ${euro(result.range.low)} – ${euro(result.range.high)}`;
   const einmaligZeile = result.oneOffGross
     ? `Dazu einmalig ca. ${euro(result.oneOffGross)} (${result.oneOffLabel}).`
     : undefined;
 
-  /** Kompakter Text der Anfrage — geht in Mail, Inbox und WhatsApp. */
+  /** Kompakter Text der Anfrage — geht in Mail und Lead-Inbox. */
   const anfrageText =
-    `${leistung}: ${result.summary}. Richtpreis ${preisZeile}` +
+    `${leistung}: ${result.summary}. Richtpreis ${preisKurz} ${result.unit} inkl. MwSt.` +
     (einmaligZeile ? ` ${einmaligZeile}` : "");
+
+  /** Datensatz für die WhatsApp-Nachricht. */
+  const nachrichtDaten: AnfrageDaten = {
+    ...felder,
+    email: felder.email || undefined,
+    message: felder.message || undefined,
+    leistung,
+    emoji: getService(slug)?.emoji,
+    auswahl: result.summary,
+    richtpreis: preisKurz,
+    einheit: result.unit,
+    einmalig: einmaligZeile,
+  };
 
   const set = (id: string, v: string | number | string[]) =>
     setValues((prev) => ({ ...prev, [id]: v }));
@@ -142,62 +154,71 @@ export function Konfigurator({
     return f;
   }
 
-  async function senden(quelle: "formular" | "whatsapp") {
+  /** Sendet den Datensatz an den Server. */
+  async function uebermitteln(quelle: "formular" | "whatsapp") {
+    const res = await fetch("/api/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...felder,
+        service: slug,
+        konfigurator: anfrageText,
+        source: quelle,
+        consent: true,
+      }),
+      // keepalive: Beim WhatsApp-Weg verlässt der Browser gleich die Seite.
+      // Ohne das würde die Anfrage mitten im Flug abgebrochen und der Lead
+      // ginge verloren, obwohl der Kunde alles ausgefüllt hat.
+      keepalive: quelle === "whatsapp",
+    });
+    const json = (await res.json()) as { ok: boolean; error?: string };
+    if (!res.ok || !json.ok) throw new Error(json.error ?? "Unbekannter Fehler");
+  }
+
+  async function absenden() {
     const gefunden = pruefen();
     setFehler(gefunden);
     if (Object.keys(gefunden).length > 0) {
       document.getElementById(`k-${slug}-${Object.keys(gefunden)[0]}`)?.focus();
       return;
     }
-
-    // WhatsApp: Fenster VOR dem await öffnen, sonst blockiert der Browser den
-    // Popup — er erlaubt ihn nur direkt aus der Klick-Interaktion heraus.
-    const fenster =
-      quelle === "whatsapp"
-        ? window.open(
-            whatsappLink({
-              ...felder,
-              leistung,
-              auswahl: result.summary,
-              richtpreis: preisZeile,
-              einmalig: einmaligZeile,
-              message: felder.message || undefined,
-            }),
-            "_blank",
-            "noopener",
-          )
-        : null;
-
     setSendet(true);
     setServerFehler(null);
     try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...felder,
-          service: slug,
-          konfigurator: anfrageText,
-          source: quelle,
-          consent: true,
-        }),
-      });
-      const json = (await res.json()) as { ok: boolean; error?: string };
-      if (!res.ok || !json.ok) throw new Error(json.error ?? "Unbekannter Fehler");
+      await uebermitteln("formular");
       setSchritt("fertig");
     } catch (err) {
-      // Bei WhatsApp ist die Nachricht trotzdem unterwegs — der Kunde soll
-      // deshalb keinen Fehler sehen, der ihn verunsichert.
-      if (fenster) {
-        setSchritt("fertig");
-      } else {
-        setServerFehler(
-          err instanceof Error ? err.message : "Die Anfrage konnte nicht gesendet werden.",
-        );
-      }
+      setServerFehler(
+        err instanceof Error ? err.message : "Die Anfrage konnte nicht gesendet werden.",
+      );
     } finally {
       setSendet(false);
     }
+  }
+
+  /**
+   * WhatsApp ist ein echter Link, kein Button mit window.open.
+   *
+   * Gründe: Long-Press und Mittelklick funktionieren, Screenreader kündigen
+   * ihn als Link an, kein Popup-Blocker kann dazwischenfunken — und die
+   * Nachricht steht als href im DOM, ist also überprüfbar.
+   *
+   * Bei ungültigen Angaben wird der Klick abgefangen; sonst gingen Anfragen
+   * ohne Namen und Adresse raus, also genau das, was der zweite Schritt
+   * verhindern soll.
+   */
+  function whatsappKlick(e: React.MouseEvent<HTMLAnchorElement>) {
+    const gefunden = pruefen();
+    setFehler(gefunden);
+    if (Object.keys(gefunden).length > 0) {
+      e.preventDefault();
+      document.getElementById(`k-${slug}-${Object.keys(gefunden)[0]}`)?.focus();
+      return;
+    }
+    // Nicht awaiten: Der Link soll ohne Verzögerung öffnen. Schlägt das
+    // Speichern fehl, ist die Nachricht trotzdem bei Arian.
+    void uebermitteln("whatsapp").catch(() => {});
+    setSchritt("fertig");
   }
 
   /* ---------------------------------------------------------- Preisspalte */
@@ -623,21 +644,23 @@ export function Konfigurator({
               <button
                 type="button"
                 disabled={sendet}
-                onClick={() => senden("formular")}
+                onClick={absenden}
                 className="inline-flex items-center justify-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band disabled:opacity-60"
               >
                 {sendet ? "Wird gesendet …" : "Anfrage senden"}
                 <ArrowRight className="size-4" aria-hidden />
               </button>
-              <button
-                type="button"
-                disabled={sendet}
-                onClick={() => senden("whatsapp")}
-                className="inline-flex items-center justify-center gap-2 rounded-sm border border-navy/20 px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:border-gold hover:text-gold-deep disabled:opacity-60"
+              <a
+                href={whatsappLink(nachrichtDaten)}
+                target="_blank"
+                rel="noopener"
+                onClick={whatsappKlick}
+                data-whatsapp
+                className="inline-flex items-center justify-center gap-2 rounded-sm border border-navy/20 px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:border-gold hover:text-gold-deep"
               >
                 <MessageCircle className="size-4" aria-hidden />
                 Per WhatsApp senden
-              </button>
+              </a>
             </div>
 
             <button
@@ -652,14 +675,21 @@ export function Konfigurator({
             <p className="mt-5 text-xs leading-relaxed text-ink-muted">
               Ihre Adresse brauchen wir, um Anfahrt und Aufwand einzuschätzen —
               wir schicken Ihnen nichts zu und geben nichts weiter.
-              {felder.name && felder.plz && felder.ort && felder.strasse && (
-                <>
-                  {" "}
-                  In der WhatsApp-Nachricht steht dann: „Hallo, ich bin{" "}
-                  {felder.name}. Ich wohne in {adresseEinzeilig(felder)} …“
-                </>
-              )}
             </p>
+
+            {/* Echte Vorschau statt Versprechen: Wer seine Adresse eintippt,
+                darf sehen, was damit verschickt wird. Zugeklappt, damit sie
+                niemanden erschlägt, der einfach nur senden will. */}
+            {felder.name && felder.strasse && felder.plz && felder.ort && (
+              <details className="group mt-3">
+                <summary className="cursor-pointer list-none text-xs font-semibold text-navy underline decoration-mist underline-offset-4 hover:decoration-gold [&::-webkit-details-marker]:hidden">
+                  Nachricht ansehen, die verschickt wird
+                </summary>
+                <pre className="mt-2 max-h-64 overflow-auto rounded-sm border border-mist bg-shell p-3.5 font-sans text-xs leading-relaxed whitespace-pre-wrap text-ink-muted">
+                  {whatsappText(nachrichtDaten)}
+                </pre>
+              </details>
+            )}
           </>
         )}
       </div>

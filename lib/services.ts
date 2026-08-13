@@ -28,6 +28,12 @@ export type Service = {
   /** Lucide-Icon-Name, wird in der Kachel aufgelöst. */
   icon: "building" | "spray" | "sprout" | "truck";
   /**
+   * Emoji für die WhatsApp-Nachricht. In einer Chat-App ist ein Icon-Font
+   * keine Option — Emojis sind dort die einzige Bildsprache, die überall
+   * gleich ankommt.
+   */
+  emoji: string;
+  /**
    * KI-generiertes Bild. `assetId` verbindet Bild, Kennzeichnungs-Badge und
    * den Eintrag in story-spec.json — der Playwright-Test prüft darüber, dass
    * zu jedem pflichtigen Bild ein sichtbares Badge existiert.
@@ -64,6 +70,7 @@ export const services: Service[] = [
       "Werterhaltung der Immobilie",
     ],
     icon: "building",
+    emoji: "🏢",
     image: {
       src: "/images/objektbetreuung.webp",
       alt: "Behandschuhte Hände mit Checkliste vor einem Hauseingang mit Briefkastenanlage",
@@ -136,6 +143,7 @@ export const services: Service[] = [
       "Terrassenreinigung",
     ],
     icon: "spray",
+    emoji: "🧽",
     image: {
       src: "/images/gebaeudereinigung.webp",
       alt: "Treppenhaus wird mit einem Flachmopp gereinigt, daneben ein Warnschild",
@@ -212,6 +220,7 @@ export const services: Service[] = [
       "Garten- & Grünanlagenpflege (ganzjährig)",
     ],
     icon: "sprout",
+    emoji: "🌿",
     image: {
       src: "/images/gartenpflege.webp",
       alt: "Heckenschnitt mit einer elektrischen Heckenschere an einer dichten grünen Hecke",
@@ -287,6 +296,7 @@ export const services: Service[] = [
       "Besichtigung & Angebot kostenlos",
     ],
     icon: "truck",
+    emoji: "📦",
     image: {
       src: "/images/entruempelung.webp",
       alt: "Leergeräumtes Zimmer mit gestapelten Umzugskartons und Tageslicht am Fenster",

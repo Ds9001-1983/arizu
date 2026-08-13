@@ -14,24 +14,32 @@ export type AnfrageDaten = {
   plz: string;
   ort: string;
   phone: string;
+  email?: string;
   message?: string;
   /** Leistungsname, z. B. "Entrümpelung". */
   leistung?: string;
-  /** Auswahl aus dem Konfigurator, bereits als Fließtext. */
+  /** Emoji der Leistung — in einer Chat-App die einzige Bildsprache. */
+  emoji?: string;
+  /** Auswahl aus dem Konfigurator als "Feld: Wert · Feld: Wert". */
   auswahl?: string;
-  /** Richtpreis als fertige Zeile, z. B. "ca. 1.720 € – 2.120 € einmalig". */
+  /** Richtpreis ohne Einheit, z. B. "ca. 1.370 € – 1.690 €". */
   richtpreis?: string;
+  /** Abrechnungseinheit, z. B. "einmalig" oder "pro Monat". */
+  einheit?: string;
   /** Einmalposten, falls vorhanden. */
   einmalig?: string;
 };
 
-/** Adresse in einer Zeile: "51674 Wedel, Römerstraße 23". */
+/**
+ * Adresse in deutscher Lesereihenfolge: Straße zuerst, dann PLZ und Ort.
+ * "Römerstraße 23, 51674 Wiehl"
+ */
 export function adresseEinzeilig(d: {
   strasse: string;
   plz: string;
   ort: string;
 }): string {
-  return `${d.plz} ${d.ort}, ${d.strasse}`;
+  return `${d.strasse}, ${d.plz} ${d.ort}`;
 }
 
 /**
@@ -40,27 +48,53 @@ export function adresseEinzeilig(d: {
  * Bewusst in der Ich-Form aus Sicht des Kunden geschrieben — sie erscheint in
  * seinem Chatfenster und er schickt sie ab. Eine Nachricht in der Wir-Form
  * würde dort merkwürdig wirken, so als hätte der Betrieb sie verfasst.
+ *
+ * Aufbau: erst die Leistung mit den Eckdaten, dann der Preis, dann die
+ * Kontaktdaten. Arian liest die Nachricht auf dem Handy und braucht zuerst
+ * die Frage "worum geht es", danach "was kostet es" und zum Schluss "wen
+ * rufe ich an" — in dieser Reihenfolge greift er auch zum Telefon.
+ *
+ * `*Sternchen*` ist WhatsApps Auszeichnung für fett. Sparsam eingesetzt:
+ * Leistung, Preis und die Überschrift der Kontaktdaten. Wäre alles fett,
+ * wäre nichts hervorgehoben.
  */
 export function whatsappText(d: AnfrageDaten): string {
-  const zeilen: string[] = [
-    `Hallo, ich bin ${d.name}.`,
-    `Ich wohne in ${adresseEinzeilig(d)} und möchte Folgendes anfragen:`,
-    "",
-  ];
+  const block: string[] = ["Hallo! Ich möchte folgende Leistung anfragen:", ""];
 
-  if (d.leistung) zeilen.push(`Leistung: ${d.leistung}`);
-  if (d.auswahl) zeilen.push(d.auswahl);
-  if (d.richtpreis) zeilen.push(`Ihr Rechner nennt dafür ${d.richtpreis}.`);
-  if (d.einmalig) zeilen.push(d.einmalig);
-  if (d.message) zeilen.push("", d.message);
+  if (d.leistung) {
+    block.push(`${d.emoji ?? "🔧"} *${d.leistung}*`);
+  }
 
-  zeilen.push(
+  // Die Auswahl kommt als "Feld: Wert · Feld: Wert" — im Chat liest sich das
+  // als Liste deutlich besser als in einer langen Zeile.
+  if (d.auswahl) {
+    for (const teil of d.auswahl.split(" · ")) {
+      block.push(`• ${teil}`);
+    }
+  }
+
+  if (d.richtpreis) {
+    block.push(
+      "",
+      `💶 Ihr Rechner nennt *${d.richtpreis}*${d.einheit ? ` ${d.einheit}` : ""}, inkl. MwSt.`,
+    );
+  }
+  if (d.einmalig) block.push(`➕ ${d.einmalig}`);
+
+  if (d.message) block.push("", `📝 ${d.message}`);
+
+  block.push(
     "",
-    "Bitte melden Sie sich für einen Termin vor Ort.",
-    `Erreichbar bin ich unter ${d.phone}.`,
+    "*Meine Kontaktdaten*",
+    `👤 ${d.name}`,
+    `📍 ${adresseEinzeilig(d)}`,
+    `📞 ${d.phone}`,
   );
+  if (d.email) block.push(`✉️ ${d.email}`);
 
-  return zeilen.join("\n");
+  block.push("", "Bitte melden Sie sich für einen Termin vor Ort. Danke!");
+
+  return block.join("\n");
 }
 
 /** Fertiger wa.me-Link mit vorbefüllter Nachricht. */

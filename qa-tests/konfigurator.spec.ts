@@ -93,26 +93,57 @@ test("Schritt 2 verlangt Name, Adresse, Telefon und Einwilligung", async ({ page
   ).toBeVisible();
 });
 
+/* Die Nachricht wird aus dem href gelesen, NICHT aus der geöffneten Seite:
+   wa.me leitet weiter, und dabei ändert sich die Kodierung der Emojis. Der
+   href ist der Wert, den der Browser tatsächlich verschickt. */
+async function whatsappNachricht(page: import("@playwright/test").Page) {
+  const href = await rechner(page).locator("a[data-whatsapp]").getAttribute("href");
+  return decodeURIComponent(new URL(href!).searchParams.get("text") ?? "");
+}
+
 test("WhatsApp-Nachricht enthält Name, Adresse und die Konfigurator-Daten", async ({
   page,
-  context,
 }) => {
   await page.goto("/leistungen/entruempelung");
   await rechner(page).getByRole("button", { name: "Unverbindlich anfragen" }).click();
   await angabenAusfuellen(page, "entruempelung");
 
-  const [popup] = await Promise.all([
-    context.waitForEvent("page"),
-    rechner(page).getByRole("button", { name: "Per WhatsApp senden" }).click(),
-  ]);
+  const text = await whatsappNachricht(page);
 
-  const text = decodeURIComponent(new URL(popup.url()).searchParams.get("text") ?? "");
-  expect(text).toContain("Hallo, ich bin Dennis Sasse.");
-  expect(text).toContain("51674 Wiehl, Römerstraße 23");
-  expect(text).toContain("Entrümpelung");
-  expect(text).toMatch(/Zu räumende Fläche/);
-  expect(text).toMatch(/ca\. .* € – .* €/);
-  expect(text).toContain("0179 5272126");
+  // Struktur: Leistung mit Emoji, Eckdaten als Liste, Preis, Kontaktblock
+  expect(text).toContain("📦 *Entrümpelung*");
+  expect(text).toMatch(/^• Zu räumende Fläche: \d+ m²$/m);
+  expect(text).toMatch(/💶 Ihr Rechner nennt \*ca\. .* € – .* €\*/);
+  expect(text).toContain("*Meine Kontaktdaten*");
+  expect(text).toContain("👤 Dennis Sasse");
+  // Straße vor Ort — deutsche Lesereihenfolge
+  expect(text).toContain("📍 Römerstraße 23, 51674 Wiehl");
+  expect(text).toContain("📞 0179 5272126");
+  expect(text).toContain("Bitte melden Sie sich für einen Termin vor Ort.");
+});
+
+test("Vorschau zeigt genau die Nachricht, die verschickt wird", async ({ page }) => {
+  await page.goto("/leistungen/gartenpflege");
+  await rechner(page).getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await angabenAusfuellen(page, "gartenpflege");
+
+  await page.getByText("Nachricht ansehen, die verschickt wird").click();
+  const vorschau = (await rechner(page).locator("pre").innerText()).trim();
+  expect(vorschau).toContain("🌿 *Gartenpflege*");
+
+  // Die Vorschau darf kein Marketing sein, sondern muss der Nachricht
+  // entsprechen — sonst ist sie schlimmer als keine.
+  expect((await whatsappNachricht(page)).trim()).toBe(vorschau);
+});
+
+test("WhatsApp-Link ohne Angaben schickt nichts los", async ({ page }) => {
+  await page.goto("/leistungen/entruempelung");
+  await rechner(page).getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  // Ohne ausgefüllte Felder muss der Klick abgefangen werden, sonst ginge
+  // eine Anfrage ohne Namen und Adresse raus.
+  await rechner(page).locator("a[data-whatsapp]").click();
+  await expect(rechner(page).getByText("Bitte geben Sie Ihren Namen an.")).toBeVisible();
+  await expect(page).toHaveURL(/leistungen\/entruempelung/);
 });
 
 test("Abgeschickte Anfrage bestätigt mit Namen und Ort", async ({ page }) => {
