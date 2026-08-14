@@ -45,7 +45,9 @@ export function localBusinessSchema() {
     logo: `${SITE_URL}/brand/logo-arizu-print.png`,
     address: {
       "@type": "PostalAddress",
-      // VERIFY: streetAddress bleibt leer, bis Arian die Adresse liefert.
+      // Seit 14.08.2026 gefuellt. Die Bedingung bleibt trotzdem stehen: Ohne
+      // sie stuende bei fehlender Adresse ein leerer streetAddress im JSON-LD,
+      // und ein leeres Pflichtfeld ist fuer Google schlechter als gar keins.
       ...(business.address.street ? { streetAddress: business.address.street } : {}),
       postalCode: business.address.postalCode,
       addressLocality: business.address.city,

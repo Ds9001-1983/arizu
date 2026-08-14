@@ -80,9 +80,10 @@ function nl2br(s: string): string {
   return esc(s).replace(/\r?\n/g, "<br />");
 }
 
-// VERIFY: Sobald die Domain live ist, liefert SITE_URL das Logo aus. Auf
-// Vercel-Previews per MAIL_LOGO_URL überschreiben, sonst zeigt die Mail ein
-// kaputtes Bild.
+// Die Domain ist seit dem 14.08.2026 live und liefert das Logo aus, der
+// Rückfall greift also von selbst — auch aus Vorschau-Deployments, weil die
+// URL öffentlich ist. MAIL_LOGO_URL ist deshalb überall entfernt und nur noch
+// dafür da, das Bild bei Bedarf woandershin zu legen.
 const logoUrl =
   process.env.MAIL_LOGO_URL || `${SITE_URL}/brand/logo-arizu-signatur.png`;
 
