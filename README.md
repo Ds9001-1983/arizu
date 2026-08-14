@@ -37,12 +37,11 @@ ohne Admin-Hash bleibt `/intern` gesperrt.
 | `npm run db:init` | Tabellen `leads` und `preise` in Neon anlegen (idempotent) |
 | `npm run hash:password "…"` | Passwort-Hash für `/intern` erzeugen |
 
-> **Achtung bei `npm run qa`:** Die Suite schickt echte Anfragen durch die
-> Formulare. Ist in `.env.local` eine `DATABASE_URL` gesetzt, landen sie in
-> derselben Datenbank wie die echten Leads — erkennbar an „Dennis Sasse,
-> Römerstraße 23, Wiehl" und den Testeinträgen des Geschäftskundenformulars.
-> Vor dem Live-Gang entweder gegen eine getrennte Testdatenbank laufen lassen
-> oder die Zeilen danach löschen.
+> **`npm run qa` schickt echte Anfragen durch die Formulare.** Deshalb gibt es
+> zwei Neon-Datenbanken, beide in Frankfurt: `arizu-leads-eu` für die
+> Produktion und `arizu-test-eu` für Vorschau-Deployments und die lokale
+> Entwicklung. Testzeilen landen damit nie in Arians Anfragenliste, und eine
+> Preisänderung aus einer Vorschau wirkt nicht auf die Live-Seite.
 
 ## Struktur
 
