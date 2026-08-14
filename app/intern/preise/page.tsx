@@ -212,7 +212,9 @@ export default async function PreisePage({
                         formAction={resetPreise}
                         className="text-sm font-semibold text-ink-muted hover:text-navy"
                       >
-                        Alle {eigene.length} Abweichungen zurücksetzen
+                        {eigene.length === 1
+                          ? "Abweichung zurücksetzen"
+                          : `Alle ${eigene.length} Abweichungen zurücksetzen`}
                       </button>
                     )}
                   </div>
