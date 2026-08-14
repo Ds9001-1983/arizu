@@ -73,26 +73,27 @@ story-spec.json             Projektspezifikation, gegen SUPERBRAND-Schema validi
 
 ## Vor dem Live-Gang
 
-Die Seite ist als Prototyp fertig, aber **nicht veröffentlichungsreif**. Offen:
+Die Seite ist online, aber noch nicht in jedem Punkt abgeschlossen. Offen:
 
-1. **Impressum** — Straße und USt-IdNr./Steuernummer fehlen. Ohne diese
-   Angaben ist die Seite nach § 5 DDG abmahnfähig. Die Rechtsseiten zeigen
-   die Lücken rot markiert und mit Warnhinweis.
-2. **AGB** — nur Entwurf, auf `noindex`. Anwaltlich prüfen lassen,
-   insbesondere Stornopauschale (§ 309 Nr. 5 BGB) und Widerrufsrecht.
-3. **Preise bestätigen** — jeder Wert steht in `defaultRates` der Specs unter
-   `lib/pricing/` und ist mit `VERIFY` markiert. Grundlage ist Marktrecherche
-   von 08/2026, angesetzt jeweils der untere Rand. `npm run check:pricing`
-   prüft die Werte gegen die Belege.
-4. **Mailversand** — es gibt noch keine SMTP-Zugangsdaten, deshalb läuft der
-   Demo-Modus: Anfragen landen in der Datenbank und unter `/intern`, aber es
-   geht keine Mail raus, weder an Arian noch als Bestätigung an den Kunden.
-5. **DMARC fehlt** — SPF und DKIM stehen seit dem 14.08.2026, ein
-   `_dmarc`-Eintrag nicht. Ohne ihn bleibt die Domain für Absender-Fälschung
-   offener als nötig.
-6. **Zweitdomain `arizu.de`** — noch nicht registriert, soll später per
-   Redirect auf die Hauptdomain zeigen.
-7. **Google Business Profile** — vorbereiten, Verifizierung braucht Arian.
+1. **Auftragsverarbeitungsverträge nach Art. 28 DSGVO** — mit Vercel (im
+   Regelwerk enthalten, muss aber im Konto bestätigt werden), mit Hetzner
+   (im Kundenmenü abzuschließen) und für die Neon-Datenbank, die über den
+   Vercel-Marktplatz bezogen wird. Das sind Pflichten des Verantwortlichen,
+   keine Angabe auf der Website — deshalb stehen sie hier und nicht mehr in
+   der Datenschutzerklärung.
+2. **Rechtstexte anwaltlich prüfen lassen** — die Datenschutzerklärung ist
+   inhaltlich vollständig und beschreibt den gemessenen Ist-Zustand, die
+   abschließende juristische Bewertung ersetzt das nicht. Bei den **AGB** ist
+   es dringender: Sie sind nur ein Entwurf auf `noindex` und haben neun offene
+   Stellen (Zahlungsziel, Stornofrist, Anzahlungsgrenze, Versicherer). Kritisch
+   sind Stornopauschale (§ 309 Nr. 5 BGB) und Widerrufsrecht.
+3. **Stammdaten prüfen** — die Postleitzahl 25337 stammt aus dem
+   Designentwurf und ist nie gegen „Am Dornbusch 17“ abgeglichen worden
+   (Elmshorn hat drei). Ebenso ungeprüft: Öffnungszeiten und Rechtsform.
+   Alle mit `VERIFY` in `lib/business.ts` markiert.
+4. **Google Business Profile** — vorbereiten, Verifizierung braucht Arian.
+   Vorher die Koordinaten präzisieren, sie zeigen auf den Ortsmittelpunkt.
+5. **Zweitdomain `arizu.de`** und **DMARC** — laufen bei Dennis parallel.
 
 ### Erledigt
 
@@ -102,6 +103,25 @@ Hetzner. `A @` und `CNAME www` zeigen auf Vercel, der nackte Name leitet per
 Mailhost geblieben** — der Mailverkehr hängt daran. Beim SPF war eine
 Anpassung nötig: `+a` autorisierte nach dem Umzug Vercels Webserver zum
 Mailversand, jetzt steht dort `v=spf1 +mx ~all`.
+
+**Mailversand** läuft über Hetzner, nachgewiesen am 14.08.2026 mit echten
+Anfragen über beide Wege. SMTP ist ausschließlich in Vercel gesetzt; lokal
+bleibt der Demo-Modus, weil `npm run qa` sonst bei jedem Lauf echte Mails
+verschicken würde.
+
+**Kein Cookie-Banner nötig**, und das ist gemessen statt angenommen: Ein
+Browserlauf über Startseite, Leistungsseite, Geschäftskundenbereich, Kontakt
+und Datenschutz samt Bedienung des Konfigurators kontaktierte **keinen
+einzigen fremden Host**, setzte **keinen Cookie** und ließ `localStorage`
+wie `sessionStorage` leer. Nach § 25 TDDDG ist eine Einwilligung nur nötig,
+wenn auf dem Endgerät gespeichert oder ausgelesen wird — hier passiert
+beides nicht. Schriften und das Hero-Video liegen selbst gehostet, es gibt
+keine Reichweitenmessung und keine eingebetteten Karten oder Plugins.
+
+Wer daran etwas ändert — Analytics, Google Fonts, eine eingebettete Karte,
+Vercel Speed Insights —, macht ein Cookie-Banner beziehungsweise eine
+Einwilligungslösung erforderlich und muss die Datenschutzerklärung anpassen.
+Die Messung lässt sich mit einem Playwright-Lauf wiederholen.
 
 ## Bilder und KI-Kennzeichnung
 

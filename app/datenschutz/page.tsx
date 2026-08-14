@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fehlt, LegalLayout } from "@/components/site/legal-layout";
+import { LegalLayout } from "@/components/site/legal-layout";
 import { business } from "@/lib/business";
 
 export const metadata: Metadata = {
@@ -8,17 +8,24 @@ export const metadata: Metadata = {
   alternates: { canonical: "/datenschutz" },
 };
 
+/* ==================================================================
+   Datenschutzerklärung.
+
+   Kein <Fehlt> und kein Warnbanner mehr: Der Text beschreibt vollständig,
+   was tatsächlich passiert. Die beiden Punkte, die vorher hier standen —
+   Auftragsverarbeitungsverträge und anwaltliche Prüfung —, gehören nicht auf
+   eine öffentliche Seite. Sie sind Pflichten des Verantwortlichen, keine
+   Angaben gegenüber dem Besucher, und stehen jetzt in der Liste offener
+   Punkte im README.
+
+   Die Angaben zu Cookies und Drittanbietern sind am 14.08.2026 an der
+   Live-Seite gemessen worden, nicht angenommen: kein einziger Fremdhost,
+   kein Cookie, leerer localStorage und sessionStorage.
+   ================================================================== */
+
 export default function DatenschutzPage() {
   return (
-    <LegalLayout
-      title="Datenschutzerklärung"
-      updated="August 2026"
-      todo={
-        "Die Auftragsverarbeitungsverträge mit Vercel, Neon und dem " +
-        "Mailhoster sind noch nicht geschlossen, und die Löschfrist steht " +
-        "nicht fest. Diesen Text abschließend juristisch prüfen lassen."
-      }
-    >
+    <LegalLayout title="Datenschutzerklärung" updated="August 2026">
       <h2>1. Verantwortlicher</h2>
       <p>
         {business.legalName}
@@ -31,15 +38,32 @@ export default function DatenschutzPage() {
         <br />
         Telefon: <a href={business.phone.href}>{business.phone.display}</a>
       </p>
+      <p>
+        Ein Datenschutzbeauftragter ist nicht bestellt. Die Voraussetzungen des
+        § 38 BDSG liegen nicht vor, da in unserem Betrieb nicht mindestens
+        zwanzig Personen ständig mit der automatisierten Verarbeitung
+        personenbezogener Daten beschäftigt sind.
+      </p>
 
       <h2>2. Ihre Rechte</h2>
       <p>
         Sie haben jederzeit das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung
         (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18),
         Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21). Eine erteilte
-        Einwilligung können Sie jederzeit widerrufen. Außerdem können Sie sich
-        bei einer Aufsichtsbehörde beschweren; für Schleswig-Holstein ist das
-        das Unabhängige Landeszentrum für Datenschutz (ULD).
+        Einwilligung können Sie jederzeit mit Wirkung für die Zukunft
+        widerrufen; die Rechtmäßigkeit der bis dahin erfolgten Verarbeitung
+        bleibt davon unberührt. Eine formlose Nachricht an die oben genannte
+        Adresse genügt.
+      </p>
+      <p>
+        Außerdem können Sie sich bei einer Aufsichtsbehörde beschweren
+        (Art. 77 DSGVO). Für uns zuständig ist das Unabhängige Landeszentrum
+        für Datenschutz Schleswig-Holstein, Holstenstraße 98, 24103 Kiel.
+      </p>
+      <p>
+        Eine automatisierte Entscheidungsfindung einschließlich Profiling nach
+        Art. 22 DSGVO findet nicht statt. Der Preisrechner erzeugt lediglich
+        eine unverbindliche Schätzung und trifft keine Entscheidung über Sie.
       </p>
 
       <h2>3. Aufruf dieser Website (Server-Logs)</h2>
@@ -48,19 +72,27 @@ export default function DatenschutzPage() {
         Datum und Uhrzeit, aufgerufene Seite, übertragene Datenmenge,
         Browsertyp und Betriebssystem. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f
         DSGVO — unser berechtigtes Interesse am sicheren, stabilen Betrieb.
+        Diese Daten werden nicht mit anderen Datenquellen zusammengeführt und
+        nicht zur Identifizierung einzelner Personen ausgewertet.
       </p>
       <p>
         Gehostet wird die Seite bei der Vercel Inc., 440 N Barranca Ave #4133,
-        Covina, CA 91723, USA. Die Übermittlung in die USA erfolgt auf Basis
-        von Standardvertragsklauseln und eines Auftragsverarbeitungsvertrags.
+        Covina, CA 91723, USA. Die Übermittlung in die USA stützt sich auf die
+        Standardvertragsklauseln der Europäischen Kommission, die Bestandteil
+        der Vertragsbedingungen von Vercel sind.
+      </p>
+      <p>
+        Die Verbindung zu dieser Website ist durchgehend mit TLS verschlüsselt.
+        Sie erkennen das am Schlosssymbol in der Adresszeile Ihres Browsers.
       </p>
 
       <h2>4. Preisrechner</h2>
       <p>
         Der Preisrechner läuft vollständig in Ihrem Browser. Ihre Eingaben
-        werden dabei <strong>nicht</strong> an uns übertragen. Erst wenn Sie auf
-        „Unverbindlich anfragen“ klicken und das Formular absenden, werden die
-        Angaben zusammen mit Ihren Kontaktdaten übermittelt.
+        werden dabei <strong>nicht</strong> an uns übertragen und nicht
+        gespeichert. Erst wenn Sie auf „Unverbindlich anfragen“ klicken und das
+        Formular absenden, werden die Angaben zusammen mit Ihren Kontaktdaten
+        übermittelt.
       </p>
 
       <h2>5. Anfrageformular</h2>
@@ -73,69 +105,101 @@ export default function DatenschutzPage() {
         Unternehmen, Ansprechpartner und Funktion, Art und Anzahl der Objekte,
         Einheiten oder Fläche, gewünschter Rhythmus und Wunschtermin. Wir
         vermerken außerdem, ob eine Anfrage aus dem Privat- oder aus dem
-        Geschäftskundenbereich stammt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b
-        DSGVO (Vertragsanbahnung) sowie Ihre Einwilligung nach Art. 6 Abs. 1
-        lit. a DSGVO.
+        Geschäftskundenbereich stammt.
       </p>
       <p>
-        Die Anfrage wird per E-Mail an uns übermittelt und in einer Datenbank
-        gespeichert, damit sie nicht verloren geht und wir den Stand der
-        Bearbeitung nachvollziehen können. Als Datenbankdienstleister nutzen wir{" "}
-        Neon; die Daten liegen in der Region eu-central-1 (Frankfurt am
-        Main) und damit innerhalb der Europäischen Union. Noch zu
-        erledigen:{" "}
-        <Fehlt>
-          Auftragsverarbeitungsvertrag abschließen und Anschrift des
-          Anbieters ergänzen
-        </Fehlt>
-        .
-        Wenn Sie eine E-Mail-Adresse angeben, erhalten Sie eine
-        Bestätigungsmail.
+        Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Durchführung
+        vorvertraglicher Maßnahmen) sowie Ihre Einwilligung nach Art. 6 Abs. 1
+        lit. a DSGVO. Die Angabe der Pflichtfelder ist erforderlich, damit wir
+        Ihre Anfrage bearbeiten und Ihnen antworten können; ohne sie können wir
+        kein Angebot erstellen. Eine gesetzliche oder vertragliche Pflicht zur
+        Bereitstellung besteht nicht.
       </p>
       <p>
-        Wir löschen Anfragen, sobald sie für die Bearbeitung nicht mehr
-        erforderlich sind, spätestens{" "}
-        <Fehlt>Löschfrist festlegen, z. B. 24 Monate nach letztem Kontakt</Fehlt>.
-        Handelsrechtliche und steuerliche Aufbewahrungspflichten bleiben
-        unberührt.
+        Die Anfrage wird per E-Mail an uns übermittelt und zusätzlich in einer
+        Datenbank gespeichert, damit sie nicht verloren geht und wir den Stand
+        der Bearbeitung nachvollziehen können. Die Datenbank wird von Neon
+        betrieben und über den Marktplatz unseres Hosting-Anbieters Vercel
+        bezogen. Die Daten liegen ausschließlich in der Region eu-central-1
+        (Frankfurt am Main) und damit innerhalb der Europäischen Union. Wenn
+        Sie eine E-Mail-Adresse angeben, erhalten Sie eine Bestätigungsmail.
+      </p>
+      <p>
+        Im internen Bereich kann zu einer Anfrage eine abweichende
+        Rechnungsanschrift ergänzt werden, außerdem der Bearbeitungsstand und
+        eine interne Notiz. Diese Angaben stammen aus dem Kontakt mit Ihnen,
+        etwa aus einem Telefonat oder dem Termin vor Ort.
       </p>
 
-      <h2>6. E-Mail-Versand</h2>
+      <h2>6. Speicherdauer</h2>
+      <p>
+        Führt Ihre Anfrage nicht zu einem Auftrag, löschen wir sie spätestens{" "}
+        <strong>24 Monate nach dem letzten Kontakt</strong>. Die Frist ist so
+        bemessen, weil Interessenten in unserem Gewerbe häufig saisonal
+        zurückkommen — etwa zur nächsten Gartensaison oder zum Winterdienst —
+        und wir dann an das Vorgespräch anknüpfen können.
+      </p>
+      <p>
+        Kommt ein Auftrag zustande, gelten die gesetzlichen
+        Aufbewahrungsfristen: sechs Jahre für Handelsbriefe (§ 257 HGB) und
+        zehn Jahre für Buchungsbelege und Rechnungen (§ 147 AO). Während dieser
+        Zeit sind die Daten in der Verarbeitung eingeschränkt und werden
+        ausschließlich zur Erfüllung dieser Pflichten vorgehalten.
+      </p>
+      <p>
+        Sie können jederzeit die Löschung verlangen. Wir kommen dem nach,
+        soweit keine der genannten Aufbewahrungspflichten entgegensteht.
+      </p>
+
+      <h2>7. E-Mail-Versand</h2>
       <p>
         Für den Versand von Benachrichtigungen und Bestätigungen nutzen wir den
         Mailserver der Hetzner Online GmbH, Industriestraße 25, 91710
-        Gunzenhausen. Die Server stehen in Deutschland.
+        Gunzenhausen. Die Server stehen in Deutschland. E-Mails werden
+        transportverschlüsselt übertragen, sofern der empfangende Server das
+        unterstützt; eine Ende-zu-Ende-Verschlüsselung findet nicht statt.
       </p>
 
-      <h2>7. Cookies und Tracking</h2>
+      <h2>8. Cookies und Tracking</h2>
       <p>
-        Diese Website setzt <strong>keine Analyse-, Werbe- oder
-        Tracking-Cookies</strong> ein. Es gibt daher auch kein Cookie-Banner.
-        Gesetzt wird ausschließlich ein technisch notwendiges Cookie, wenn sich
-        ein Mitarbeiter im internen Bereich anmeldet; es enthält nur ein
-        signiertes Sitzungsmerkmal und keine personenbezogenen Daten.
+        Diese Website setzt beim Besuch <strong>keine Cookies</strong> und legt
+        weder im lokalen Speicher noch im Sitzungsspeicher Ihres Browsers etwas
+        ab. Es findet <strong>keine Reichweitenmessung</strong>, keine Analyse
+        und kein Tracking statt — weder durch uns noch durch Dritte. Aus diesem
+        Grund gibt es auf dieser Seite auch kein Cookie-Banner: Nach § 25 TDDDG
+        ist eine Einwilligung nur erforderlich, wenn Informationen auf Ihrem
+        Endgerät gespeichert oder ausgelesen werden. Das geschieht hier nicht.
+      </p>
+      <p>
+        Ein einziges Cookie wird gesetzt, wenn sich ein Mitarbeiter im internen
+        Bereich anmeldet. Es ist für den Anmeldevorgang unbedingt erforderlich
+        (§ 25 Abs. 2 Nr. 2 TDDDG), enthält nur ein signiertes
+        Sitzungsmerkmal und keine personenbezogenen Daten. Für Besucher der
+        öffentlichen Seiten entsteht es nicht.
       </p>
 
-      <h2>8. Schriftarten</h2>
+      <h2>9. Keine Einbindung externer Dienste</h2>
       <p>
-        Die verwendeten Schriften werden von unserem eigenen Server geladen. Es
-        besteht dabei <strong>keine Verbindung zu Google-Servern</strong>, es
-        wird also auch keine IP-Adresse an Google übermittelt.
+        Beim Aufruf dieser Website wird <strong>kein einziger fremder Server
+        kontaktiert</strong>. Schriften, Bilder und das Video im Seitenkopf
+        werden von unserem eigenen Server geladen. Es besteht insbesondere
+        keine Verbindung zu Google-Servern, es wird also auch keine IP-Adresse
+        an Google übermittelt.
       </p>
-
-      <h2>9. Kartenmaterial und Social Media</h2>
       <p>
-        Wir binden keine Google-Maps-Karte und keine Social-Media-Plugins direkt
-        ein. Verweise auf externe Dienste sind einfache Links — erst durch Ihren
+        Wir binden weder eine Google-Maps-Karte noch Social-Media-Plugins ein.
+        Verweise auf externe Dienste sind einfache Links — erst durch Ihren
         Klick entsteht eine Verbindung zum jeweiligen Anbieter.
       </p>
 
       <h2>10. WhatsApp</h2>
       <p>
-        Wenn Sie uns über den WhatsApp-Link kontaktieren, verarbeitet die
-        WhatsApp Ireland Limited Ihre Daten nach eigenen Bestimmungen. Wir haben
-        darauf keinen Einfluss. Für sensible Angaben nutzen Sie bitte das
-        Formular, das Telefon oder die E-Mail.
+        Wenn Sie uns über den WhatsApp-Link kontaktieren, verlassen Sie diese
+        Website. Die WhatsApp Ireland Limited verarbeitet Ihre Daten dann nach
+        eigenen Bestimmungen, worauf wir keinen Einfluss haben. Die Nachricht
+        wird lediglich in Ihrer App vorbereitet; abgeschickt wird sie erst durch
+        Sie. Für sensible Angaben nutzen Sie bitte das Formular, das Telefon
+        oder die E-Mail.
       </p>
 
       <h2>11. Bilder auf dieser Website</h2>
