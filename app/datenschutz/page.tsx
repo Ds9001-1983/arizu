@@ -67,11 +67,17 @@ export default function DatenschutzPage() {
 
       <h2>5. Anfrageformular</h2>
       <p>
-        Wir verarbeiten die von Ihnen eingegebenen Daten (Name, Telefonnummer,
-        optional E-Mail-Adresse, Objektangaben, Nachricht sowie die Angaben aus
-        dem Preisrechner), um Ihre Anfrage zu bearbeiten. Rechtsgrundlage ist
-        Art. 6 Abs. 1 lit. b DSGVO (Vertragsanbahnung) sowie Ihre Einwilligung
-        nach Art. 6 Abs. 1 lit. a DSGVO.
+        Wir verarbeiten die von Ihnen eingegebenen Daten, um Ihre Anfrage zu
+        bearbeiten. Als Privatkunde sind das Name, Telefonnummer, optional
+        E-Mail-Adresse, die Anschrift des Einsatzortes, Ihre Nachricht sowie
+        die Angaben aus dem Preisrechner. Fragen Sie über den
+        Geschäftskundenbereich an, kommen die dort erhobenen Angaben hinzu:
+        Unternehmen, Ansprechpartner und Funktion, Art und Anzahl der Objekte,
+        Einheiten oder Fläche, gewünschter Rhythmus und Wunschtermin. Wir
+        vermerken außerdem, ob eine Anfrage aus dem Privat- oder aus dem
+        Geschäftskundenbereich stammt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b
+        DSGVO (Vertragsanbahnung) sowie Ihre Einwilligung nach Art. 6 Abs. 1
+        lit. a DSGVO.
       </p>
       <p>
         Die Anfrage wird per E-Mail an uns übermittelt und in einer Datenbank
