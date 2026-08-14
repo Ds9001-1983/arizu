@@ -26,6 +26,19 @@ let cached: Transporter | null = null;
 
 type Smtp = { host: string; port: number; user: string; pass: string; from: string };
 
+/* Überall `||` und nicht `??`, und das ist hier kein Schludern.
+
+   Eine .env-Zeile ohne Wert (`LEAD_TO=`) ergibt einen LEEREN STRING, nicht
+   `undefined` — und `??` greift nur bei `undefined`. Mit `??` würde aus
+   `LEAD_TO=` also der Empfänger "", die Betriebsmail ginge ins Nichts und
+   scheiterte still im catch weiter unten. Genau diese leeren Zuweisungen
+   liefert .env.example aus, und der README sagt `cp .env.example .env.local`.
+   Wer der Anleitung folgt, bekäme also einen kaputten Mailversand.
+
+   `||` behandelt den leeren String wie "nicht gesetzt". Das ist die
+   Bedeutung, die eine .env-Datei ihm ohnehin gibt. Bitte nicht auf `??`
+   "modernisieren". */
+
 function readSmtp(): Smtp | null {
   const host = process.env.SMTP_HOST;
   const user = process.env.SMTP_USER;
@@ -33,10 +46,10 @@ function readSmtp(): Smtp | null {
   if (!host || !user || !pass) return null;
   return {
     host,
-    port: Number(process.env.SMTP_PORT ?? 587),
+    port: Number(process.env.SMTP_PORT || 587),
     user,
     pass,
-    from: process.env.MAIL_FROM ?? user,
+    from: process.env.MAIL_FROM || user,
   };
 }
 
@@ -71,7 +84,7 @@ function nl2br(s: string): string {
 // Vercel-Previews per MAIL_LOGO_URL überschreiben, sonst zeigt die Mail ein
 // kaputtes Bild.
 const logoUrl =
-  process.env.MAIL_LOGO_URL ?? `${SITE_URL}/brand/logo-arizu-signatur.png`;
+  process.env.MAIL_LOGO_URL || `${SITE_URL}/brand/logo-arizu-signatur.png`;
 
 export type LeadMail = {
   id?: number;
@@ -403,7 +416,7 @@ export async function sendLeadMails(lead: LeadMail): Promise<MailOutcome> {
   try {
     await t.sendMail({
       from: cfg.from,
-      to: process.env.LEAD_TO ?? business.email,
+      to: process.env.LEAD_TO || business.email,
       replyTo: lead.email || undefined,
       // Kundenart ganz vorn: Arian liest Betreffzeilen auf dem Sperrbildschirm,
       // und dort entscheiden die ersten rund 20 Zeichen, ob er sofort öffnet.
