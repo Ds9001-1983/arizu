@@ -6,11 +6,13 @@ import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
 import { HeroMedia } from "@/components/site/hero-media";
 import { KonfiguratorTabs } from "@/components/site/konfigurator-tabs";
+import { KundenartWeiche } from "@/components/site/kundenart-weiche";
 import { SectionHeading } from "@/components/site/section-heading";
 import { ServiceGrid } from "@/components/site/service-grid";
 import { TrustBar } from "@/components/site/trust-bar";
 import { glassSurface } from "@/components/ai/ai-media-badge";
 import { business } from "@/lib/business";
+import { getAllRates } from "@/lib/rates-server";
 import { faqSchema, localBusinessSchema } from "@/lib/seo";
 import { services } from "@/lib/services";
 import { cn } from "@/lib/utils";
@@ -28,7 +30,16 @@ const reasons = [
    dieselbe Frage doppelt ausgezeichnet wird. */
 const homeFaqs = services.map((s) => s.faqs[0]);
 
-export default function Home() {
+/* Ein Tag. Die Preise ändert Arian vielleicht dreimal im Jahr, und die
+   Speichern-Aktion frischt die Seite ohnehin sofort auf — das hier ist nur
+   das Netz für den Fall, dass eine Invalidierung einmal danebengeht. Ohne
+   das stünde dann bis zum nächsten Deploy ein falscher Verbraucherpreis auf
+   der Seite, und niemand merkte es. */
+export const revalidate = 86_400;
+
+export default async function Home() {
+  const rates = await getAllRates();
+
   return (
     <>
       <JsonLd data={[localBusinessSchema(), faqSchema(homeFaqs)]} />
@@ -99,6 +110,8 @@ export default function Home() {
         </Container>
       </section>
 
+      <KundenartWeiche />
+
       <TrustBar />
 
       {/* -------------------------------------------------------- Leistungen */}
@@ -124,7 +137,7 @@ export default function Home() {
             lead="Andere schreiben „Angebot in 60 Sekunden“ und schicken Ihnen dann ein Formular. Hier bekommen Sie eine Zahl — sofort, ohne Ihre Daten abzugeben."
           />
           <div className="mt-12">
-            <KonfiguratorTabs />
+            <KonfiguratorTabs rates={rates} />
           </div>
         </Container>
       </section>

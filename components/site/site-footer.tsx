@@ -40,6 +40,16 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+              {/* Abgesetzt, weil es keine fünfte Leistung ist, sondern ein
+                  eigener Weg durch dieselben vier. */}
+              <li className="pt-2">
+                <Link
+                  href="/geschaeftskunden"
+                  className="font-semibold text-white/80 transition-colors hover:text-gold-soft"
+                >
+                  Für Geschäftskunden
+                </Link>
+              </li>
             </ul>
           </div>
 

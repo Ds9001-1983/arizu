@@ -12,6 +12,7 @@ import { Konfigurator } from "@/components/site/konfigurator";
 import { SectionHeading } from "@/components/site/section-heading";
 import { business, serviceArea } from "@/lib/business";
 import { getConfigurator } from "@/lib/pricing";
+import { getAllRates } from "@/lib/rates-server";
 import { breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/seo";
 import { getService, services } from "@/lib/services";
 
@@ -20,7 +21,21 @@ export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
 }
 
-export const dynamicParams = false;
+/* `dynamicParams` steht bewusst NICHT mehr auf false.
+
+   Es war eine zweite Absicherung gegen erfundene Slugs — die erste ist der
+   `notFound()`-Aufruf unten, der jeden unbekannten Slug abfängt. Der Preis
+   dafür war hoch: Mit `dynamicParams = false` darf Next eine Seite nicht
+   nachträglich neu erzeugen. Sobald Arian unter /intern/preise einen Satz
+   ändert und `revalidatePath` die Seite verwirft, findet der Server keinen
+   Weg mehr, sie zu rendern — sie liefert dauerhaft 404, im Log steht
+   `NoFallbackError`. Die vier gültigen Pfade stehen weiterhin in
+   generateStaticParams und werden beim Bauen vorgerendert. */
+
+/* Ein Tag — Begründung steht in app/page.tsx. Die Seite bleibt statisch:
+   Dynamisch würde sie erst durch cookies(), headers() oder searchParams, nicht
+   durch eine Datenbankabfrage beim Bauen. */
+export const revalidate = 86_400;
 
 export async function generateMetadata({
   params,
@@ -51,6 +66,8 @@ export default async function ServicePage({
   const service = getService(slug);
   const spec = getConfigurator(slug);
   if (!service || !spec) notFound();
+
+  const rates = (await getAllRates())[service.slug];
 
   const others = services.filter((s) => s.slug !== service.slug);
 
@@ -145,6 +162,24 @@ export default async function ServicePage({
                   ))}
                 </ul>
               </div>
+
+              {/* Unbedingt auf allen vier Seiten, nicht nur bei der Reinigung:
+                  Anfragen von Hausverwaltungen kommen in jedem Bereich vor,
+                  und wer über Google direkt hier landet, sieht die Weiche auf
+                  der Startseite nie. */}
+              <div className="mt-5 rounded-sm border border-navy/15 bg-navy/4 p-6">
+                <p className="text-[0.95rem] leading-relaxed text-navy">
+                  Sie fragen für ein Unternehmen, eine Praxis oder eine
+                  Hausverwaltung an?
+                </p>
+                <Link
+                  href="/geschaeftskunden"
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-deep hover:text-navy"
+                >
+                  Zum Geschäftskundenbereich
+                  <ArrowRight className="size-4" aria-hidden />
+                </Link>
+              </div>
             </div>
           </div>
         </Container>
@@ -159,7 +194,7 @@ export default async function ServicePage({
             lead="Sie geben vier Angaben ein und sehen sofort den Rahmen. Erst danach entscheiden Sie, ob Sie anfragen."
           />
           <div className="mt-12">
-            <Konfigurator slug={service.slug} />
+            <Konfigurator slug={service.slug} rates={rates} />
           </div>
         </Container>
       </section>

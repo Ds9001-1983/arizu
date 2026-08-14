@@ -16,6 +16,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     })),
     {
+      url: `${SITE_URL}/geschaeftskunden`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    },
+    {
       url: `${SITE_URL}/kontakt`,
       lastModified: now,
       changeFrequency: "yearly" as const,

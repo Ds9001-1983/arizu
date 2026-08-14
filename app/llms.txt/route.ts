@@ -34,8 +34,11 @@ export function GET() {
     `- Telefon: ${business.phone.display} (mobil), ${business.landline.display} (Festnetz)`,
     `- E-Mail: ${business.email}`,
     `- Website: ${SITE_URL}`,
-    "- Kundschaft: überwiegend Privathaushalte, außerdem Eigentümer, " +
-      "Hausverwaltungen und Gewerbeobjekte",
+    "- Kundschaft: Privathaushalte sowie Unternehmen, Praxen, " +
+      "Hausverwaltungen und Eigentümergemeinschaften. Die Website trennt " +
+      "beide Wege: Privatkunden rechnen den Richtpreis selbst aus, " +
+      "Geschäftskunden schildern ihren Bedarf und erhalten ein Angebot nach " +
+      "Begehung.",
     "",
     "## Leistungen",
     "",
@@ -53,6 +56,22 @@ export function GET() {
   }
 
   lines.push(
+    "## Geschäftskunden",
+    "",
+    "Für Unternehmen, Praxen, Ladenlokale, Wohnanlagen und Hausverwaltungen " +
+      "gibt es einen eigenen Bereich. Dort wird KEIN Richtpreis genannt: Bei " +
+      "laufenden Aufträgen über mehrere Objekte entscheiden Bodenbeläge, " +
+      "Zugänge, Sanitäreinheiten und Publikumsverkehr über den Aufwand. " +
+      "Stattdessen wird der Bedarf erfasst (Bereich, Objektart, Anzahl " +
+      "Objekte, Einheiten oder Fläche, gewünschter Rhythmus), danach folgen " +
+      "eine kostenlose Begehung und ein schriftliches Angebot mit " +
+      "Leistungsverzeichnis, monatlich kündbar.",
+    "",
+    "Unterhaltsreinigung sowie Büro- und Praxisreinigung werden " +
+      "ausschließlich hier kalkuliert.",
+    "",
+    `Geschäftskundenbereich: ${SITE_URL}/geschaeftskunden`,
+    "",
     "## Preise",
     "",
     "Für jede der vier Leistungen gibt es auf der Website einen Rechner, der " +

@@ -11,6 +11,7 @@ import { LogoWordmark } from "./logo";
 
 const nav = [
   ...services.map((s) => ({ href: `/leistungen/${s.slug}`, label: s.name })),
+  { href: "/geschaeftskunden", label: "Geschäftskunden" },
   { href: "/kontakt", label: "Kontakt" },
 ];
 
@@ -62,7 +63,13 @@ export function SiteHeader() {
             />
           </Link>
 
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Hauptnavigation">
+          {/* gap-5 erst ab xl auf 7: Mit dem sechsten Punkt
+              ("Geschäftskunden") wird die Zeile bei 1024 px sonst zu breit
+              und bricht neben Logo und Anrufbutton um. */}
+          <nav
+            className="hidden items-center gap-5 lg:flex xl:gap-7"
+            aria-label="Hauptnavigation"
+          >
             {nav.map((item) => (
               <Link
                 key={item.href}
