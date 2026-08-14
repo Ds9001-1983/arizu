@@ -75,20 +75,33 @@ story-spec.json             Projektspezifikation, gegen SUPERBRAND-Schema validi
 
 Die Seite ist als Prototyp fertig, aber **nicht veröffentlichungsreif**. Offen:
 
-1. **Domains registrieren** — `arizu-gebaeudedienstleistungen.de` und
-   `arizu.de` waren am 12.08.2026 bei DENIC noch frei.
-2. **Impressum** — Straße und USt-IdNr./Steuernummer fehlen. Ohne diese
+1. **Impressum** — Straße und USt-IdNr./Steuernummer fehlen. Ohne diese
    Angaben ist die Seite nach § 5 DDG abmahnfähig. Die Rechtsseiten zeigen
    die Lücken rot markiert und mit Warnhinweis.
-3. **AGB** — nur Entwurf, auf `noindex`. Anwaltlich prüfen lassen,
+2. **AGB** — nur Entwurf, auf `noindex`. Anwaltlich prüfen lassen,
    insbesondere Stornopauschale (§ 309 Nr. 5 BGB) und Widerrufsrecht.
-4. **Preise bestätigen** — jeder Wert in `lib/pricing/` ist mit `VERIFY`
-   markiert. Grundlage ist Marktrecherche von 08/2026, angesetzt jeweils der
-   untere Rand. `npm run check:pricing` prüft die Werte gegen die Belege.
-5. **DNS** — beim Umzug auf Vercel zeigen nur A/CNAME dorthin.
-   **MX, SPF und DKIM müssen beim Mailserver bleiben**, sonst fällt der
-   Mailversand aus.
-6. **Google Business Profile** — vorbereiten, Verifizierung braucht Arian.
+3. **Preise bestätigen** — jeder Wert steht in `defaultRates` der Specs unter
+   `lib/pricing/` und ist mit `VERIFY` markiert. Grundlage ist Marktrecherche
+   von 08/2026, angesetzt jeweils der untere Rand. `npm run check:pricing`
+   prüft die Werte gegen die Belege.
+4. **Mailversand** — es gibt noch keine SMTP-Zugangsdaten, deshalb läuft der
+   Demo-Modus: Anfragen landen in der Datenbank und unter `/intern`, aber es
+   geht keine Mail raus, weder an Arian noch als Bestätigung an den Kunden.
+5. **DMARC fehlt** — SPF und DKIM stehen seit dem 14.08.2026, ein
+   `_dmarc`-Eintrag nicht. Ohne ihn bleibt die Domain für Absender-Fälschung
+   offener als nötig.
+6. **Zweitdomain `arizu.de`** — noch nicht registriert, soll später per
+   Redirect auf die Hauptdomain zeigen.
+7. **Google Business Profile** — vorbereiten, Verifizierung braucht Arian.
+
+### Erledigt
+
+**Domain** `arizu-gebaeudedienstleistungen.de` läuft seit dem 14.08.2026 bei
+Hetzner. `A @` und `CNAME www` zeigen auf Vercel, der nackte Name leitet per
+308 auf `www`. **MX, SPF, DKIM, die SRV-Einträge und `autoconfig` sind beim
+Mailhost geblieben** — der Mailverkehr hängt daran. Beim SPF war eine
+Anpassung nötig: `+a` autorisierte nach dem Umzug Vercels Webserver zum
+Mailversand, jetzt steht dort `v=spf1 +mx ~all`.
 
 ## Bilder und KI-Kennzeichnung
 

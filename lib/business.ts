@@ -9,12 +9,15 @@
    sichtbare Platzhalter formuliert, damit nichts Falsches live geht.
    ================================================================== */
 
-// VERIFY: Domain ist bei DENIC noch frei (geprueft 12.08.2026) und muss
-// registriert werden. Bis dahin laeuft der Prototyp auf Vercel-Preview.
+// Seit 14.08.2026 registriert (Hetzner) und live. Der nackte Name leitet per
+// 308 auf www weiter, deshalb steht hier die www-Fassung: Sie ist die
+// kanonische Adresse und speist Canonical-Tags, Sitemap, JSON-LD und die
+// Bild-URL in den Mails.
 export const SITE_URL = "https://www.arizu-gebaeudedienstleistungen.de";
 
-// Zweitdomain, leitet spaeter per Redirect auf SITE_URL (Merk-Domain fuers
-// Fahrzeug: kurz genug, dass Leute sie aus dem Vorbeifahren behalten).
+// VERIFY: Zweitdomain noch nicht registriert. Gedacht als Merk-Domain fuers
+// Fahrzeug (kurz genug, dass Leute sie aus dem Vorbeifahren behalten), soll
+// spaeter per Redirect auf SITE_URL zeigen.
 export const SITE_URL_SHORT = "https://arizu.de";
 
 export const business = {
