@@ -38,6 +38,13 @@ export type LeadRow = {
   source: string | null;
   status: LeadStatus;
   note: string | null;
+  /* Rechnungsadresse. Kommt nie aus dem Formular, sondern wird von Arian
+     nachgetragen — beim Vor-Ort-Termin oder am Telefon. Kann vom Einsatzort
+     abweichen: Erbengemeinschaft, Hausverwaltung, Firmensitz des Vermieters. */
+  rg_name: string | null;
+  rg_strasse: string | null;
+  rg_plz: string | null;
+  rg_ort: string | null;
 };
 
 export async function initSchema(): Promise<void> {
@@ -57,7 +64,11 @@ export async function initSchema(): Promise<void> {
       konfigurator  text,
       source        text,
       status        text        not null default 'neu',
-      note          text
+      note          text,
+      rg_name       text,
+      rg_strasse    text,
+      rg_plz        text,
+      rg_ort        text
     )
   `;
   // Nachträglich hinzugekommene Spalten. Ausgeschrieben statt in einer
@@ -68,6 +79,10 @@ export async function initSchema(): Promise<void> {
   await q`alter table leads add column if not exists plz text`;
   await q`alter table leads add column if not exists ort text`;
   await q`alter table leads add column if not exists source text`;
+  await q`alter table leads add column if not exists rg_name text`;
+  await q`alter table leads add column if not exists rg_strasse text`;
+  await q`alter table leads add column if not exists rg_plz text`;
+  await q`alter table leads add column if not exists rg_ort text`;
   // Die Inbox sortiert immer nach Eingang — dafür ein Index, damit das auch
   // bei einigen Tausend Leads schnell bleibt.
   await q`create index if not exists leads_created_at_idx on leads (created_at desc)`;
@@ -101,7 +116,8 @@ export async function listLeads(limit = 200): Promise<LeadRow[]> {
   const q = sql();
   return (await q`
     select id, created_at, name, phone, email, strasse, plz, ort, message,
-           service, konfigurator, source, status, note
+           service, konfigurator, source, status, note,
+           rg_name, rg_strasse, rg_plz, rg_ort
       from leads
      order by created_at desc
      limit ${limit}
@@ -112,7 +128,8 @@ export async function getLead(id: number): Promise<LeadRow | undefined> {
   const q = sql();
   const rows = (await q`
     select id, created_at, name, phone, email, strasse, plz, ort, message,
-           service, konfigurator, source, status, note
+           service, konfigurator, source, status, note,
+           rg_name, rg_strasse, rg_plz, rg_ort
       from leads
      where id = ${id}
   `) as LeadRow[];
@@ -151,6 +168,31 @@ export async function updateLead(
       konfigurator = coalesce(${patch.konfigurator ?? null}, konfigurator),
       status       = coalesce(${patch.status ?? null}, status),
       note         = coalesce(${patch.note ?? null}, note)
+    where id = ${id}
+  `;
+}
+
+/**
+ * Rechnungsadresse setzen.
+ *
+ * Eigene Funktion statt eines weiteren Feldes in updateLead: Dort arbeitet
+ * jedes Feld mit `coalesce`, behält also den alten Wert, wenn nichts kommt.
+ * Das ist für Teil-Updates richtig — hier aber falsch, denn Arian muss eine
+ * einmal eingetragene Rechnungsadresse auch wieder leeren können. Diese
+ * Felder werden deshalb bedingungslos geschrieben.
+ */
+export async function setBillingAddress(
+  id: number,
+  rg: { name: string; strasse: string; plz: string; ort: string },
+): Promise<void> {
+  const q = sql();
+  const leer = (v: string) => (v.trim() === "" ? null : v.trim());
+  await q`
+    update leads set
+      rg_name    = ${leer(rg.name)},
+      rg_strasse = ${leer(rg.strasse)},
+      rg_plz     = ${leer(rg.plz)},
+      rg_ort     = ${leer(rg.ort)}
     where id = ${id}
   `;
 }

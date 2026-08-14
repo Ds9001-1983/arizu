@@ -9,7 +9,7 @@ import {
   sessionMaxAge,
   verifyPassword,
 } from "@/lib/auth";
-import { type LeadStatus, updateLead } from "@/lib/db";
+import { type LeadStatus, setBillingAddress, updateLead } from "@/lib/db";
 
 /**
  * Fehlversuche pro Instanz mitzählen.
@@ -83,6 +83,15 @@ export async function saveLead(formData: FormData) {
     konfigurator: String(formData.get("konfigurator") ?? "") || undefined,
     note: String(formData.get("note") ?? "") || undefined,
     status,
+  });
+
+  // Getrennt, weil diese Felder auch wieder geleert werden können müssen —
+  // updateLead behält per coalesce den alten Wert.
+  await setBillingAddress(id, {
+    name: String(formData.get("rg_name") ?? ""),
+    strasse: String(formData.get("rg_strasse") ?? ""),
+    plz: String(formData.get("rg_plz") ?? ""),
+    ort: String(formData.get("rg_ort") ?? ""),
   });
 
   revalidatePath("/intern");

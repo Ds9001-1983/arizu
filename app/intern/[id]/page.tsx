@@ -5,6 +5,7 @@ import { ArrowLeft, CheckCircle2, MapPin, MessageCircle, Phone } from "lucide-re
 import { Container } from "@/components/site/container";
 import { dbConfigured, getLead } from "@/lib/db";
 import { getService, services } from "@/lib/services";
+import { RgUebernehmen } from "@/components/site/rg-uebernehmen";
 import { saveLead } from "../actions";
 
 export const metadata: Metadata = {
@@ -102,7 +103,7 @@ export default async function LeadDetail({
           </a>
         </div>
 
-        <form action={saveLead} className="mt-9 max-w-2xl space-y-5">
+        <form action={saveLead} data-lead-form className="mt-9 max-w-2xl space-y-5">
           <input type="hidden" name="id" value={lead.id} />
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -194,6 +195,81 @@ export default async function LeadDetail({
               Hier korrigieren, wenn die Angaben vor Ort abweichen — etwa 74 m²
               statt der gemeldeten 60.
             </p>
+          </div>
+
+          {/* ---------------------------------------------------- Rechnung */}
+          <div className="border-t border-mist pt-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
+              <p className="font-sans text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+                Rechnungsadresse
+              </p>
+              <RgUebernehmen nameFallback={lead.name} />
+            </div>
+            <p className="mt-1.5 text-xs text-ink-muted">
+              Wird nicht abgefragt — beim Termin vor Ort erfassen. Kann vom
+              Einsatzort abweichen, etwa bei Erbengemeinschaft, Hausverwaltung
+              oder Vermieter.
+            </p>
+
+            {/* Erinnerung genau dann, wenn sie zählt: Auftrag gewonnen, aber
+                die Rechnung kann noch nicht geschrieben werden. */}
+            {lead.status === "gewonnen" && !lead.rg_strasse && (
+              <p className="mt-3 rounded-sm border border-gold/50 bg-gold/10 px-3.5 py-2.5 text-sm text-navy">
+                Auftrag ist gewonnen, aber die Rechnungsadresse fehlt noch.
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="rg_name" className={label}>
+              Rechnungsempfänger
+            </label>
+            <input
+              id="rg_name"
+              name="rg_name"
+              defaultValue={lead.rg_name ?? ""}
+              placeholder="Name oder Firma, falls abweichend"
+              className={field}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="rg_strasse" className={label}>
+              Straße und Hausnummer
+            </label>
+            <input
+              id="rg_strasse"
+              name="rg_strasse"
+              defaultValue={lead.rg_strasse ?? ""}
+              className={field}
+            />
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-[8rem_1fr]">
+            <div>
+              <label htmlFor="rg_plz" className={label}>
+                PLZ
+              </label>
+              <input
+                id="rg_plz"
+                name="rg_plz"
+                inputMode="numeric"
+                maxLength={5}
+                defaultValue={lead.rg_plz ?? ""}
+                className={field}
+              />
+            </div>
+            <div>
+              <label htmlFor="rg_ort" className={label}>
+                Ort
+              </label>
+              <input
+                id="rg_ort"
+                name="rg_ort"
+                defaultValue={lead.rg_ort ?? ""}
+                className={field}
+              />
+            </div>
           </div>
 
           {lead.message && (
