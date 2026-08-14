@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# Ausnahme: die Vorlage enthält keine Geheimnisse, sondern nur Schlüsselnamen
+# und die Erklärung dazu. Der Schnellstart im README verweist auf sie
+# (`cp .env.example .env.local`) — ohne diese Zeile fehlt sie nach dem Klonen.
+!.env.example
 
 # vercel
 .vercel

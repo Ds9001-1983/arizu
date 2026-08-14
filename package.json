@@ -10,8 +10,8 @@
     "check:pricing": "tsx scripts/check-pricing.ts",
     "qa": "playwright test",
     "qa:ai": "playwright test qa-tests/ai-disclosure.spec.ts",
-    "db:init": "tsx scripts/db-init.ts",
-    "hash:password": "tsx scripts/hash-password.ts"
+    "db:init": "tsx scripts/db-init.mts",
+    "hash:password": "tsx scripts/hash-password.mts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
