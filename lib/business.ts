@@ -58,18 +58,21 @@ export const business = {
   email: "info@arizu-gebaeudedienstleistungen.de",
 
   address: {
-    // VERIFY: Strasse + Hausnummer fehlen komplett — Pflichtangabe fuers
-    // Impressum (§ 5 DDG) und fuer das Google-Business-Profil.
-    street: "",
+    // Von Arian am 14.08.2026 nachgereicht.
+    street: "Am Dornbusch 17",
+    // VERIFY: Postleitzahl gegen die Strasse pruefen. Elmshorn hat drei
+    // (25335, 25336, 25337); die 25337 stammt noch aus dem Designentwurf,
+    // als die Strasse unbekannt war. Eine falsche PLZ im Impressum faellt
+    // spaetestens bei der Google-Verifizierung per Postkarte auf.
     postalCode: "25337",
     city: "Elmshorn",
     country: "DE",
     countryName: "Deutschland",
   },
 
-  // VERIFY: Koordinaten sind der Ortsmittelpunkt Elmshorn, bis die genaue
-  // Adresse vorliegt. Fuer LocalBusiness-JSON-LD ausreichend, fuer die
-  // Kartenanzeige spaeter praezisieren.
+  // VERIFY: Koordinaten sind weiterhin der Ortsmittelpunkt Elmshorn, nicht
+  // die Hausnummer. Fuer das LocalBusiness-JSON-LD ausreichend; vor dem
+  // Google-Business-Profil praezisieren.
   geo: { latitude: 53.7544, longitude: 9.6533 },
 
   // VERIFY: Erreichbarkeitszeiten mit Arian klaeren (auch fuer Google-Profil).

@@ -14,18 +14,16 @@ export default function DatenschutzPage() {
       title="Datenschutzerklärung"
       updated="August 2026"
       todo={
-        "Anschrift des Verantwortlichen ergänzen. Außerdem prüfen, ob die " +
-        "genannten Dienstleister (Vercel, Neon, Mailserver) mit dem " +
-        "tatsächlichen Setup übereinstimmen, und die " +
-        "Auftragsverarbeitungsverträge abschließen. Diesen Text " +
-        "abschließend juristisch prüfen lassen."
+        "Die Auftragsverarbeitungsverträge mit Vercel, Neon und dem " +
+        "Mailhoster sind noch nicht geschlossen, und die Löschfrist steht " +
+        "nicht fest. Diesen Text abschließend juristisch prüfen lassen."
       }
     >
       <h2>1. Verantwortlicher</h2>
       <p>
         {business.legalName}
         <br />
-        <Fehlt>Straße und Hausnummer</Fehlt>
+        {business.address.street}
         <br />
         {business.address.postalCode} {business.address.city}
         <br />
@@ -105,8 +103,8 @@ export default function DatenschutzPage() {
       <h2>6. E-Mail-Versand</h2>
       <p>
         Für den Versand von Benachrichtigungen und Bestätigungen nutzen wir den
-        Mailserver unseres Hosting-Anbieters{" "}
-        <Fehlt>Anbieter und Anschrift des Mailservers</Fehlt>.
+        Mailserver der Hetzner Online GmbH, Industriestraße 25, 91710
+        Gunzenhausen. Die Server stehen in Deutschland.
       </p>
 
       <h2>7. Cookies und Tracking</h2>

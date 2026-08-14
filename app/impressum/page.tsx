@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fehlt, LegalLayout } from "@/components/site/legal-layout";
+import { LegalLayout } from "@/components/site/legal-layout";
 import { business } from "@/lib/business";
 
 export const metadata: Metadata = {
@@ -11,19 +11,12 @@ export const metadata: Metadata = {
 
 export default function ImpressumPage() {
   return (
-    <LegalLayout
-      title="Impressum"
-      todo={
-        "Straße und Hausnummer sowie die Umsatzsteuer-Identifikationsnummer " +
-        "bzw. Steuernummer fehlen. Beides ist nach § 5 DDG Pflicht — ohne " +
-        "diese Angaben darf die Seite nicht online gehen (abmahnfähig)."
-      }
-    >
+    <LegalLayout title="Impressum">
       <h2>Angaben gemäß § 5 DDG</h2>
       <p>
         {business.legalName}
         <br />
-        <Fehlt>Straße und Hausnummer</Fehlt>
+        {business.address.street}
         <br />
         {business.address.postalCode} {business.address.city}
         <br />
@@ -44,8 +37,9 @@ export default function ImpressumPage() {
 
       <h2>Umsatzsteuer</h2>
       <p>
-        Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:{" "}
-        <Fehlt>USt-IdNr. oder Steuernummer</Fehlt>
+        Eine Umsatzsteuer-Identifikationsnummer gemäß § 27 a
+        Umsatzsteuergesetz liegt noch nicht vor — der Betrieb befindet sich in
+        Gründung. Sie wird hier ergänzt, sobald sie erteilt ist.
       </p>
 
       <h2>Verantwortlich für den Inhalt</h2>
