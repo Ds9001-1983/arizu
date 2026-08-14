@@ -77,7 +77,14 @@ export default function DatenschutzPage() {
         Die Anfrage wird per E-Mail an uns übermittelt und in einer Datenbank
         gespeichert, damit sie nicht verloren geht und wir den Stand der
         Bearbeitung nachvollziehen können. Als Datenbankdienstleister nutzen wir{" "}
-        <Fehlt>Neon (Region bestätigen) — Auftragsverarbeitungsvertrag prüfen</Fehlt>.
+        Neon; die Daten liegen in der Region eu-central-1 (Frankfurt am
+        Main) und damit innerhalb der Europäischen Union. Noch zu
+        erledigen:{" "}
+        <Fehlt>
+          Auftragsverarbeitungsvertrag abschließen und Anschrift des
+          Anbieters ergänzen
+        </Fehlt>
+        .
         Wenn Sie eine E-Mail-Adresse angeben, erhalten Sie eine
         Bestätigungsmail.
       </p>
