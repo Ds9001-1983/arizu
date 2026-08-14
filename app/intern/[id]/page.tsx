@@ -23,6 +23,14 @@ const statuses = [
   { id: "verloren", label: "Verloren" },
 ];
 
+/* Umschaltbar, weil die automatische Erfassung nicht alles trifft: Eine
+   Hausverwaltung, die über Google direkt auf einer Leistungsseite landet,
+   füllt das Privatkundenformular aus. Arian korrigiert das hier. */
+const kundenarten = [
+  { id: "privat", label: "Privatkunde" },
+  { id: "geschaeft", label: "Geschäftskunde" },
+];
+
 export default async function LeadDetail({
   params,
   searchParams,
@@ -147,6 +155,26 @@ export default async function LeadDetail({
                 ))}
               </select>
             </div>
+            <div>
+              <label htmlFor="kundenart" className={label}>
+                Kundenart
+              </label>
+              <select
+                id="kundenart"
+                name="kundenart"
+                defaultValue={lead.kundenart ?? ""}
+                className={field}
+              >
+                {/* Nur für Altbestände sichtbar. Wer einmal zugeordnet hat,
+                    soll nicht versehentlich auf "unbekannt" zurückfallen. */}
+                {!lead.kundenart && <option value="">— nicht zugeordnet —</option>}
+                {kundenarten.map((k) => (
+                  <option key={k.id} value={k.id}>
+                    {k.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <p className="pt-2 font-sans text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
@@ -182,7 +210,9 @@ export default async function LeadDetail({
 
           <div>
             <label htmlFor="konfigurator" className={label}>
-              Angaben aus dem Konfigurator
+              {lead.kundenart === "geschaeft"
+                ? "Bedarf des Geschäftskunden"
+                : "Angaben aus dem Konfigurator"}
             </label>
             <textarea
               id="konfigurator"
@@ -192,8 +222,9 @@ export default async function LeadDetail({
               className={field}
             />
             <p className="mt-1.5 text-xs text-ink-muted">
-              Hier korrigieren, wenn die Angaben vor Ort abweichen — etwa 74 m²
-              statt der gemeldeten 60.
+              {lead.kundenart === "geschaeft"
+                ? "Hier ergänzen, was sich bei der Begehung ergibt — etwa ein fünftes Objekt oder abweichende Flächen."
+                : "Hier korrigieren, wenn die Angaben vor Ort abweichen — etwa 74 m² statt der gemeldeten 60."}
             </p>
           </div>
 

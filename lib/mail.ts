@@ -85,6 +85,7 @@ export type LeadMail = {
   service?: string;
   konfigurator?: string;
   source?: string;
+  kundenart?: string;
 };
 
 function row(label: string, value: string): string {
@@ -131,7 +132,17 @@ function shell(title: string, inner: string, preheader: string): string {
 
 function internalHtml(lead: LeadMail): string {
   const serviceName = lead.service ? getService(lead.service)?.name : undefined;
+  const gewerbe = lead.kundenart === "geschaeft";
   const rows = [
+    // Bewusst als erste Zeile und unbedingt, nicht nur bei Gewerbe: In einer
+    // Tabelle, die Arian täglich überfliegt, ist eine feste Position mehr wert
+    // als eine gesparte Zeile.
+    row(
+      "Kundenart",
+      gewerbe
+        ? `<strong style="color:${GOLD}">Geschäftskunde</strong>`
+        : "Privatkunde",
+    ),
     row("Name", esc(lead.name)),
     row(
       "Telefon",
@@ -163,7 +174,10 @@ function internalHtml(lead: LeadMail): string {
           )}</a>`,
         )
       : "",
-    lead.konfigurator ? row("Aus dem Konfigurator", nl2br(lead.konfigurator)) : "",
+    // Bei Geschäftskunden gab es keinen Rechner, sondern eine Bedarfsabfrage.
+    lead.konfigurator
+      ? row(gewerbe ? "Bedarf" : "Aus dem Konfigurator", nl2br(lead.konfigurator))
+      : "",
     lead.message ? row("Nachricht", nl2br(lead.message)) : "",
     lead.source === "whatsapp"
       ? row(
@@ -188,7 +202,9 @@ function internalHtml(lead: LeadMail): string {
   const inner = `
     <tr><td style="padding:30px 32px 8px">
       <p style="margin:0;font:700 11px/1.4 Arial,sans-serif;letter-spacing:.16em;
-                text-transform:uppercase;color:${GOLD}">Neue Anfrage${lead.id ? ` · Nr. ${lead.id}` : ""}</p>
+                text-transform:uppercase;color:${GOLD}">${
+                  gewerbe ? "Neue Geschäftskunden-Anfrage" : "Neue Anfrage"
+                }${lead.id ? ` · Nr. ${lead.id}` : ""}</p>
       <h1 style="margin:10px 0 0;font:800 24px/1.25 Arial,sans-serif;color:${NAVY}">
         ${esc(lead.name)} wartet auf Ihren Anruf
       </h1>
@@ -212,13 +228,28 @@ function internalHtml(lead: LeadMail): string {
   return shell(
     `Neue Anfrage von ${lead.name}`,
     inner,
-    `${lead.name} · ${lead.phone}${serviceName ? ` · ${serviceName}` : ""}`,
+    // Vorschauzeile in der Inbox — die Kundenart nach vorn, aus demselben
+    // Grund wie im Betreff.
+    `${gewerbe ? "Geschäftskunde · " : ""}${lead.name} · ${lead.phone}` +
+      `${serviceName ? ` · ${serviceName}` : ""}`,
   );
 }
 
 /* ------------------------------------------------------ Mail an den Kunden */
 
+/* Zwei Fassungen, kein gemeinsamer Text mit Platzhaltern.
+
+   Die Privatfassung verspricht "die Besichtigung vor Ort" und ein
+   "verbindliches Festpreisangebot". Bei einer Hausverwaltung mit acht
+   Objekten trifft beides nicht: Es gibt nicht den einen Termin morgen, und
+   der Preis steht je Objekt und Monat. Ein Versprechen, das nicht gehalten
+   werden kann, ist schlimmer als keins — deshalb eigene Texte statt einer
+   Fassung, die für beide Seiten halb passt. Rahmen, Logo und Fußzeile teilen
+   sich beide über shell(). */
+
 function customerHtml(lead: LeadMail): string {
+  if (lead.kundenart === "geschaeft") return customerHtmlGewerbe(lead);
+
   const serviceName = lead.service ? getService(lead.service)?.name : undefined;
 
   const inner = `
@@ -283,6 +314,75 @@ function customerHtml(lead: LeadMail): string {
   );
 }
 
+function customerHtmlGewerbe(lead: LeadMail): string {
+  const serviceName = lead.service ? getService(lead.service)?.name : undefined;
+
+  const inner = `
+    <tr><td style="padding:30px 32px 8px">
+      <p style="margin:0;font:700 11px/1.4 Arial,sans-serif;letter-spacing:.16em;
+                text-transform:uppercase;color:${GOLD}">Ihre Anfrage ist angekommen</p>
+      <h1 style="margin:10px 0 0;font:800 24px/1.25 Arial,sans-serif;color:${NAVY}">
+        Vielen Dank, ${esc(lead.name.split(" ")[0])}.
+      </h1>
+      <p style="margin:16px 0 0;font:400 15px/1.7 Arial,sans-serif;color:#4a5568">
+        Wir haben Ihre Anfrage${serviceName ? ` zum Thema <strong style="color:${NAVY}">${esc(serviceName)}</strong>` : ""}
+        erhalten und melden uns innerhalb eines Werktags bei Ihnen.
+        Die Begehung Ihrer Objekte ist kostenlos und unverbindlich.
+      </p>
+    </td></tr>
+
+    ${
+      lead.konfigurator
+        ? `<tr><td style="padding:22px 32px 0">
+             <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+                    style="background:${SHELL};border-left:3px solid ${GOLD}">
+               <tr><td style="padding:16px 18px">
+                 <p style="margin:0 0 6px;font:700 11px/1.4 Arial,sans-serif;letter-spacing:.14em;
+                           text-transform:uppercase;color:#4a5568">Ihr Bedarf</p>
+                 <p style="margin:0;font:400 14px/1.7 Arial,sans-serif;color:${NAVY}">
+                   ${nl2br(lead.konfigurator)}
+                 </p>
+               </td></tr>
+             </table>
+           </td></tr>`
+        : ""
+    }
+
+    <tr><td style="padding:24px 32px 0">
+      <p style="margin:0 0 10px;font:700 13px/1.4 Arial,sans-serif;color:${NAVY}">Wie es weitergeht</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        ${[
+          "Wir rufen Sie an und klären den Umfang.",
+          "Wir begehen die Objekte gemeinsam — kostenlos.",
+          "Sie erhalten ein schriftliches Angebot mit Leistungsverzeichnis.",
+        ]
+          .map(
+            (step, i) => `
+          <tr><td style="padding:6px 0;font:400 14px/1.6 Arial,sans-serif;color:#4a5568">
+            <span style="display:inline-block;width:22px;font-weight:700;color:${GOLD}">${i + 1}.</span>
+            ${esc(step)}
+          </td></tr>`,
+          )
+          .join("")}
+      </table>
+    </td></tr>
+
+    <tr><td style="padding:22px 32px 30px">
+      <p style="margin:0;font:400 13px/1.7 Arial,sans-serif;color:#7a8496">
+        Das Angebot weist den Preis je Objekt und Monat aus und ist monatlich
+        kündbar. Ein Vertrag entsteht erst, wenn Sie es annehmen. Wenn es eilt,
+        erreichen Sie uns direkt unter
+        <a href="${business.phone.href}" style="color:${NAVY};font-weight:700">${esc(business.phone.display)}</a>.
+      </p>
+    </td></tr>`;
+
+  return shell(
+    `Ihre Anfrage bei ${business.shortName}`,
+    inner,
+    "Wir haben Ihre Anfrage erhalten und melden uns innerhalb eines Werktags.",
+  );
+}
+
 /* ------------------------------------------------------------------ Versand */
 
 export type MailOutcome = { internal: boolean; customer: boolean; demo: boolean };
@@ -305,7 +405,12 @@ export async function sendLeadMails(lead: LeadMail): Promise<MailOutcome> {
       from: cfg.from,
       to: process.env.LEAD_TO ?? business.email,
       replyTo: lead.email || undefined,
-      subject: `Neue Anfrage: ${lead.name}${lead.service ? ` — ${getService(lead.service)?.name}` : ""}`,
+      // Kundenart ganz vorn: Arian liest Betreffzeilen auf dem Sperrbildschirm,
+      // und dort entscheiden die ersten rund 20 Zeichen, ob er sofort öffnet.
+      // Genau das war sein "die kann ich sofort kontaktieren".
+      subject:
+        `${lead.kundenart === "geschaeft" ? "Geschäftskunde" : "Neue Anfrage"}: ` +
+        `${lead.name}${lead.service ? ` — ${getService(lead.service)?.name}` : ""}`,
       html: internalHtml(lead),
     });
     outcome.internal = true;

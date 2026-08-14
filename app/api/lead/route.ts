@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { bedarfText, serviceAusHauptleistung } from "@/lib/b2b";
 import { dbConfigured, insertLead } from "@/lib/db";
 import { leadSchema } from "@/lib/lead-schema";
 import { sendLeadMails } from "@/lib/mail";
@@ -57,6 +58,11 @@ export async function POST(request: Request) {
   // nichts tun, damit der Bot nicht merkt, dass er erkannt wurde.
   if (data.website) return NextResponse.json({ ok: true });
 
+  // Der Bedarfstext wird hier gebaut und nicht im Browser: Sonst könnte das
+  // Formular eine beliebige Zeichenkette schicken, und die Beschriftungen
+  // würden mit der Zeit von den Formularlabels abdriften.
+  const b2bText = data.b2b ? bedarfText(data.b2b) : undefined;
+
   const lead = {
     name: data.name,
     phone: data.phone,
@@ -65,9 +71,14 @@ export async function POST(request: Request) {
     plz: data.plz,
     ort: data.ort,
     message: data.message || undefined,
-    service: data.service || undefined,
-    konfigurator: data.konfigurator || undefined,
+    service: data.b2b
+      ? serviceAusHauptleistung(data.b2b.hauptleistung)
+      : data.service || undefined,
+    konfigurator: b2bText ?? data.konfigurator ?? undefined,
     source: data.source || "formular",
+    // Fehlt das Feld, stammt die Anfrage aus einem älteren, noch gecachten
+    // Bundle — dort gab es nur den Privatkundenweg.
+    kundenart: data.kundenart ?? "privat",
   };
 
   // Reihenfolge und Fehlerbehandlung sind hier das Wesentliche: Ein Lead darf

@@ -2,10 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
 import { Container } from "@/components/site/container";
-import { dbConfigured, listLeads, type LeadRow } from "@/lib/db";
+import {
+  countByService,
+  dbConfigured,
+  listLeads,
+  type BereichZeile,
+  type KundenartFilter,
+  type LeadRow,
+} from "@/lib/db";
 import { getService } from "@/lib/services";
 import { cn } from "@/lib/utils";
 import { logout } from "./actions";
+import { Statistik } from "./statistik";
 
 export const metadata: Metadata = {
   title: "Anfragen",
@@ -23,6 +31,30 @@ const statusStyles: Record<string, string> = {
   verloren: "bg-mist text-ink-muted",
 };
 
+const kundenartLabel: Record<string, string> = {
+  geschaeft: "Geschäftskunde",
+  privat: "Privatkunde",
+};
+
+const kundenartStyles: Record<string, string> = {
+  geschaeft: "bg-navy text-gold-soft",
+  privat: "bg-mist text-ink-muted",
+};
+
+/* Die Filterleiste sind Links, keine Schaltflächen mit Zustand: Damit bleibt
+   diese Seite eine Server Component, der Filter überlebt das revalidatePath
+   nach dem Speichern, und die gefilterte Ansicht ist als URL teilbar. */
+const filter: { id: KundenartFilter | "alle"; label: string }[] = [
+  { id: "alle", label: "Alle" },
+  { id: "geschaeft", label: "Geschäftskunden" },
+  { id: "privat", label: "Privatkunden" },
+  { id: "ohne", label: "Nicht zugeordnet" },
+];
+
+function istFilter(v: string | undefined): KundenartFilter | undefined {
+  return v === "geschaeft" || v === "privat" || v === "ohne" ? v : undefined;
+}
+
 function when(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleString("de-DE", {
@@ -34,8 +66,15 @@ function when(iso: string): string {
   });
 }
 
-export default async function InternPage() {
+export default async function InternPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ kundenart?: string }>;
+}) {
+  const aktiv = istFilter((await searchParams).kundenart);
+
   let leads: LeadRow[] = [];
+  let bereiche: BereichZeile[] = [];
   let error: string | null = null;
 
   if (!dbConfigured) {
@@ -44,7 +83,7 @@ export default async function InternPage() {
       "sobald die Neon-Datenbank verbunden ist, erscheinen sie hier.";
   } else {
     try {
-      leads = await listLeads();
+      [leads, bereiche] = await Promise.all([listLeads(200, aktiv), countByService()]);
     } catch (err) {
       error =
         "Die Datenbank ist nicht erreichbar. Anfragen kommen weiterhin per E-Mail an.";
@@ -61,7 +100,7 @@ export default async function InternPage() {
           <div>
             <h1 className="font-display text-2xl text-navy">Anfragen</h1>
             <p className="mt-1 text-sm text-ink-muted">
-              {leads.length} gespeichert
+              {leads.length} {aktiv ? "in dieser Ansicht" : "gespeichert"}
               {offen > 0 && (
                 <>
                   {" · "}
@@ -70,20 +109,55 @@ export default async function InternPage() {
               )}
             </p>
           </div>
-          <form action={logout}>
-            <button
-              type="submit"
+          <div className="flex items-center gap-3">
+            <Link
+              href="/intern/preise"
               className="rounded-sm border border-mist px-4 py-2 text-sm font-semibold text-navy hover:border-gold"
             >
-              Abmelden
-            </button>
-          </form>
+              Preise
+            </Link>
+            <form action={logout}>
+              <button
+                type="submit"
+                className="rounded-sm border border-mist px-4 py-2 text-sm font-semibold text-navy hover:border-gold"
+              >
+                Abmelden
+              </button>
+            </form>
+          </div>
         </div>
 
         {error && (
           <p className="mt-8 rounded-sm border border-gold/40 bg-gold/8 px-4 py-3 text-sm text-navy">
             {error}
           </p>
+        )}
+
+        {!error && (
+          <>
+            <nav aria-label="Nach Kundenart filtern" className="mt-6 flex flex-wrap gap-2">
+              {filter.map((f) => {
+                const gewaehlt = f.id === (aktiv ?? "alle");
+                return (
+                  <Link
+                    key={f.id}
+                    href={f.id === "alle" ? "/intern" : `/intern?kundenart=${f.id}`}
+                    aria-current={gewaehlt ? "page" : undefined}
+                    className={cn(
+                      "rounded-sm border px-4 py-2 font-display text-sm font-bold transition-colors",
+                      gewaehlt
+                        ? "border-navy bg-navy text-white"
+                        : "border-mist bg-surface text-navy hover:border-gold",
+                    )}
+                  >
+                    {f.label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <Statistik rows={bereiche} />
+          </>
         )}
 
         {leads.length > 0 && (
@@ -101,6 +175,19 @@ export default async function InternPage() {
                       >
                         {lead.status}
                       </span>
+                      {/* Kein Badge bei leerer Spalte: Diese Zeilen stammen von
+                          vor der Trennung, und Schweigen ist das ehrliche
+                          Signal für "wissen wir nicht". */}
+                      {lead.kundenart && (
+                        <span
+                          className={cn(
+                            "ml-1.5 inline-block rounded-xs px-2 py-0.5 font-display text-[0.66rem] font-bold uppercase tracking-[0.12em]",
+                            kundenartStyles[lead.kundenart] ?? kundenartStyles.privat,
+                          )}
+                        >
+                          {kundenartLabel[lead.kundenart] ?? lead.kundenart}
+                        </span>
+                      )}
                       <h2 className="mt-2 font-display text-lg text-navy">
                         {lead.name}
                         {lead.service && (
@@ -159,7 +246,9 @@ export default async function InternPage() {
 
         {!error && leads.length === 0 && (
           <p className="mt-8 text-sm text-ink-muted">
-            Noch keine Anfragen eingegangen.
+            {aktiv
+              ? "In dieser Ansicht steht nichts. Über „Alle“ sehen Sie wieder jede Anfrage."
+              : "Noch keine Anfragen eingegangen."}
           </p>
         )}
       </Container>

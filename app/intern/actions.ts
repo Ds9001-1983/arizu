@@ -9,7 +9,16 @@ import {
   sessionMaxAge,
   verifyPassword,
 } from "@/lib/auth";
-import { type LeadStatus, setBillingAddress, updateLead } from "@/lib/db";
+import {
+  type LeadKundenart,
+  type LeadStatus,
+  clearRate,
+  clearRates,
+  setBillingAddress,
+  setRate,
+  updateLead,
+} from "@/lib/db";
+import { configurators, getConfigurator } from "@/lib/pricing";
 
 /**
  * Fehlversuche pro Instanz mitzählen.
@@ -62,6 +71,7 @@ export async function logout() {
 }
 
 const STATUS: LeadStatus[] = ["neu", "kontaktiert", "angebot", "gewonnen", "verloren"];
+const KUNDENART: LeadKundenart[] = ["privat", "geschaeft"];
 
 export async function saveLead(formData: FormData) {
   const id = Number(formData.get("id"));
@@ -70,6 +80,13 @@ export async function saveLead(formData: FormData) {
   const statusRaw = String(formData.get("status") ?? "");
   const status = STATUS.includes(statusRaw as LeadStatus)
     ? (statusRaw as LeadStatus)
+    : undefined;
+
+  // Array-Whitelist statt zod, wie beim Status: /intern liegt hinter der
+  // Anmeldung, und zod gehört in diesem Projekt ausschließlich nach app/api/.
+  const kundenartRaw = String(formData.get("kundenart") ?? "");
+  const kundenart = KUNDENART.includes(kundenartRaw as LeadKundenart)
+    ? (kundenartRaw as LeadKundenart)
     : undefined;
 
   await updateLead(id, {
@@ -83,6 +100,7 @@ export async function saveLead(formData: FormData) {
     konfigurator: String(formData.get("konfigurator") ?? "") || undefined,
     note: String(formData.get("note") ?? "") || undefined,
     status,
+    kundenart,
   });
 
   // Getrennt, weil diese Felder auch wieder geleert werden können müssen —
@@ -97,4 +115,69 @@ export async function saveLead(formData: FormData) {
   revalidatePath("/intern");
   revalidatePath(`/intern/${id}`);
   redirect(`/intern/${id}?gespeichert=1`);
+}
+
+/* ------------------------------------------------------------ Preispflege */
+
+/**
+ * Die öffentlichen Seiten sind statisch vorgerendert. Ohne diese Aufrufe
+ * stünde der alte Preis dort bis zum nächsten Deploy.
+ *
+ * Bewusst die VIER KONKRETEN Pfade und nicht `revalidatePath("/leistungen/
+ * [slug]", "page")`. Das Muster wäre die naheliegende Kurzform, macht die
+ * Leistungsseiten hier aber dauerhaft zu 404: Die Route steht auf
+ * `dynamicParams = false`, und nach dem Verwerfen des Musters findet Next
+ * keinen Fallback mehr, um sie neu zu erzeugen — im Log erscheint
+ * `NoFallbackError`. Einzelne Pfade werden dagegen sauber regeneriert, weil
+ * sie in `generateStaticParams` stehen.
+ */
+function preiseAuffrischen() {
+  revalidatePath("/");
+  for (const slug of Object.keys(configurators)) {
+    revalidatePath(`/leistungen/${slug}`);
+  }
+  revalidatePath("/intern/preise");
+}
+
+export async function savePreise(formData: FormData) {
+  const slug = String(formData.get("konfigurator") ?? "");
+  const spec = getConfigurator(slug);
+  if (!spec) return;
+
+  // Über die im Code bekannten Felder iterieren und damit das Formular
+  // befragen — nie umgekehrt. So kann ein manipuliertes Feld keinen fremden
+  // Schlüssel in die Tabelle bringen.
+  for (const f of spec.rateFields) {
+    const roh = String(formData.get(`satz.${f.key}`) ?? "").trim();
+
+    if (roh === "") {
+      await clearRate(slug, f.key);
+      continue;
+    }
+
+    // Arian tippt "10,50". Number() macht daraus NaN.
+    const n = Number(roh.replace(/\./g, "").replace(",", "."));
+
+    /* Technische Grenzen, KEINE kaufmännische Bewertung: NaN oder ein
+       negativer Betrag würden die Seite kaputtrechnen. Dass ein Preis zu
+       niedrig sein könnte, wird hier bewusst NICHT geprüft — der
+       Auftraggeber hat sich gegen Warnlogik entschieden. Bitte hier auch
+       später keine Mindestlohn- oder Marktprüfung "nachrüsten", ohne das
+       vorher abzustimmen. */
+    if (!Number.isFinite(n) || n < 0 || n > 100_000) continue;
+
+    await setRate(slug, f.key, n);
+  }
+
+  preiseAuffrischen();
+  redirect(`/intern/preise?gespeichert=${slug}#${slug}`);
+}
+
+export async function resetPreise(formData: FormData) {
+  const slug = String(formData.get("konfigurator") ?? "");
+  if (!getConfigurator(slug)) return;
+
+  await clearRates(slug);
+  preiseAuffrischen();
+  redirect(`/intern/preise?gespeichert=${slug}#${slug}`);
 }

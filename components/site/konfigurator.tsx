@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Info, MessageCircle, Phone } from 
 import { whatsappLink, whatsappText, type AnfrageDaten } from "@/lib/anfrage-text";
 import { business } from "@/lib/business";
 import {
+  type Rates,
   type Values,
   defaultValues,
   estimateRange,
@@ -67,6 +68,7 @@ const FELD =
 
 export function Konfigurator({
   slug,
+  rates,
   className,
 }: {
   /**
@@ -76,6 +78,16 @@ export function Konfigurator({
    * Server-Abhängigkeiten, also holt sie sich der Client selbst.
    */
   slug: string;
+  /**
+   * Die geltenden Preissätze. Anders als `calc` sind das reine Zahlen und
+   * damit sehr wohl serialisierbar — die Server-Komponente lädt Arians
+   * Überschreibungen aus der Datenbank und reicht sie hier durch.
+   *
+   * Bewusst PFLICHT und ohne Default: Ein Default machte aus einer vergessenen
+   * Aufrufstelle einen stillen Fehler mit alten Preisen statt eines
+   * Compilerfehlers.
+   */
+  rates: Rates;
   className?: string;
 }) {
   const spec = getConfigurator(slug)!;
@@ -89,7 +101,7 @@ export function Konfigurator({
   const [serverFehler, setServerFehler] = useState<string | null>(null);
 
   const result = useMemo(() => {
-    const calc = spec.calc(values);
+    const calc = spec.calc(values, rates);
     const brutto = gross(calc.net);
     return {
       ...calc,
@@ -97,7 +109,9 @@ export function Konfigurator({
       oneOffGross: calc.oneOffNet ? gross(calc.oneOffNet) : undefined,
       summary: summarize(spec, values),
     };
-  }, [spec, values]);
+    // `rates` gehört in die Liste: Auf der Startseite wechselt der Besucher
+    // den Rechner, ohne dass die Komponente neu montiert wird.
+  }, [spec, values, rates]);
 
   const preisKurz = `ca. ${euro(result.range.low)} – ${euro(result.range.high)}`;
   const einmaligZeile = result.oneOffGross
@@ -164,6 +178,8 @@ export function Konfigurator({
         service: slug,
         konfigurator: anfrageText,
         source: quelle,
+        // Der Rechner steht ausschließlich im Privatkundenbereich.
+        kundenart: "privat",
         consent: true,
       }),
       // keepalive: Beim WhatsApp-Weg verlässt der Browser gleich die Seite.

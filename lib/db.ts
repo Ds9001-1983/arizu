@@ -23,6 +23,17 @@ function sql() {
 
 export type LeadStatus = "neu" | "kontaktiert" | "angebot" | "gewonnen" | "verloren";
 
+/**
+ * Privat- oder Geschäftskunde.
+ *
+ * `null` heißt "nicht zugeordnet" und meint ausschließlich Anfragen, die vor
+ * der Trennung eingegangen sind. Ein nachträgliches Auffüllen dieser Zeilen
+ * wäre eine Behauptung — manche davon könnten Hausverwaltungen gewesen sein.
+ * Deshalb bleiben sie leer und lassen sich im internen Bereich einzeln
+ * zuordnen.
+ */
+export type LeadKundenart = "privat" | "geschaeft";
+
 export type LeadRow = {
   id: number;
   created_at: string;
@@ -36,6 +47,7 @@ export type LeadRow = {
   service: string | null;
   konfigurator: string | null;
   source: string | null;
+  kundenart: string | null;
   status: LeadStatus;
   note: string | null;
   /* Rechnungsadresse. Kommt nie aus dem Formular, sondern wird von Arian
@@ -63,6 +75,7 @@ export async function initSchema(): Promise<void> {
       service       text,
       konfigurator  text,
       source        text,
+      kundenart     text,
       status        text        not null default 'neu',
       note          text,
       rg_name       text,
@@ -83,9 +96,34 @@ export async function initSchema(): Promise<void> {
   await q`alter table leads add column if not exists rg_strasse text`;
   await q`alter table leads add column if not exists rg_plz text`;
   await q`alter table leads add column if not exists rg_ort text`;
+  await q`alter table leads add column if not exists kundenart text`;
   // Die Inbox sortiert immer nach Eingang — dafür ein Index, damit das auch
   // bei einigen Tausend Leads schnell bleibt.
   await q`create index if not exists leads_created_at_idx on leads (created_at desc)`;
+
+  /* Preisüberschreibungen. Eine Zeile NUR je tatsächlich geändertem Satz —
+     nicht das ganze Preisbild als Abzug. Sonst erreichte eine spätere
+     Code-Änderung an einem Satz, den Arian nie angefasst hat, die Produktion
+     nie mehr.
+
+     `double precision`, nicht `numeric`: Der Neon-Treiber liefert `numeric`
+     als STRING zurück. Ein übersehenes Number() ergäbe dann
+     `preis += "0.90"`, also Zeichenkettenverkettung und absurde Beträge —
+     und `check:pricing` fasst die Datenbank bewusst nicht an, würde es also
+     nie fangen. `double precision` bildet außerdem exakt die Arithmetik der
+     bisherigen Modulkonstanten ab.
+
+     Neue Tabelle, deshalb keine begleitende `alter table`-Zeile — die
+     Konvention oben gilt ab der ersten nachträglich ergänzten Spalte. */
+  await q`
+    create table if not exists preise (
+      konfigurator text             not null,
+      schluessel   text             not null,
+      wert         double precision not null,
+      geaendert_am timestamptz      not null default now(),
+      primary key (konfigurator, schluessel)
+    )
+  `;
 }
 
 export async function insertLead(lead: {
@@ -99,26 +137,54 @@ export async function insertLead(lead: {
   service?: string | null;
   konfigurator?: string | null;
   source?: string | null;
+  kundenart?: string | null;
 }): Promise<number> {
   const q = sql();
   const rows = (await q`
     insert into leads (name, phone, email, strasse, plz, ort, message, service,
-                       konfigurator, source)
+                       konfigurator, source, kundenart)
     values (${lead.name}, ${lead.phone}, ${lead.email ?? null}, ${lead.strasse ?? null},
             ${lead.plz ?? null}, ${lead.ort ?? null}, ${lead.message ?? null},
-            ${lead.service ?? null}, ${lead.konfigurator ?? null}, ${lead.source ?? null})
+            ${lead.service ?? null}, ${lead.konfigurator ?? null}, ${lead.source ?? null},
+            ${lead.kundenart ?? null})
     returning id
   `) as { id: number }[];
   return rows[0].id;
 }
 
-export async function listLeads(limit = 200): Promise<LeadRow[]> {
+/** Filterwert der Lead-Inbox. "ohne" meint die Zeilen von vor der Trennung. */
+export type KundenartFilter = LeadKundenart | "ohne";
+
+/**
+ * Lead-Liste, optional nach Kundenart gefiltert.
+ *
+ * Gefiltert wird in SQL, nicht in JavaScript. Das ist keine Geschmacksfrage:
+ * Die Abfrage ist auf 200 Zeilen begrenzt. Bei tausend Anfragen, deren
+ * jüngste 200 zufällig alle privat sind, meldete ein Filter im Speicher
+ * "keine Geschäftskunden" — obwohl es welche gibt. Ein Filter, der still
+ * falsche Ergebnisse liefert, ist schlimmer als gar keiner.
+ *
+ * Zwei Eigenheiten, die hier sein müssen:
+ * - `is not distinct from` statt `=`, sonst trifft der Vergleich mit NULL
+ *   niemals eine Zeile und der Filter "ohne" käme immer leer zurück.
+ * - Die Casts `::boolean` und `::text` sind Pflicht, nicht Zierde: Ohne sie
+ *   kann Postgres bei einem NULL-Parameter den Typ nicht bestimmen und wirft.
+ * So bleibt es EIN Tagged Template ohne zusammengebautes `where` — die Regel
+ * aus dem Kommentar bei initSchema gilt weiter.
+ */
+export async function listLeads(
+  limit = 200,
+  filter?: KundenartFilter,
+): Promise<LeadRow[]> {
   const q = sql();
+  const alle = filter === undefined;
+  const gesucht = filter === "ohne" ? null : (filter ?? null);
   return (await q`
     select id, created_at, name, phone, email, strasse, plz, ort, message,
-           service, konfigurator, source, status, note,
+           service, konfigurator, source, kundenart, status, note,
            rg_name, rg_strasse, rg_plz, rg_ort
       from leads
+     where (${alle}::boolean or kundenart is not distinct from ${gesucht}::text)
      order by created_at desc
      limit ${limit}
   `) as LeadRow[];
@@ -128,7 +194,7 @@ export async function getLead(id: number): Promise<LeadRow | undefined> {
   const q = sql();
   const rows = (await q`
     select id, created_at, name, phone, email, strasse, plz, ort, message,
-           service, konfigurator, source, status, note,
+           service, konfigurator, source, kundenart, status, note,
            rg_name, rg_strasse, rg_plz, rg_ort
       from leads
      where id = ${id}
@@ -151,6 +217,10 @@ export async function updateLead(
     plz?: string | null;
     ort?: string | null;
     konfigurator?: string | null;
+    /* Wird nie geleert, nur zwischen zwei Werten umgeschaltet — deshalb ist
+       das coalesce unten hier richtig und es braucht kein Gegenstück wie bei
+       setBillingAddress. */
+    kundenart?: LeadKundenart;
     status?: LeadStatus;
     note?: string | null;
   },
@@ -166,6 +236,7 @@ export async function updateLead(
       plz          = coalesce(${patch.plz ?? null}, plz),
       ort          = coalesce(${patch.ort ?? null}, ort),
       konfigurator = coalesce(${patch.konfigurator ?? null}, konfigurator),
+      kundenart    = coalesce(${patch.kundenart ?? null}, kundenart),
       status       = coalesce(${patch.status ?? null}, status),
       note         = coalesce(${patch.note ?? null}, note)
     where id = ${id}
@@ -195,4 +266,99 @@ export async function setBillingAddress(
       rg_ort     = ${leer(rg.ort)}
     where id = ${id}
   `;
+}
+
+/* ================================================================ Statistik
+
+   Arians Frage aus dem Gespräch: "welche Bereiche werden am meisten benutzt".
+   Gezählt wird in SQL statt über die geladene Liste — die ist auf 200 Zeilen
+   begrenzt und beantwortete damit eine andere Frage, nämlich "unter den
+   letzten 200". Sobald der Betrieb läuft, wäre die Antwort still falsch.
+
+   ACHTUNG bei den `::int`-Casts: `count(*)` ist in Postgres ein `bigint`, und
+   der Neon-Treiber liefert `bigint` als STRING zurück — "12" statt 12. Ohne
+   Cast liefe Math.max() über Zeichenketten und die Balkenbreiten wären
+   Unsinn. Dasselbe gilt für jedes künftige count/sum in diesem Projekt.
+   ================================================================== */
+
+export type LeadZaehler = {
+  gesamt: number;
+  privat: number;
+  geschaeft: number;
+  ohne: number;
+};
+
+export async function countLeads(): Promise<LeadZaehler> {
+  const q = sql();
+  const rows = (await q`
+    select count(*)::int                                       as gesamt,
+           count(*) filter (where kundenart = 'privat')::int    as privat,
+           count(*) filter (where kundenart = 'geschaeft')::int as geschaeft,
+           count(*) filter (where kundenart is null)::int       as ohne
+      from leads
+  `) as LeadZaehler[];
+  return rows[0] ?? { gesamt: 0, privat: 0, geschaeft: 0, ohne: 0 };
+}
+
+/* ============================================================ Preispflege */
+
+export type PreisZeile = {
+  konfigurator: string;
+  schluessel: string;
+  wert: number;
+  geaendert_am: string;
+};
+
+/** Alle Überschreibungen in einem Rutsch — es sind höchstens rund 40. */
+export async function listRateOverrides(): Promise<PreisZeile[]> {
+  const q = sql();
+  return (await q`
+    select konfigurator, schluessel, wert, geaendert_am
+      from preise
+     order by konfigurator, schluessel
+  `) as PreisZeile[];
+}
+
+export async function setRate(
+  konfigurator: string,
+  schluessel: string,
+  wert: number,
+): Promise<void> {
+  const q = sql();
+  await q`
+    insert into preise (konfigurator, schluessel, wert, geaendert_am)
+    values (${konfigurator}, ${schluessel}, ${wert}, now())
+    on conflict (konfigurator, schluessel)
+    do update set wert = excluded.wert, geaendert_am = now()
+  `;
+}
+
+/** Zurücksetzen ist ein Löschen — danach gilt wieder der Wert aus dem Code. */
+export async function clearRate(
+  konfigurator: string,
+  schluessel: string,
+): Promise<void> {
+  const q = sql();
+  await q`delete from preise where konfigurator = ${konfigurator} and schluessel = ${schluessel}`;
+}
+
+export async function clearRates(konfigurator: string): Promise<void> {
+  const q = sql();
+  await q`delete from preise where konfigurator = ${konfigurator}`;
+}
+
+export type BereichZeile = {
+  service: string | null;
+  kundenart: string | null;
+  anzahl: number;
+};
+
+export async function countByService(): Promise<BereichZeile[]> {
+  const q = sql();
+  return (await q`
+    select service, kundenart, count(*)::int as anzahl
+      from leads
+     group by service, kundenart
+     order by count(*) desc
+  `) as BereichZeile[];
 }

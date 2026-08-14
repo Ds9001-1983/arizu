@@ -77,7 +77,16 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, source: "formular", consent: true }),
+        // kundenart ausdrücklich mitschicken statt weglassen: Sonst wären
+        // neue Anfragen nicht von den Altbeständen zu unterscheiden, die vor
+        // der Trennung eingingen. So heißt eine leere Spalte unmissverständlich
+        // "kam rein, bevor es die Weiche gab".
+        body: JSON.stringify({
+          ...data,
+          source: "formular",
+          kundenart: "privat",
+          consent: true,
+        }),
       });
       const json = (await res.json()) as { ok: boolean; error?: string };
       if (!res.ok || !json.ok) throw new Error(json.error ?? "Unbekannter Fehler");
