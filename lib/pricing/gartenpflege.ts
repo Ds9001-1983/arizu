@@ -1,4 +1,4 @@
-import { type ConfiguratorSpec, type Values, many, num, pick } from "./types";
+import { type Values, defineConfigurator, many, num, pick } from "./types";
 
 /* ==================================================================
    Gartenpflege — Rasenfläche, Beetfläche, Heckenmeter, Turnus.
@@ -21,18 +21,8 @@ import { type ConfiguratorSpec, type Values, many, num, pick } from "./types";
    400-m²-Garten das Doppelte des Marktpreises heraus.
    ================================================================== */
 
-// VERIFY: Sätze sind recherchierte Marktminima, von Arian zu bestätigen.
-const RATE = {
-  rasenPerSqm: 0.12,
-  beetPerSqm: 0.3,
-  unkrautFlat: 25, // Wege und Pflaster, pro Einsatz
-  vertikutierenPerSqm: 0.25, // einmal im Jahr
-  heckePerLfm: 3.5, // pro Schnitt, bis 2 m Höhe
-  gruenschnittProEinsatz: 15, // Anhänger, anteilig pro Einsatz
-  containerEinmalig: 140,
-} as const;
-
-/** Einsätze pro Monat. Saisonvertrag = März–Oktober, auf 12 Monate verteilt. */
+/** Einsätze pro Monat. Saisonvertrag = März–Oktober, auf 12 Monate verteilt.
+    Kalenderarithmetik, kein Preis — steht deshalb NICHT in den Rates. */
 const TURNUS: Record<string, { perMonth: number; label: string }> = {
   einmalig: { perMonth: 0, label: "einmalig" },
   zweiwoechentlich: { perMonth: 2.17, label: "alle 14 Tage" },
@@ -40,18 +30,62 @@ const TURNUS: Record<string, { perMonth: number; label: string }> = {
   saison: { perMonth: 1.08, label: "Saisonvertrag März–Oktober" },
 };
 
-// Anfahrt und Rüstzeit (Anhänger, Geräte) müssen pro Einsatz gedeckt sein.
-// VERIFY: Höhe mit Arian abstimmen.
-const MIN_ORDER_NET = 79;
-
-export const gartenpflege: ConfiguratorSpec = {
+export const gartenpflege = defineConfigurator({
   slug: "gartenpflege",
   title: "Gartenpflege berechnen",
   intro:
     "Flächen, Heckenmeter, Turnus — fertig. Leistungen, die nur ein- bis " +
     "zweimal im Jahr anfallen, weisen wir getrennt aus.",
 
-  minOrderNet: MIN_ORDER_NET,
+  /* Alle Werte netto. VERIFY: recherchierte Marktminima, von Arian zu
+     bestätigen. Belege im Kopf dieser Datei.
+
+     Zum Mindestauftragswert: Anfahrt und Rüstzeit (Anhänger, Geräte) müssen
+     pro Einsatz gedeckt sein. */
+  defaultRates: {
+    "je_einsatz.rasen": 0.12,
+    "je_einsatz.beet": 0.3,
+    "je_einsatz.unkraut": 25,
+    "je_einsatz.gruenschnitt": 15,
+    "einmalig.vertikutieren": 0.25,
+    "einmalig.hecke": 3.5,
+    "einmalig.container": 140,
+    mindestauftrag: 79,
+  },
+
+  rateFields: [
+    { key: "je_einsatz.rasen", label: "Rasen mähen", unit: "€/m²", group: "Bei jedem Einsatz" },
+    { key: "je_einsatz.beet", label: "Beetpflege", unit: "€/m² Beetfläche", group: "Bei jedem Einsatz" },
+    { key: "je_einsatz.unkraut", label: "Unkraut auf Wegen", unit: "€ pauschal", group: "Bei jedem Einsatz" },
+    {
+      key: "je_einsatz.gruenschnitt",
+      label: "Grünschnitt mitnehmen",
+      unit: "€ pauschal",
+      group: "Bei jedem Einsatz",
+      hint: "Entfällt, wenn der Schnitt vor Ort bleibt.",
+    },
+    {
+      key: "einmalig.vertikutieren",
+      label: "Vertikutieren und düngen",
+      unit: "€/m² Rasen",
+      group: "Ein- bis zweimal im Jahr",
+    },
+    {
+      key: "einmalig.hecke",
+      label: "Heckenschnitt",
+      unit: "€/lfd. Meter",
+      group: "Ein- bis zweimal im Jahr",
+      hint: "Pro Schnitt, bis 2 m Höhe.",
+    },
+    { key: "einmalig.container", label: "Container", unit: "€ pauschal", group: "Ein- bis zweimal im Jahr" },
+    {
+      key: "mindestauftrag",
+      label: "Mindestauftragswert je Einsatz",
+      unit: "€ netto",
+      group: "Sonstiges",
+      hint: "Greift, wenn die Rechnung darunter landet.",
+    },
+  ],
 
   fields: [
     {
@@ -131,7 +165,7 @@ export const gartenpflege: ConfiguratorSpec = {
     },
   ],
 
-  calc(v: Values) {
+  calc(v: Values, r) {
     const rasen = num(v, "rasenflaeche", 400);
     const beet = num(v, "beetflaeche", 40);
     const hecke = num(v, "hecke", 0);
@@ -143,22 +177,22 @@ export const gartenpflege: ConfiguratorSpec = {
 
     // --- Kosten pro Einsatz ---
     let perVisit = 0;
-    if (leistungen.includes("rasen")) perVisit += rasen * RATE.rasenPerSqm;
-    if (leistungen.includes("beetpflege")) perVisit += beet * RATE.beetPerSqm;
-    if (leistungen.includes("unkraut")) perVisit += RATE.unkrautFlat;
+    if (leistungen.includes("rasen")) perVisit += rasen * r["je_einsatz.rasen"];
+    if (leistungen.includes("beetpflege")) perVisit += beet * r["je_einsatz.beet"];
+    if (leistungen.includes("unkraut")) perVisit += r["je_einsatz.unkraut"];
     if (pick(v, "entsorgung", "mitnehmen") === "mitnehmen") {
-      perVisit += RATE.gruenschnittProEinsatz;
+      perVisit += r["je_einsatz.gruenschnitt"];
     }
 
-    if (perVisit < MIN_ORDER_NET) {
-      perVisit = MIN_ORDER_NET;
+    if (perVisit < r.mindestauftrag) {
+      perVisit = r.mindestauftrag;
       notes.push("Mindestauftragswert pro Einsatz berücksichtigt.");
     }
 
     // --- Einmalposten, bewusst NICHT im Monatspreis ---
-    let oneOff = hecke * RATE.heckePerLfm;
-    if (einmalig.includes("vertikutieren")) oneOff += rasen * RATE.vertikutierenPerSqm;
-    if (einmalig.includes("container")) oneOff += RATE.containerEinmalig;
+    let oneOff = hecke * r["einmalig.hecke"];
+    if (einmalig.includes("vertikutieren")) oneOff += rasen * r["einmalig.vertikutieren"];
+    if (einmalig.includes("container")) oneOff += r["einmalig.container"];
 
     const oneOffParts: string[] = [];
     if (hecke > 0) oneOffParts.push(`Heckenschnitt ${hecke} lfd. Meter`);
@@ -197,4 +231,4 @@ export const gartenpflege: ConfiguratorSpec = {
       ...oneOffFields,
     };
   },
-};
+});

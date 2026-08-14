@@ -62,3 +62,4 @@ export function summarize(
 }
 
 export * from "./types";
+export * from "./rates";

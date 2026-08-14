@@ -1,4 +1,4 @@
-import { type ConfiguratorSpec, type Values, many, num, pick } from "./types";
+import { type Values, defineConfigurator, many, num, pick, rate } from "./types";
 
 /* ==================================================================
    Objektbetreuung — pro Wohneinheit und Monat, modular.
@@ -14,38 +14,60 @@ import { type ConfiguratorSpec, type Values, many, num, pick } from "./types";
    was er weglassen kann, statt ihn mit einer Pauschale zu erschlagen.
    ================================================================== */
 
-// VERIFY: Sätze sind recherchierte Marktminima, von Arian zu bestätigen.
-const GRUND_PRO_WE = 16; // €/Wohneinheit/Monat, Sichtkontrolle + Dokumentation
-
-const MODULE: Record<string, { perWE: number; label: string }> = {
-  treppenhaus: { perWE: 6, label: "Treppenhausreinigung" },
-  aussenanlagen: { perWE: 5, label: "Außenanlagen" },
-  muelltonnen: { perWE: 2.5, label: "Mülltonnenmanagement" },
-  kleinreparaturen: { perWE: 4, label: "Kleinreparaturen" },
-  schliessdienst: { perWE: 3, label: "Schließ- und Öffnungsdienste" },
-  winterdienst: { perWE: 7, label: "Winterdienst" },
-};
-
-/** Gewerbe und WEG bedeuten mehr Abstimmung und Dokumentation. */
+/** Gewerbe und WEG bedeuten mehr Abstimmung und Dokumentation.
+    Faktoren, keine Preise — stehen deshalb NICHT in den Rates. */
 const OBJEKTART: Record<string, { factor: number; label: string }> = {
   mfh: { factor: 1, label: "Mehrfamilienhaus" },
   weg: { factor: 1.05, label: "WEG mit Verwaltung" },
   gewerbe: { factor: 1.15, label: "Gewerbeobjekt" },
 };
 
-// Unter dieser Monatspauschale trägt sich ein Betreuungsvertrag nicht:
-// Anfahrten, Doku und Erreichbarkeit fallen unabhängig von der Objektgröße an.
-// VERIFY: Höhe mit Arian abstimmen.
-const MIN_ORDER_NET = 149;
-
-export const objektbetreuung: ConfiguratorSpec = {
+export const objektbetreuung = defineConfigurator({
   slug: "objektbetreuung",
   title: "Objektbetreuung berechnen",
   intro:
     "Sie wählen die Module, wir zeigen den monatlichen Rahmen. Ein " +
     "Betreuungsvertrag läuft monatlich kündbar.",
 
-  minOrderNet: MIN_ORDER_NET,
+  /* Alle Werte netto je Wohneinheit und Monat. VERIFY: recherchierte
+     Marktminima, von Arian zu bestätigen. Belege im Kopf dieser Datei.
+
+     Zum Mindestauftragswert: Unter dieser Monatspauschale trägt sich ein
+     Betreuungsvertrag nicht — Anfahrten, Dokumentation und Erreichbarkeit
+     fallen unabhängig von der Objektgröße an. */
+  defaultRates: {
+    grundbetreuung: 16,
+    "modul.treppenhaus": 6,
+    "modul.aussenanlagen": 5,
+    "modul.muelltonnen": 2.5,
+    "modul.kleinreparaturen": 4,
+    "modul.schliessdienst": 3,
+    "modul.winterdienst": 7,
+    mindestauftrag: 149,
+  },
+
+  rateFields: [
+    {
+      key: "grundbetreuung",
+      label: "Grundbetreuung",
+      unit: "€/Einheit/Monat",
+      group: "Grundpreis",
+      hint: "Sichtkontrolle und Dokumentation, immer enthalten.",
+    },
+    { key: "modul.treppenhaus", label: "Treppenhausreinigung", unit: "€/Einheit/Monat", group: "Zubuchbare Module" },
+    { key: "modul.aussenanlagen", label: "Außenanlagen", unit: "€/Einheit/Monat", group: "Zubuchbare Module" },
+    { key: "modul.muelltonnen", label: "Mülltonnenmanagement", unit: "€/Einheit/Monat", group: "Zubuchbare Module" },
+    { key: "modul.kleinreparaturen", label: "Kleinreparaturen", unit: "€/Einheit/Monat", group: "Zubuchbare Module" },
+    { key: "modul.schliessdienst", label: "Schließ- und Öffnungsdienste", unit: "€/Einheit/Monat", group: "Zubuchbare Module" },
+    { key: "modul.winterdienst", label: "Winterdienst", unit: "€/Einheit/Monat", group: "Zubuchbare Module" },
+    {
+      key: "mindestauftrag",
+      label: "Mindestpauschale im Monat",
+      unit: "€ netto",
+      group: "Sonstiges",
+      hint: "Greift bei kleinen Objekten — häufigster Grund, warum eine Senkung nicht durchschlägt.",
+    },
+  ],
 
   fields: [
     {
@@ -87,20 +109,20 @@ export const objektbetreuung: ConfiguratorSpec = {
     },
   ],
 
-  calc(v: Values) {
+  calc(v: Values, r) {
     const einheiten = Math.max(1, num(v, "einheiten", 8));
     const art = OBJEKTART[pick(v, "objektart", "mfh")] ?? OBJEKTART.mfh;
     const notes: string[] = [];
 
-    let perWE = GRUND_PRO_WE;
+    let perWE = r.grundbetreuung;
     for (const id of many(v, "module")) {
-      perWE += MODULE[id]?.perWE ?? 0;
+      perWE += rate(r, `modul.${id}`, 0);
     }
 
     let net = perWE * einheiten * art.factor;
 
-    if (net < MIN_ORDER_NET) {
-      net = MIN_ORDER_NET;
+    if (net < r.mindestauftrag) {
+      net = r.mindestauftrag;
       notes.push("Mindestpauschale für die Objektbetreuung berücksichtigt.");
     }
 
@@ -115,4 +137,4 @@ export const objektbetreuung: ConfiguratorSpec = {
 
     return { net, unit: "pro Monat", notes };
   },
-};
+});

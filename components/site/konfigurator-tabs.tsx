@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { ConfiguratorSlug } from "@/lib/pricing";
+import type { ConfiguratorSlug, Rates } from "@/lib/pricing";
 import { services } from "@/lib/services";
 import { cn } from "@/lib/utils";
 import { Konfigurator } from "./konfigurator";
@@ -13,7 +13,14 @@ import { Konfigurator } from "./konfigurator";
  * der Besucher wechseln, ohne die Seite zu verlassen — er soll die Zahl
  * sehen, bevor er weiterklickt.
  */
-export function KonfiguratorTabs({ initial = "entruempelung" }: { initial?: ConfiguratorSlug }) {
+export function KonfiguratorTabs({
+  rates,
+  initial = "entruempelung",
+}: {
+  /** Sätze aller vier Rechner, weil hier zwischen ihnen gewechselt wird. */
+  rates: Record<ConfiguratorSlug, Rates>;
+  initial?: ConfiguratorSlug;
+}) {
   const [active, setActive] = useState<ConfiguratorSlug>(initial);
 
   return (
@@ -47,7 +54,7 @@ export function KonfiguratorTabs({ initial = "entruempelung" }: { initial?: Conf
       </div>
 
       <div id={`konfigurator-${active}`} role="tabpanel" className="mt-5">
-        <Konfigurator key={active} slug={active} />
+        <Konfigurator key={active} slug={active} rates={rates[active]} />
       </div>
     </div>
   );

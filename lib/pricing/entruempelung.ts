@@ -1,11 +1,4 @@
-import {
-  type ConfiguratorSpec,
-  type Values,
-  many,
-  num,
-  pick,
-  travelFee,
-} from "./types";
+import { type Values, defineConfigurator, many, num, pick, rate, travelFee } from "./types";
 
 /* ==================================================================
    Entrümpelung — der Konfigurator aus dem Kundengespräch.
@@ -18,47 +11,70 @@ import {
    ≈ 50 €/m². Angesetzt wird jeweils der untere Rand.
    ================================================================== */
 
-// VERIFY: Alle Sätze sind recherchierte Marktminima und müssen von Arian
-// bestätigt werden, bevor die Seite live geht.
-const FUELLGRAD: Record<string, number> = {
-  wenig: 15,
-  normal: 20,
-  voll: 28,
-  messie: 38,
-};
-
-// Zugangs-Zuschlag als €/m², weil der Aufwand mit der Menge skaliert:
-// jedes Möbelstück muss die Treppe runter, nicht nur einmal der Weg.
-// VERIFY: Aus dem Marktbeispiel abgeleitet (5. OG ohne Aufzug ≈ +12 €/m²),
-// bewusst konservativ nach unten gesetzt.
-const ZUGANG: Record<string, number> = {
-  eg_aufzug: 0,
-  og12: 2,
-  og35: 5,
-  keller_dach: 3,
-};
-
-// Unter ~290 € netto deckt ein Einsatz Anfahrt, Container und zwei
-// Arbeitsstunden nicht. Seit 01.01.2026 gilt in der Branche ein
-// allgemeinverbindlicher Mindestlohn von 15,00 €/h — mit Lohnnebenkosten,
-// Fahrzeug und Entsorgung liegt die interne Stunde deutlich darüber.
-// VERIFY: Höhe mit Arian abstimmen.
-const MIN_ORDER_NET = 290;
-
-const EXTRAS: Record<string, { flat?: number; perSqm?: number }> = {
-  endreinigung: { perSqm: 3.5 }, // Grundreinigung nach dem Räumen
-  sondermuell: { flat: 180 }, // Farben, Öle, Asbestverdacht separat
-  moebeldemontage: { flat: 120 },
-};
-
-export const entruempelung: ConfiguratorSpec = {
+export const entruempelung = defineConfigurator({
   slug: "entruempelung",
   title: "Entrümpelung berechnen",
   intro:
     "Vier Angaben genügen für einen Richtpreis. Die Besichtigung vor Ort ist " +
     "kostenlos — erst danach steht der Festpreis.",
 
-  minOrderNet: MIN_ORDER_NET,
+  /* Alle Werte netto. VERIFY: recherchierte Marktminima, von Arian zu
+     bestätigen, bevor die Seite live geht. Die Belege stehen im Kopf dieser
+     Datei — beim Ändern eines Standards bitte mitziehen und
+     `npm run check:pricing` laufen lassen (AGENTS.md).
+
+     Zum Zugangs-Zuschlag: als €/m², weil der Aufwand mit der Menge skaliert —
+     jedes Möbelstück muss die Treppe runter, nicht nur einmal der Weg. Aus
+     dem Marktbeispiel abgeleitet (5. OG ohne Aufzug ≈ +12 €/m²), bewusst
+     konservativ nach unten gesetzt.
+
+     Zum Mindestauftragswert: Unter ~290 € netto deckt ein Einsatz Anfahrt,
+     Container und zwei Arbeitsstunden nicht. Seit 01.01.2026 gilt ein
+     allgemeinverbindlicher Mindestlohn von 15,00 €/h — mit Lohnnebenkosten,
+     Fahrzeug und Entsorgung liegt die interne Stunde deutlich darüber. */
+  defaultRates: {
+    "fuellgrad.wenig": 15,
+    "fuellgrad.normal": 20,
+    "fuellgrad.voll": 28,
+    "fuellgrad.messie": 38,
+    "zugang.eg_aufzug": 0,
+    "zugang.og12": 2,
+    "zugang.og35": 5,
+    "zugang.keller_dach": 3,
+    "extra.endreinigung": 3.5,
+    "extra.sondermuell": 180,
+    "extra.moebeldemontage": 120,
+    "anfahrt.pro_km": 0.9,
+    mindestauftrag: 290,
+  },
+
+  rateFields: [
+    { key: "fuellgrad.wenig", label: "Wenig Inventar", unit: "€/m²", group: "Grundpreis nach Füllgrad" },
+    { key: "fuellgrad.normal", label: "Normal möbliert", unit: "€/m²", group: "Grundpreis nach Füllgrad" },
+    { key: "fuellgrad.voll", label: "Voll", unit: "€/m²", group: "Grundpreis nach Füllgrad" },
+    { key: "fuellgrad.messie", label: "Stark vermüllt", unit: "€/m²", group: "Grundpreis nach Füllgrad" },
+    { key: "zugang.eg_aufzug", label: "Erdgeschoss oder Aufzug", unit: "€/m²", group: "Zuschlag nach Zugang" },
+    { key: "zugang.og12", label: "1.–2. OG ohne Aufzug", unit: "€/m²", group: "Zuschlag nach Zugang" },
+    { key: "zugang.og35", label: "3.–5. OG ohne Aufzug", unit: "€/m²", group: "Zuschlag nach Zugang" },
+    { key: "zugang.keller_dach", label: "Keller oder Dachboden", unit: "€/m²", group: "Zuschlag nach Zugang" },
+    { key: "extra.endreinigung", label: "Grundreinigung nach dem Räumen", unit: "€/m²", group: "Zusatzleistungen" },
+    { key: "extra.sondermuell", label: "Sondermüll entsorgen", unit: "€ pauschal", group: "Zusatzleistungen" },
+    { key: "extra.moebeldemontage", label: "Möbel demontieren", unit: "€ pauschal", group: "Zusatzleistungen" },
+    {
+      key: "anfahrt.pro_km",
+      label: "Anfahrt",
+      unit: "€/km",
+      group: "Sonstiges",
+      hint: "Erst ab dem 21. Kilometer, die ersten 20 bleiben frei.",
+    },
+    {
+      key: "mindestauftrag",
+      label: "Mindestauftragswert",
+      unit: "€ netto",
+      group: "Sonstiges",
+      hint: "Greift, wenn die Rechnung darunter landet — häufigster Grund, warum eine Senkung nicht durchschlägt.",
+    },
+  ],
 
   fields: [
     {
@@ -124,25 +140,27 @@ export const entruempelung: ConfiguratorSpec = {
     },
   ],
 
-  calc(v: Values) {
+  calc(v: Values, r) {
     const flaeche = num(v, "flaeche", 60);
-    const rate = FUELLGRAD[pick(v, "fuellgrad", "normal")] ?? FUELLGRAD.normal;
-    const zugang = ZUGANG[pick(v, "zugang", "eg_aufzug")] ?? 0;
+    const satz = rate(r, `fuellgrad.${pick(v, "fuellgrad", "normal")}`, r["fuellgrad.normal"]);
+    const zugang = rate(r, `zugang.${pick(v, "zugang", "eg_aufzug")}`, 0);
     const notes: string[] = [];
 
-    let net = flaeche * (rate + zugang);
+    let net = flaeche * (satz + zugang);
 
-    const anfahrt = travelFee(num(v, "anfahrt", 0));
+    const anfahrt = travelFee(num(v, "anfahrt", 0), r["anfahrt.pro_km"]);
     if (anfahrt > 0) net += anfahrt;
 
+    // Flächenabhängig oder pauschal — die Unterscheidung steckt jetzt hier
+    // statt in einer Datenstruktur, weil ein Satz in den Rates nur eine Zahl
+    // sein kann.
     for (const id of many(v, "extras")) {
-      const e = EXTRAS[id];
-      if (!e) continue;
-      net += (e.flat ?? 0) + (e.perSqm ?? 0) * flaeche;
+      const wert = rate(r, `extra.${id}`, 0);
+      net += id === "endreinigung" ? wert * flaeche : wert;
     }
 
-    if (net < MIN_ORDER_NET) {
-      net = MIN_ORDER_NET;
+    if (net < r.mindestauftrag) {
+      net = r.mindestauftrag;
       notes.push("Mindestauftragswert für einen Einsatz berücksichtigt.");
     }
 
@@ -153,4 +171,4 @@ export const entruempelung: ConfiguratorSpec = {
 
     return { net, unit: "einmalig", notes };
   },
-};
+});

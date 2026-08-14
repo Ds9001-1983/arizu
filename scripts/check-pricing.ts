@@ -6,11 +6,28 @@
    1. das Beispiel aus dem Kundengespräch (60 m², 3. OG, 30 km Anfahrt),
    2. dass die Marktrecherche-Belege reproduziert werden,
    3. Grenzwerte (Minimum, Maximum, alle Extras),
-   4. dass jeder Konfigurator mit seinen Defaults einen plausiblen Wert liefert.
+   4. dass jeder Konfigurator mit seinen Defaults einen plausiblen Wert liefert,
+   5. dass Sätze und Pflegeoberfläche zusammenpassen und jeder Satz wirkt.
+
+   WICHTIG, seit Arian Preise selbst ändern kann (14.08.2026): Geprüft werden
+   ausschließlich die CODE-STANDARDS aus `spec.defaultRates`. Die
+   Überschreibungen, die Arian unter /intern/preise einträgt, sind bewusst
+   ungeprüft — sie haben keine Recherchequelle, gegen die man sie halten
+   könnte, und der Auftraggeber hat sich ausdrücklich gegen Warn- und
+   Grenzwertlogik entschieden. Dieses Skript sagt also: "Der
+   Auslieferungszustand ist marktgerecht", nicht: "Was gerade auf der Seite
+   steht, ist marktgerecht". Die Datenbank wird hier nie angefasst.
    ================================================================== */
 
-import { configurators, defaultValues, estimateRange, euro, gross } from "../lib/pricing";
-import type { ConfiguratorSpec, Values } from "../lib/pricing/types";
+import {
+  configurators,
+  defaultValues,
+  estimateRange,
+  euro,
+  gross,
+  resolveRates,
+} from "../lib/pricing";
+import type { ConfiguratorSpec, Rates, Values } from "../lib/pricing/types";
 
 let failed = 0;
 
@@ -20,9 +37,9 @@ function check(label: string, ok: boolean, detail: string) {
   console.log(`[${mark}] ${label}${detail ? ` — ${detail}` : ""}`);
 }
 
-function run(spec: ConfiguratorSpec, patch: Values = {}) {
+function run(spec: ConfiguratorSpec, patch: Values = {}, rates?: Rates) {
   const v = { ...defaultValues(spec), ...patch };
-  const r = spec.calc(v);
+  const r = spec.calc(v, rates ?? spec.defaultRates);
   const g = gross(r.net);
   const range = estimateRange(g);
   return { ...r, grossValue: g, range };
@@ -140,7 +157,11 @@ for (const [name, spec] of Object.entries(configurators)) {
   }
   const lo = run(spec, lows);
   const hi = run(spec, highs);
-  check(`${name}: Minimum greift Mindestauftragswert`, lo.net >= (spec.minOrderNet ?? 0), euro(lo.net));
+  check(
+    `${name}: Minimum greift Mindestauftragswert`,
+    lo.net >= (spec.defaultRates.mindestauftrag ?? 0),
+    euro(lo.net),
+  );
   check(`${name}: Maximum bleibt endlich und positiv`, Number.isFinite(hi.net) && hi.net > lo.net, euro(hi.net));
   check(`${name}: Spanne ist aufsteigend`, hi.range.low < hi.range.high, `${euro(hi.range.low)}–${euro(hi.range.high)}`);
 }
@@ -154,6 +175,69 @@ for (const [name, spec] of Object.entries(configurators)) {
     `${euro(r.grossValue)} ${r.unit}`,
   );
   check(`${name}: liefert mindestens einen Hinweis`, r.notes.length > 0, `${r.notes.length}`);
+}
+
+console.log("\n=== 5. Sätze und Pflegeoberfläche ===");
+for (const [name, spec] of Object.entries(configurators)) {
+  const satzKeys = Object.keys(spec.defaultRates).sort();
+  const feldKeys = spec.rateFields.map((f) => f.key).sort();
+
+  // Fängt beides: einen Satz, den Arian gar nicht bearbeiten kann, und ein
+  // Eingabefeld, das ins Leere zeigt.
+  check(
+    `${name}: jeder Satz hat genau ein Eingabefeld`,
+    satzKeys.join("|") === feldKeys.join("|"),
+    `${satzKeys.length} Sätze, ${feldKeys.length} Felder`,
+  );
+
+  // Ohne Überschreibung muss exakt das Verhalten von vorher herauskommen.
+  check(
+    `${name}: ohne Überschreibung gelten die Code-Standards`,
+    JSON.stringify(resolveRates(spec, [])) === JSON.stringify(spec.defaultRates),
+    "",
+  );
+
+  /* Der wichtigste Test des ganzen Umbaus: Wirkt sich jeder Satz überhaupt
+     aus? Wird beim Umstellen eine Stelle übersehen und liest weiter die alte
+     Modulkonstante, stimmen sämtliche Prüfungen oben trotzdem — nur Arians
+     Änderung bliebe wirkungslos, und niemand fände den Grund. Deshalb wird
+     jeder Satz verdoppelt und über eine kleine Matrix gerechnet: Defaults,
+     alle Minima, alle Maxima und jede Auswahloption einzeln. */
+  const matrix: Values[] = [{}];
+  const alleAn: Values = {};
+  const alleAus: Values = {};
+  for (const f of spec.fields) {
+    if (f.kind === "number") {
+      alleAus[f.id] = f.min;
+      alleAn[f.id] = f.max;
+    } else if (f.kind === "checkboxes") {
+      alleAus[f.id] = [];
+      alleAn[f.id] = f.options.map((o) => o.id);
+    }
+  }
+  matrix.push(alleAus, alleAn);
+  for (const f of spec.fields) {
+    if (f.kind !== "select") continue;
+    for (const o of f.options) matrix.push({ ...alleAn, [f.id]: o.id });
+  }
+
+  const nurKalkulation = new Set(
+    spec.rateFields.filter((f) => f.nurKalkulation).map((f) => f.key),
+  );
+  const wirkungslos = satzKeys.filter((key) => {
+    if (nurKalkulation.has(key)) return false;
+    const veraendert: Rates = { ...spec.defaultRates, [key]: spec.defaultRates[key] * 2 + 1 };
+    return !matrix.some((v) => {
+      const a = run(spec, v);
+      const b = run(spec, v, veraendert);
+      return a.net !== b.net || (a.oneOffNet ?? 0) !== (b.oneOffNet ?? 0);
+    });
+  });
+  check(
+    `${name}: jeder Satz wirkt sich auf den Preis aus`,
+    wirkungslos.length === 0,
+    wirkungslos.length ? `ohne Wirkung: ${wirkungslos.join(", ")}` : `${satzKeys.length} geprüft`,
+  );
 }
 
 console.log(

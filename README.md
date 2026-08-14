@@ -32,25 +32,35 @@ ohne Admin-Hash bleibt `/intern` gesperrt.
 | `npm run build` | Produktionsbuild |
 | `npm run lint` | ESLint |
 | `npm run check:pricing` | Rechnet die Konfiguratoren gegen Marktbelege und Grenzwerte nach |
-| `npm run qa` | Playwright: KI-Kennzeichnung, Konfigurator, Formular, Zugangsschutz |
+| `npm run qa` | Playwright: KI-Kennzeichnung, Konfigurator, Geschäftskunden, Formular, Zugangsschutz |
 | `npm run qa:ai` | Nur der Pflicht-Check der KI-Kennzeichnung |
-| `npm run db:init` | Tabelle `leads` in Neon anlegen (idempotent) |
+| `npm run db:init` | Tabellen `leads` und `preise` in Neon anlegen (idempotent) |
 | `npm run hash:password "…"` | Passwort-Hash für `/intern` erzeugen |
+
+> **Achtung bei `npm run qa`:** Die Suite schickt echte Anfragen durch die
+> Formulare. Ist in `.env.local` eine `DATABASE_URL` gesetzt, landen sie in
+> derselben Datenbank wie die echten Leads — erkennbar an „Dennis Sasse,
+> Römerstraße 23, Wiehl" und den Testeinträgen des Geschäftskundenformulars.
+> Vor dem Live-Gang entweder gegen eine getrennte Testdatenbank laufen lassen
+> oder die Zeilen danach löschen.
 
 ## Struktur
 
 ```
 app/
-  page.tsx                  Startseite
+  page.tsx                  Startseite, mit Weiche privat/geschäftlich
   leistungen/[slug]/        4 Leistungsseiten (statisch)
+  geschaeftskunden/         B2B-Bereich: Bedarfsabfrage ohne Richtpreis
   kontakt/                  Kontaktseite
-  intern/                   Lead-Inbox, per proxy.ts geschützt
+  intern/                   Lead-Inbox und Preispflege, per proxy.ts geschützt
   api/lead/                 Lead-Annahme (Node-Runtime)
   llms.txt/                 GEO-Datei für ChatGPT, Perplexity, Gemini
 lib/
   business.ts               Single Source of Truth für NAP-Daten
   services.ts               Leistungskatalog, 38 Einzelleistungen aus dem Flyer
+  b2b.ts                    Kataloge des Geschäftskundenbereichs, kein Preis
   pricing/                  Preislogik je Leistung, alle Werte VERIFY-markiert
+  rates-server.ts           Lädt Arians Preisüberschreibungen (nur serverseitig)
   seo.ts                    JSON-LD-Bausteine
   mail.ts · db.ts · auth.ts
 components/
