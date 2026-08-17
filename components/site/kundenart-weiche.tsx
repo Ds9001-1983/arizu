@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { ArrowRight, Building2, House } from "lucide-react";
+import { waehleKundenart } from "@/app/kundenart-actions";
+import type { LeadKundenart } from "@/lib/db";
 import { Container } from "./container";
 
 /* ==================================================================
@@ -12,37 +13,35 @@ import { Container } from "./container";
 
    ZWEI DINGE, DIE HIER ABSICHT SIND:
 
-   1. Keine Tab-Rollen. Naheliegend wäre role="tablist"/role="tab" wie in
-      konfigurator-tabs.tsx — hier aber falsch: Tabs schalten Bereiche
-      derselben Seite um, diese Weiche führt auf eine andere Route. Und
-      praktisch: qa-tests/konfigurator.spec.ts greift auf der Startseite
-      ungescopet mit getByRole("tabpanel") zu. Ein zweites Tablist auf "/"
-      ließe Playwrights Strict Mode sofort scheitern.
+   1. Keine Tab-Rollen. Tabs schalten Bereiche derselben Seite um; diese
+      Weiche sendet den Nutzer auf einen eigenständigen Seitenweg.
 
-   2. Keine Server Component mit Cookie, kein localStorage, kein Merken der
-      Wahl. Die Startseite ist vollstatisch; sie an ein Cookie zu hängen
-      hieße, die meistbesuchte Seite dynamisch auszuliefern — für einen
-      Komfortgewinn, den ein Betrieb mit überwiegend Erstbesuchern nie
-      einspielt. Der Ersatz kostet nichts: Der Geschäftskundenbereich hat
-      einen festen Platz in Kopf- und Fußzeile.
+   2. Kein Cookie, localStorage oder Drittanbieter-Tracking. Der bewusste
+      Klick wird als eine von zwei anonymen Summen serverseitig gezählt. Das
+      Formular ruft die Server Action erst beim Absenden auf — Link-Prefetch
+      und Suchmaschinenbesuche können die Statistik daher nicht aufblasen.
    ================================================================== */
 
 const wege = [
   {
-    href: "#richtpreis",
+    id: "privat" as const,
     icon: House,
     titel: "Ich bin Privatkunde",
     text: "Wohnung, Haus oder Garten. Richtpreis sofort, ohne Daten zu hinterlassen.",
-    cta: "Zum Richtpreisrechner",
+    cta: "Zum Privatkundenbereich",
   },
   {
-    href: "/geschaeftskunden",
+    id: "geschaeft" as const,
     icon: Building2,
     titel: "Ich frage für ein Unternehmen an",
     text: "Büro, Praxis, Wohnanlage oder Ladenlokal. Angebot nach kostenloser Begehung.",
     cta: "Zum Geschäftskundenbereich",
   },
 ];
+
+function actionFuer(kundenart: LeadKundenart) {
+  return waehleKundenart.bind(null, kundenart);
+}
 
 export function KundenartWeiche() {
   return (
@@ -62,28 +61,30 @@ export function KundenartWeiche() {
         </p>
         <ul className="mt-5 grid gap-4 sm:grid-cols-2">
           {wege.map((w) => (
-            <li key={w.href}>
-              <Link
-                href={w.href}
-                className="group flex h-full items-start gap-4 rounded-sm border border-white/15 bg-white/5 p-5 transition-colors hover:border-gold"
-              >
-                <w.icon className="mt-0.5 size-6 shrink-0 text-gold" aria-hidden />
-                <span className="block">
-                  <span className="block font-display text-[1.05rem] font-bold text-white">
-                    {w.titel}
+            <li key={w.id}>
+              <form action={actionFuer(w.id)} className="h-full">
+                <button
+                  type="submit"
+                  className="group flex h-full w-full items-start gap-4 rounded-sm border border-white/15 bg-white/5 p-5 text-left transition-colors hover:border-gold"
+                >
+                  <w.icon className="mt-0.5 size-6 shrink-0 text-gold" aria-hidden />
+                  <span className="block">
+                    <span className="block font-display text-[1.05rem] font-bold text-white">
+                      {w.titel}
+                    </span>
+                    <span className="mt-1.5 block text-sm leading-relaxed text-white/70">
+                      {w.text}
+                    </span>
+                    <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-gold">
+                      {w.cta}
+                      <ArrowRight
+                        className="size-4 transition-transform group-hover:translate-x-0.5"
+                        aria-hidden
+                      />
+                    </span>
                   </span>
-                  <span className="mt-1.5 block text-sm leading-relaxed text-white/70">
-                    {w.text}
-                  </span>
-                  <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-gold">
-                    {w.cta}
-                    <ArrowRight
-                      className="size-4 transition-transform group-hover:translate-x-0.5"
-                      aria-hidden
-                    />
-                  </span>
-                </span>
-              </Link>
+                </button>
+              </form>
             </li>
           ))}
         </ul>

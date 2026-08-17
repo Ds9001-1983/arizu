@@ -4,8 +4,10 @@ import { ArrowRight, Phone } from "lucide-react";
 import { Container } from "@/components/site/container";
 import {
   countByService,
+  countKundenartAuswahl,
   dbConfigured,
   listLeads,
+  type AuswahlZaehler,
   type BereichZeile,
   type KundenartFilter,
   type LeadRow,
@@ -75,6 +77,7 @@ export default async function InternPage({
 
   let leads: LeadRow[] = [];
   let bereiche: BereichZeile[] = [];
+  let auswahl: AuswahlZaehler = { privat: 0, geschaeft: 0, gesamt: 0 };
   let error: string | null = null;
 
   if (!dbConfigured) {
@@ -83,7 +86,11 @@ export default async function InternPage({
       "sobald die Neon-Datenbank verbunden ist, erscheinen sie hier.";
   } else {
     try {
-      [leads, bereiche] = await Promise.all([listLeads(200, aktiv), countByService()]);
+      [leads, bereiche, auswahl] = await Promise.all([
+        listLeads(200, aktiv),
+        countByService(),
+        countKundenartAuswahl(),
+      ]);
     } catch (err) {
       error =
         "Die Datenbank ist nicht erreichbar. Anfragen kommen weiterhin per E-Mail an.";
@@ -156,7 +163,7 @@ export default async function InternPage({
               })}
             </nav>
 
-            <Statistik rows={bereiche} />
+            <Statistik rows={bereiche} auswahl={auswahl} />
           </>
         )}
 

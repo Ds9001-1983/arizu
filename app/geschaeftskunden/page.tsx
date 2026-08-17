@@ -203,13 +203,6 @@ export default function GeschaeftskundenPage() {
               <div key={s.slug} className="rounded-sm border border-mist bg-surface p-6">
                 <h3 className="font-display text-lg text-navy">{s.name}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-muted">{s.teaser}</p>
-                <Link
-                  href={`/leistungen/${s.slug}`}
-                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-deep hover:text-navy"
-                >
-                  Leistungsumfang ansehen
-                  <ArrowRight className="size-4" aria-hidden />
-                </Link>
               </div>
             ))}
           </div>
@@ -266,7 +259,10 @@ export default function GeschaeftskundenPage() {
         <Container>
           <p className="text-sm text-ink-muted">
             Sie fragen für Ihren Privathaushalt an?{" "}
-            <Link href="/#richtpreis" className="font-semibold text-navy underline">
+            <Link
+              href="/privatkunden#richtpreis"
+              className="font-semibold text-navy underline"
+            >
               Zum Richtpreisrechner
             </Link>{" "}
             — dort sehen Sie den Rahmen sofort, ohne Ihre Daten zu hinterlassen.

@@ -201,6 +201,23 @@
       }
     },
     {
+      "id": "img-arian-portrait",
+      "type": "static_image",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "assistive_edit_exempt",
+        "decided_at": "2026-08-17T11:22:00+02:00"
+      },
+      "output": {
+        "desktop": {
+          "file": "public/images/arian-aslani.webp",
+          "width": 720,
+          "height": 1219,
+          "kb": 31
+        }
+      }
+    },
+    {
       "id": "logo-arizu",
       "type": "static_image",
       "ai_disclosure": {
@@ -230,24 +247,28 @@
   ],
   "modules": [
     {
-      "type": "trust_bar",
+      "type": "customer_type_gate",
       "after": "hero"
     },
     {
-      "type": "service_grid",
-      "after": "trust_bar"
-    },
-    {
-      "type": "price_configurator_tabs",
-      "after": "service_grid"
+      "type": "trust_bar",
+      "after": "customer_type_gate"
     },
     {
       "type": "reasons_grid",
-      "after": "price_configurator_tabs"
+      "after": "trust_bar"
     },
     {
       "type": "tax_benefit_band",
       "after": "reasons_grid"
+    },
+    {
+      "type": "service_grid",
+      "after": "privatkunden_intro"
+    },
+    {
+      "type": "price_configurator_tabs",
+      "after": "service_grid"
     },
     {
       "type": "faq",
@@ -294,7 +315,7 @@
   },
   "seo": {
     "title": "ARIZU Gebäudedienstleistungen Elmshorn",
-    "description": "Gebäudereinigung, Gartenpflege, Objektbetreuung und Entrümpelung in Elmshorn und im Kreis Pinneberg. Richtpreis in 60 Sekunden online berechnen.",
+    "description": "Gebäudereinigung, Gartenpflege, Objektbetreuung und Entrümpelung für Privat- und Geschäftskunden in Elmshorn, im Kreis Pinneberg und im Umkreis von 40 km.",
     "canonical": "https://www.arizu-gebaeudedienstleistungen.de",
     "robots": "index, follow",
     "structuredData": {
@@ -308,11 +329,24 @@
     }
   },
   "versioning": {
-    "current": "0.4.0",
+    "current": "0.5.0",
     "created": "2026-08-12T14:20:00+02:00",
-    "lastModified": "2026-08-13T10:40:00+02:00",
+    "lastModified": "2026-08-17T11:30:00+02:00",
     "status": "draft",
     "changelog": [
+      {
+        "version": "0.5.0",
+        "date": "2026-08-17",
+        "changes": [
+          "Startseite auf Hero, Kundenart-Weiche, Vertrauenswerte und Steuervorteil reduziert",
+          "Eigener Privatkundenbereich mit Leistungen, Richtpreisrechnern, FAQ und Anfrage",
+          "Hauptnavigation auf Privatkunden, Geschäftskunden und Kontakt umgestellt",
+          "Festnetz ist die sichtbare Primärnummer; Mobilnummer bleibt ausschließlich bei WhatsApp",
+          "Partnerschaftlich und flexibel als Werte ergänzt",
+          "Echtes, technisch optimiertes Porträt von Arian im Kontaktbereich; KI-Neinentscheidung dokumentiert",
+          "Anonyme Summenzählung für die Privat-/Geschäftskunden-Auswahl ergänzt"
+        ]
+      },
       {
         "version": "0.4.0",
         "date": "2026-08-13",

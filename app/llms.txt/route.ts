@@ -20,8 +20,8 @@ export function GET() {
   const lines: string[] = [
     `# ${business.name}`,
     "",
-    `> ${business.slogan} ${business.subclaim} — Gebäudedienstleistungen in ` +
-      `${business.address.city} und im Kreis Pinneberg.`,
+    `> ${business.slogan} — Gebäudedienstleistungen in ` +
+      `${business.address.city} und im ${serviceArea.region}.`,
     "",
     business.intro,
     "",
@@ -31,9 +31,10 @@ export function GET() {
     `- Standort: ${business.address.postalCode} ${business.address.city}, Deutschland`,
     `- Einsatzgebiet: ${serviceArea.cities.join(", ")} und Umgebung, Umkreis ` +
       `${serviceArea.radiusKm} km um ${serviceArea.center}`,
-    `- Telefon: ${business.phone.display} (mobil), ${business.landline.display} (Festnetz)`,
+    `- Telefon: ${business.phone.display} (Festnetz)`,
     `- E-Mail: ${business.email}`,
     `- Website: ${SITE_URL}`,
+    `- Privatkundenbereich: ${SITE_URL}/privatkunden`,
     "- Kundschaft: Privathaushalte sowie Unternehmen, Praxen, " +
       "Hausverwaltungen und Eigentümergemeinschaften. Die Website trennt " +
       "beide Wege: Privatkunden rechnen den Richtpreis selbst aus, " +
@@ -97,7 +98,7 @@ export function GET() {
     "## Kontakt",
     "",
     `Am schnellsten telefonisch unter ${business.phone.display}. Fotos vom ` +
-      `Objekt gerne per WhatsApp an dieselbe Nummer. Anfrageformular: ${SITE_URL}/kontakt`,
+      `Objekt gerne über den WhatsApp-Link der Website. Anfrageformular: ${SITE_URL}/kontakt`,
     "",
   );
 

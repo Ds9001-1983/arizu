@@ -13,9 +13,9 @@ export const metadata: Metadata = {
     template: `%s | ${business.shortName} ${business.address.city}`,
   },
   description:
-    "Gebäudereinigung, Gartenpflege, Objektbetreuung und Entrümpelung in " +
-    `${business.address.city} und Umgebung. Richtpreis in 60 Sekunden online berechnen — ` +
-    "unverbindlich und kostenlos.",
+    "Gebäudereinigung, Gartenpflege, Objektbetreuung und Entrümpelung für " +
+    `Privat- und Geschäftskunden in ${business.address.city}, im Kreis Pinneberg ` +
+    "und im Umkreis von 40 km.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",

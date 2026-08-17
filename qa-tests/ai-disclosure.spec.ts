@@ -32,10 +32,10 @@ const pflichtig = spec.assets.filter((a) => a.ai_disclosure.required);
 /* Wo welches Asset zu sehen ist. */
 const seiten: Record<string, string> = {
   "img-hero": "/",
-  "img-objektbetreuung": "/",
-  "img-gebaeudereinigung": "/",
-  "img-gartenpflege": "/",
-  "img-entruempelung": "/",
+  "img-objektbetreuung": "/privatkunden",
+  "img-gebaeudereinigung": "/privatkunden",
+  "img-gartenpflege": "/privatkunden",
+  "img-entruempelung": "/privatkunden",
 };
 
 const EVIDENCE = "qa-reports/ai-disclosure";

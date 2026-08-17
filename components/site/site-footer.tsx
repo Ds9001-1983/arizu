@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { business, serviceArea } from "@/lib/business";
-import { services } from "@/lib/services";
 import { Container } from "./container";
 import { LogoClaim } from "./logo";
 
@@ -27,27 +26,31 @@ export function SiteFooter() {
 
           <div>
             <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold-soft">
-              Leistungen
+              Bereiche
             </h2>
             <ul className="mt-5 space-y-3 text-sm">
-              {services.map((s) => (
-                <li key={s.slug}>
-                  <Link
-                    href={`/leistungen/${s.slug}`}
-                    className="text-white/80 transition-colors hover:text-gold-soft"
-                  >
-                    {s.name}
-                  </Link>
-                </li>
-              ))}
-              {/* Abgesetzt, weil es keine fünfte Leistung ist, sondern ein
-                  eigener Weg durch dieselben vier. */}
-              <li className="pt-2">
+              <li>
+                <Link
+                  href="/privatkunden"
+                  className="text-white/80 transition-colors hover:text-gold-soft"
+                >
+                  Für Privatkunden
+                </Link>
+              </li>
+              <li>
                 <Link
                   href="/geschaeftskunden"
-                  className="font-semibold text-white/80 transition-colors hover:text-gold-soft"
+                  className="text-white/80 transition-colors hover:text-gold-soft"
                 >
                   Für Geschäftskunden
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/kontakt"
+                  className="text-white/80 transition-colors hover:text-gold-soft"
+                >
+                  Kontakt aufnehmen
                 </Link>
               </li>
             </ul>
@@ -67,23 +70,12 @@ export function SiteFooter() {
               </li>
               <li className="flex gap-3">
                 <Phone className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
-                {/* py-1 + gap: Ohne das sind die Links nur 20 px hoch und
-                    liegen direkt aufeinander — Lighthouse wertet das als zu
-                    kleines Ziel (Mindestmaß 24 × 24 px). */}
-                <span className="flex flex-col gap-1.5">
-                  <a
-                    href={business.phone.href}
-                    className="inline-block py-1 hover:text-gold-soft"
-                  >
-                    {business.phone.display}
-                  </a>
-                  <a
-                    href={business.landline.href}
-                    className="inline-block py-1 hover:text-gold-soft"
-                  >
-                    {business.landline.display}
-                  </a>
-                </span>
+                <a
+                  href={business.phone.href}
+                  className="inline-block py-1 hover:text-gold-soft"
+                >
+                  {business.phone.display}
+                </a>
               </li>
               <li className="flex gap-3">
                 <Mail className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
@@ -110,8 +102,8 @@ export function SiteFooter() {
 
         <div className="border-t border-white/12 py-6 text-xs text-white/55">
           <p className="leading-relaxed">
-            Einsatzgebiet: {serviceArea.cities.join(" · ")} und Umgebung im Umkreis
-            von {serviceArea.radiusKm} km um {serviceArea.center}.
+            Einsatzgebiet: {serviceArea.region} sowie angrenzende Orte im Umkreis von{" "}
+            {serviceArea.radiusKm} km um {serviceArea.center}.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1">
             <span className="py-1.5">

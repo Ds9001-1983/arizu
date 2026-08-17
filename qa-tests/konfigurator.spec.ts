@@ -30,8 +30,8 @@ async function angabenAusfuellen(page: import("@playwright/test").Page, slug: st
   await page.locator(`#k-${slug}-consent`).check();
 }
 
-test("Startseite: Preis ändert sich bei Eingabe", async ({ page }) => {
-  await page.goto("/");
+test("Privatkundenbereich: Preis ändert sich bei Eingabe", async ({ page }) => {
+  await page.goto("/privatkunden");
   const panel = page.getByRole("tabpanel");
   await panel.scrollIntoViewIfNeeded();
 
@@ -49,7 +49,7 @@ test("Startseite: Preis ändert sich bei Eingabe", async ({ page }) => {
 });
 
 test("Leistung wechseln lädt den passenden Rechner", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/privatkunden");
   await page.getByRole("tab", { name: "Gartenpflege" }).click();
   await expect(page.getByRole("tabpanel")).toContainText("Gartenpflege berechnen");
   await expect(page.getByLabel("Rasenfläche")).toBeVisible();

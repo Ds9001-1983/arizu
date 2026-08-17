@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
@@ -25,20 +26,13 @@ export default function KontaktPage() {
             lead="Am schnellsten geht es telefonisch — meist sind wir unterwegs, rufen aber zurück. Für Fotos vom Objekt ist WhatsApp der bequemste Weg."
           />
 
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-5 sm:grid-cols-3">
             {[
               {
                 icon: Phone,
-                title: "Mobil",
+                title: "Festnetz",
                 value: business.phone.display,
                 href: business.phone.href,
-                hint: "Direkt beim Inhaber",
-              },
-              {
-                icon: Phone,
-                title: "Festnetz",
-                value: business.landline.display,
-                href: business.landline.href,
                 hint: "Büro",
               },
               {
@@ -73,7 +67,32 @@ export default function KontaktPage() {
             ))}
           </div>
 
-          <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          <div className="mt-5 grid gap-5 lg:grid-cols-3">
+            <div className="overflow-hidden rounded-sm border border-mist bg-surface">
+              {/* Echtes Foto von Arian, lediglich technisch bei Kontrast und
+                  Helligkeit optimiert. Der dokumentierte Nein-Entscheid zur
+                  KI-Kennzeichnung steht in story-spec.json. */}
+              <Image
+                src="/images/arian-aslani.webp"
+                alt="Arian Aslani, Inhaber von ARIZU Gebäudedienstleistungen"
+                width={720}
+                height={1219}
+                unoptimized
+                className="h-64 w-full object-cover object-[center_20%]"
+              />
+              <div className="p-6">
+                <p className="font-sans text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+                  Ihr Ansprechpartner
+                </p>
+                <h2 className="mt-2 font-display text-lg text-navy">
+                  {business.owner}
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                  Inhaber und persönlicher Ansprechpartner für Ihre Anfrage.
+                </p>
+              </div>
+            </div>
+
             <div className="rounded-sm border border-mist bg-surface p-6">
               <h2 className="flex items-center gap-2.5 font-display text-lg text-navy">
                 <MapPin className="size-5 text-gold" aria-hidden />
@@ -91,8 +110,9 @@ export default function KontaktPage() {
                 {business.address.postalCode} {business.address.city}
               </p>
               <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-                Wir arbeiten im Umkreis von {serviceArea.radiusKm} km um{" "}
-                {serviceArea.center} — unter anderem in {serviceArea.cities.join(", ")}.
+                Wir arbeiten im {serviceArea.region} und in angrenzenden Orten im
+                Umkreis von {serviceArea.radiusKm} km um {serviceArea.center} — unter
+                anderem in {serviceArea.cities.join(", ")}.
               </p>
             </div>
 

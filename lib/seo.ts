@@ -64,10 +64,13 @@ export function localBusinessSchema() {
       opens: h.opens,
       closes: h.closes,
     })),
-    areaServed: serviceArea.cities.map((city) => ({
-      "@type": "City",
-      name: city,
-    })),
+    areaServed: [
+      { "@type": "AdministrativeArea", name: serviceArea.region },
+      ...serviceArea.cities.map((city) => ({
+        "@type": "City",
+        name: city,
+      })),
+    ],
     serviceArea: {
       "@type": "GeoCircle",
       geoMidpoint: {

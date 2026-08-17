@@ -2,31 +2,36 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, Phone, X } from "lucide-react";
 import { business } from "@/lib/business";
-import { services } from "@/lib/services";
 import { cn } from "@/lib/utils";
 import { Container } from "./container";
 import { LogoWordmark } from "./logo";
 
 const nav = [
-  ...services.map((s) => ({ href: `/leistungen/${s.slug}`, label: s.name })),
+  { href: "/privatkunden", label: "Privatkunden" },
   { href: "/geschaeftskunden", label: "Geschäftskunden" },
   { href: "/kontakt", label: "Kontakt" },
 ];
 
 export function SiteHeader() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [solid, setSolid] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const solid = pathname !== "/" || scrolled;
 
-  // Der Header wird erst nach dem Hero deckend. Ohne diesen Wechsel läge das
-  // Navy-Band direkt auf dem Hero-Bild und würde es zerschneiden.
+  // Nur die Startseite besitzt einen dunklen Hero unter dem Header. Dort wird
+  // er nach dem Hero deckend; alle hellen Unterseiten brauchen ihn sofort in
+  // der kontrastreichen Variante.
   useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 24);
+    if (pathname !== "/") return;
+
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [pathname]);
 
   // Menü bei Routenwechsel bzw. Escape schließen.
   useEffect(() => {
@@ -63,9 +68,6 @@ export function SiteHeader() {
             />
           </Link>
 
-          {/* gap-5 erst ab xl auf 7: Mit dem sechsten Punkt
-              ("Geschäftskunden") wird die Zeile bei 1024 px sonst zu breit
-              und bricht neben Logo und Anrufbutton um. */}
           <nav
             className="hidden items-center gap-5 lg:flex xl:gap-7"
             aria-label="Hauptnavigation"

@@ -27,4 +27,4 @@ if (!process.env.DATABASE_URL) {
 }
 
 await initSchema();
-console.log("Tabelle `leads` und Index sind vorhanden.");
+console.log("Tabellen `leads`, `preise` und `kundenart_auswahl` sind vorhanden.");

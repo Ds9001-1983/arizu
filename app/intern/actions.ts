@@ -132,7 +132,7 @@ export async function saveLead(formData: FormData) {
  * sie in `generateStaticParams` stehen.
  */
 function preiseAuffrischen() {
-  revalidatePath("/");
+  revalidatePath("/privatkunden");
   for (const slug of Object.keys(configurators)) {
     revalidatePath(`/leistungen/${slug}`);
   }

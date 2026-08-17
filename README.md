@@ -34,7 +34,7 @@ ohne Admin-Hash bleibt `/intern` gesperrt.
 | `npm run check:pricing` | Rechnet die Konfiguratoren gegen Marktbelege und Grenzwerte nach |
 | `npm run qa` | Playwright: KI-Kennzeichnung, Konfigurator, Geschäftskunden, Formular, Zugangsschutz |
 | `npm run qa:ai` | Nur der Pflicht-Check der KI-Kennzeichnung |
-| `npm run db:init` | Tabellen `leads` und `preise` in Neon anlegen (idempotent) |
+| `npm run db:init` | Tabellen `leads`, `preise` und `kundenart_auswahl` in Neon anlegen (idempotent) |
 | `npm run hash:password "…"` | Passwort-Hash für `/intern` erzeugen |
 
 > **`npm run qa` schickt echte Anfragen durch die Formulare.** Deshalb gibt es
@@ -48,6 +48,7 @@ ohne Admin-Hash bleibt `/intern` gesperrt.
 ```
 app/
   page.tsx                  Startseite, mit Weiche privat/geschäftlich
+  privatkunden/             Leistungen, Richtpreis-Konfiguratoren und Anfrage
   leistungen/[slug]/        4 Leistungsseiten (statisch)
   geschaeftskunden/         B2B-Bereich: Bedarfsabfrage ohne Richtpreis
   kontakt/                  Kontaktseite
@@ -116,20 +117,27 @@ einzigen fremden Host**, setzte **keinen Cookie** und ließ `localStorage`
 wie `sessionStorage` leer. Nach § 25 TDDDG ist eine Einwilligung nur nötig,
 wenn auf dem Endgerät gespeichert oder ausgelesen wird — hier passiert
 beides nicht. Schriften und das Hero-Video liegen selbst gehostet, es gibt
-keine Reichweitenmessung und keine eingebetteten Karten oder Plugins.
+keine eingebetteten Karten oder Plugins. Die Startseiten-Weiche erhöht nur
+einen von zwei anonymen Summenzählern (Privat-/Geschäftskunde): kein einzelnes
+Ereignis, kein Zeitpunkt, keine IP-Adresse, keine Gerätekennung und kein
+Nutzerprofil werden in der Anwendung gespeichert.
 
-Wer daran etwas ändert — Analytics, Google Fonts, eine eingebettete Karte,
-Vercel Speed Insights —, macht ein Cookie-Banner beziehungsweise eine
-Einwilligungslösung erforderlich und muss die Datenschutzerklärung anpassen.
-Die Messung lässt sich mit einem Playwright-Lauf wiederholen.
+Wer daran etwas ändert — personenbezogene Analytics, Google Fonts, eine
+eingebettete Karte oder Vercel Speed Insights —, muss Cookie-/Einwilligungsfrage
+und Datenschutzerklärung neu bewerten. Die Messung lässt sich mit einem
+Playwright-Lauf wiederholen.
 
 ## Bilder und KI-Kennzeichnung
 
-Es existieren noch keine echten Einsatzfotos, deshalb sind fünf Bilder
+Es existieren noch keine echten Einsatzfotos, deshalb sind fünf Einsatzmotive
 KI-generiert. Alle tragen ein sichtbares Badge „✦ KI-generiert" **und** den
 IPTC-Metadatensatz `DigitalSourceType = trainedAlgorithmicMedia`. Details und
 die Entscheidung pro Asset: `docs/ki-transparenz-policy.md` und
 `story-spec.json` → `assets[].ai_disclosure`.
+
+Das Porträt auf der Kontaktseite ist ein echtes Foto von Arian; KI wurde dort
+nur assistiv für Kontrast und Bildqualität eingesetzt. Es ist deshalb als
+`assistive_edit_exempt` dokumentiert und trägt kein KI-Badge.
 
 Deshalb ist die Next-Bildoptimierung projektweit aus (`next.config.ts`): Der
 Optimizer re-encodiert und würde die Metadaten verwerfen. Die Dateien liegen

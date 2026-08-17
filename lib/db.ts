@@ -124,6 +124,17 @@ export async function initSchema(): Promise<void> {
       primary key (konfigurator, schluessel)
     )
   `;
+
+  /* Anonyme Auswahlzählung der beiden Wege auf der Startseite. Es werden
+     weder einzelne Ereignisse noch IP-Adressen, Cookies oder Gerätekennungen
+     gespeichert — nur zwei fortlaufende Summen. */
+  await q`
+    create table if not exists kundenart_auswahl (
+      kundenart   text        primary key check (kundenart in ('privat', 'geschaeft')),
+      anzahl      bigint      not null default 0,
+      geaendert_am timestamptz not null default now()
+    )
+  `;
 }
 
 export async function insertLead(lead: {
@@ -298,6 +309,65 @@ export async function countLeads(): Promise<LeadZaehler> {
       from leads
   `) as LeadZaehler[];
   return rows[0] ?? { gesamt: 0, privat: 0, geschaeft: 0, ohne: 0 };
+}
+
+/* ---------------------------------------------------- Startseiten-Auswahl */
+
+export type AuswahlZaehler = {
+  privat: number;
+  geschaeft: number;
+  gesamt: number;
+};
+
+/* Der Produktions-Deploy kann vor `npm run db:init` online sein. Das erste
+   Zählen legt die idempotente Zwei-Zeilen-Tabelle deshalb selbst an; das
+   verhindert verlorene Klicks zwischen Deploy und Schema-Lauf. */
+let auswahlSchemaReady: Promise<void> | undefined;
+
+async function ensureAuswahlSchema(): Promise<void> {
+  if (!auswahlSchemaReady) {
+    auswahlSchemaReady = (async () => {
+      const q = sql();
+      await q`
+        create table if not exists kundenart_auswahl (
+          kundenart    text        primary key check (kundenart in ('privat', 'geschaeft')),
+          anzahl       bigint      not null default 0,
+          geaendert_am timestamptz not null default now()
+        )
+      `;
+    })().catch((error) => {
+      auswahlSchemaReady = undefined;
+      throw error;
+    });
+  }
+  await auswahlSchemaReady;
+}
+
+export async function recordKundenartAuswahl(kundenart: LeadKundenart): Promise<void> {
+  await ensureAuswahlSchema();
+  const q = sql();
+  await q`
+    insert into kundenart_auswahl (kundenart, anzahl, geaendert_am)
+    values (${kundenart}, 1, now())
+    on conflict (kundenart)
+    do update set anzahl = kundenart_auswahl.anzahl + 1,
+                  geaendert_am = now()
+  `;
+}
+
+export async function countKundenartAuswahl(): Promise<AuswahlZaehler> {
+  await ensureAuswahlSchema();
+  const q = sql();
+  const rows = (await q`
+    select coalesce(sum(anzahl) filter (where kundenart = 'privat'), 0)::int
+             as privat,
+           coalesce(sum(anzahl) filter (where kundenart = 'geschaeft'), 0)::int
+             as geschaeft
+      from kundenart_auswahl
+  `) as { privat: number; geschaeft: number }[];
+  const privat = rows[0]?.privat ?? 0;
+  const geschaeft = rows[0]?.geschaeft ?? 0;
+  return { privat, geschaeft, gesamt: privat + geschaeft };
 }
 
 /* ============================================================ Preispflege */

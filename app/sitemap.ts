@@ -9,17 +9,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: SITE_URL, lastModified: now, changeFrequency: "monthly", priority: 1 },
+    {
+      url: `${SITE_URL}/privatkunden`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
     ...services.map((s) => ({
       url: `${SITE_URL}/leistungen/${s.slug}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
-      priority: 0.9,
+      priority: 0.8,
     })),
     {
       url: `${SITE_URL}/geschaeftskunden`,
       lastModified: now,
       changeFrequency: "monthly" as const,
-      priority: 0.8,
+      priority: 0.9,
     },
     {
       url: `${SITE_URL}/kontakt`,

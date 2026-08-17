@@ -29,18 +29,15 @@ export const business = {
   owner: "Arian Aslani",
 
   slogan: "Alles aus einer Hand.",
-  subclaim: "Zuverlässig. Sauber. Professionell.",
   intro:
     "Wir bieten Ihnen professionelle Dienstleistungen rund um Ihre Immobilie " +
     "und Außenanlagen. Qualität, auf die Sie sich verlassen können.",
 
-  // Mobil ist der Primaerkanal: Arian ist tagsueber beim Kunden.
+  // Seit dem Website-Review vom 17.08.2026 ist das Festnetz der sichtbare
+  // Primaerkanal. Die Mobilnummer bleibt ausschliesslich hinter WhatsApp:
+  // So wirkt der Auftritt wie der Betrieb mit Buero, der er inzwischen ist,
+  // ohne Arians private Mobilnummer an jeder Stelle zu vervielfachen.
   phone: {
-    display: "0179 52 72 126",
-    e164: "+491795272126",
-    href: "tel:+491795272126",
-  },
-  landline: {
     display: "04121 42 06 88",
     e164: "+494121420688",
     href: "tel:+494121420688",
@@ -81,8 +78,8 @@ export const business = {
     { days: ["Sa"], opens: "09:00", closes: "14:00" },
   ],
 
-  // Startfokus B2C, B2B (Objektbetreuung fuer Staedte/Krankenhaeuser) ab 2027.
-  audience: "B2C",
+  // Privat- und Geschaeftskunden sind seit 14.08.2026 gleichwertige Wege.
+  audience: "B2C+B2B",
 
   social: {
     // VERIFY: Profile existieren noch nicht — Social-Setup ist auf Anfang 2027
@@ -99,6 +96,7 @@ export const business = {
 /** Einsatzgebiet — speist Fliesstext, areaServed im JSON-LD und die Kontaktseite. */
 export const serviceArea = {
   center: "Elmshorn",
+  region: "Kreis Pinneberg",
   radiusKm: 40,
   cities: [
     "Elmshorn",
@@ -134,7 +132,7 @@ export function whatsappHref(text?: string): string {
   return text ? `${base}&text=${encodeURIComponent(text)}` : base;
 }
 
-/** „0179 52 72 126" -> fuer aria-label lesbar machen. */
+/** „04121 42 06 88" -> fuer aria-label lesbar machen. */
 export function spokenPhone(display: string): string {
   return display.split("").join(" ").replace(/\s{2,}/g, " ");
 }

@@ -1,5 +1,5 @@
 import { services } from "@/lib/services";
-import type { BereichZeile } from "@/lib/db";
+import type { AuswahlZaehler, BereichZeile } from "@/lib/db";
 
 /* ==================================================================
    Welcher Leistungsbereich wird am häufigsten angefragt?
@@ -67,7 +67,62 @@ function Balken({ zeilen }: { zeilen: Gruppe["zeilen"] }) {
   );
 }
 
-export function Statistik({ rows }: { rows: BereichZeile[] }) {
+function Auswahl({ auswahl }: { auswahl: AuswahlZaehler }) {
+  const anteil = (n: number) =>
+    auswahl.gesamt === 0 ? 0 : Math.round((n / auswahl.gesamt) * 100);
+
+  return (
+    <section className="mt-8 rounded-sm border border-mist bg-surface px-5 py-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="font-display text-sm font-bold text-navy">
+          Auswahl auf der Startseite
+        </h2>
+        <span className="text-xs tabular-nums text-ink-muted">
+          {auswahl.gesamt} Klicks insgesamt
+        </span>
+      </div>
+
+      {auswahl.gesamt === 0 ? (
+        <p className="mt-4 text-sm text-ink-muted">Noch keine Auswahl erfasst.</p>
+      ) : (
+        <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+          {[
+            { label: "Privatkunden", wert: auswahl.privat },
+            { label: "Geschäftskunden", wert: auswahl.geschaeft },
+          ].map((item) => (
+            <li key={item.label}>
+              <div className="flex items-baseline justify-between gap-3 text-sm">
+                <span className="text-navy">{item.label}</span>
+                <span className="tabular-nums text-ink-muted">
+                  {item.wert} · {anteil(item.wert)} %
+                </span>
+              </div>
+              <div className="mt-1.5 h-2 rounded-xs bg-mist">
+                <div
+                  className="h-2 rounded-xs bg-gold"
+                  style={{ width: `${anteil(item.wert)}%` }}
+                  aria-hidden
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="mt-4 text-xs leading-relaxed text-ink-muted">
+        Gezählt wird nur die bewusste Auswahl in der Weiche — ohne Cookies,
+        Gerätekennung oder Drittanbieter-Analytics.
+      </p>
+    </section>
+  );
+}
+
+export function Statistik({
+  rows,
+  auswahl,
+}: {
+  rows: BereichZeile[];
+  auswahl: AuswahlZaehler;
+}) {
   const gruppen: Gruppe[] = [
     { titel: "Geschäftskunden", zeilen: gruppiere(rows, "geschaeft") },
     { titel: "Privatkunden", zeilen: gruppiere(rows, "privat") },
@@ -78,22 +133,26 @@ export function Statistik({ rows }: { rows: BereichZeile[] }) {
   }
 
   return (
-    // <details> statt Umschalter mit State: kostet null JavaScript, und Arians
-    // Tagesgeschäft ist die Liste darunter — die Statistik ist ein Monatsblick.
-    <details className="mt-8 rounded-sm border border-mist bg-surface">
-      <summary className="cursor-pointer px-5 py-3.5 font-display text-sm font-bold text-navy">
-        Welche Bereiche werden angefragt?
-      </summary>
-      <div className="grid gap-8 border-t border-mist px-5 py-5 sm:grid-cols-2">
-        {gruppen.map((g) => (
-          <div key={g.titel}>
-            <p className="mb-3 font-display text-[0.66rem] font-bold uppercase tracking-[0.2em] text-gold-deep">
-              {g.titel}
-            </p>
-            <Balken zeilen={g.zeilen} />
-          </div>
-        ))}
-      </div>
-    </details>
+    <>
+      <Auswahl auswahl={auswahl} />
+      {/* <details> statt Umschalter mit State: kostet null JavaScript, und
+          Arians Tagesgeschäft ist die Liste darunter — die Statistik ist ein
+          Monatsblick. */}
+      <details className="mt-4 rounded-sm border border-mist bg-surface">
+        <summary className="cursor-pointer px-5 py-3.5 font-display text-sm font-bold text-navy">
+          Welche Bereiche werden angefragt?
+        </summary>
+        <div className="grid gap-8 border-t border-mist px-5 py-5 sm:grid-cols-2">
+          {gruppen.map((g) => (
+            <div key={g.titel}>
+              <p className="mb-3 font-display text-[0.66rem] font-bold uppercase tracking-[0.2em] text-gold-deep">
+                {g.titel}
+              </p>
+              <Balken zeilen={g.zeilen} />
+            </div>
+          ))}
+        </div>
+      </details>
+    </>
   );
 }

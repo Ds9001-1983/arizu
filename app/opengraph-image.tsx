@@ -74,7 +74,7 @@ export default function OpengraphImage() {
             {business.slogan}
           </div>
           <div style={{ fontSize: 30, color: GOLD, marginTop: 18, fontWeight: 700 }}>
-            {business.subclaim}
+            Für Privat- und Geschäftskunden
           </div>
           {/* Ein einzelner Textknoten: Satori verlangt sonst explizites
               display:flex, sobald ein div mehrere Kinder hat. */}

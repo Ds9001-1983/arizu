@@ -28,9 +28,7 @@ export default function ImpressumPage() {
 
       <h2>Kontakt</h2>
       <p>
-        Telefon: <a href={business.phone.href}>{business.phone.display}</a> (mobil)
-        <br />
-        Telefon: <a href={business.landline.href}>{business.landline.display}</a> (Festnetz)
+        Telefon: <a href={business.phone.href}>{business.phone.display}</a>
         <br />
         E-Mail: <a href={`mailto:${business.email}`}>{business.email}</a>
       </p>

@@ -3,37 +3,56 @@ import { expect, test } from "@playwright/test";
 /* ==================================================================
    Trennung Privat- und Geschäftskunden (Kundengespräch 14.08.2026).
 
-   Geprüft wird das, was Arian ausdrücklich verlangt hat: die Weiche unter
-   dem Hero, ein Geschäftskundenbereich OHNE Richtpreis, und ein Formular,
-   das die für ihn wesentlichen Angaben erzwingt.
-
-   Diese Datei fasst die Startseite nur lesend an. Der wichtigste Test ist
-   deshalb der erste — er hält fest, warum die Weiche keine Tab-Rollen tragen
-   darf.
+   Geprüft wird das, was Arian ausdrücklich verlangt hat: eine minimalistische
+   Startseite, getrennte Privat-/Geschäftskundenwege, ein Geschäftskundenbereich
+   OHNE Richtpreis und ein Formular mit den wesentlichen Pflichtangaben.
    ================================================================== */
 
-test("Weiche benutzt keine Tab-Rollen", async ({ page }) => {
+test("Startseite ist minimal, der Rechner liegt im Privatkundenbereich", async ({ page }) => {
   await page.goto("/");
-  // Genau eine Tabliste auf der Startseite: die Leistungsauswahl des
-  // Konfigurators. Käme eine zweite dazu, bräche der Strict Mode in
-  // konfigurator.spec.ts, wo getByRole("tabpanel") ungescopet zugreift.
+  await expect(page.getByRole("tablist")).toHaveCount(0);
+  await expect(page.locator("#richtpreis")).toHaveCount(0);
+
+  await page.goto("/privatkunden");
   await expect(page.getByRole("tablist")).toHaveCount(1);
+  await expect(page.locator("#richtpreis")).toBeVisible();
 });
 
 test("Weiche führt in den Geschäftskundenbereich", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: /Zum Geschäftskundenbereich/ }).first().click();
+  await page.getByRole("button", { name: /Zum Geschäftskundenbereich/ }).click();
   await expect(page).toHaveURL(/\/geschaeftskunden$/);
   await expect(
     page.getByRole("heading", { name: /Gebäudedienstleistungen für Unternehmen/ }),
   ).toBeVisible();
 });
 
-test("Privatkundenweg bleibt unverändert", async ({ page }) => {
+test("Weiche führt in den Privatkundenbereich", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: /Zum Richtpreisrechner/ }).first().click();
-  await expect(page).toHaveURL(/#richtpreis$/);
+  await page.getByRole("button", { name: /Zum Privatkundenbereich/ }).click();
+  await expect(page).toHaveURL(/\/privatkunden$/);
   await expect(page.getByRole("tablist")).toBeVisible();
+});
+
+test("Hero enthält nur das vereinbarte Leistungsversprechen", async ({ page }) => {
+  await page.goto("/");
+  const hero = page.locator("main > section").first();
+  await expect(hero.getByRole("heading", { name: /Alles aus einer Hand/ })).toBeVisible();
+  await expect(hero.getByText("Zuverlässig. Sauber. Professionell.")).toHaveCount(0);
+  await expect(hero.locator('a[href^="tel:"]')).toHaveCount(0);
+  await expect(hero.getByText(/Preis online sehen/)).toHaveCount(0);
+});
+
+test("Festnetz ist Primärnummer und Arian im Kontakt sichtbar", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator('header a[href="tel:+494121420688"]')).toBeAttached();
+  await expect(page.locator("body")).not.toContainText("0179 52 72 126");
+
+  await page.goto("/kontakt");
+  await expect(
+    page.getByRole("img", { name: /Arian Aslani, Inhaber/ }),
+  ).toBeVisible();
+  await expect(page.locator("main").getByText("04121 42 06 88").first()).toBeVisible();
 });
 
 test("Geschäftskundenbereich nennt keinen Richtpreis", async ({ page }) => {
@@ -95,6 +114,7 @@ test("Geschäftskunden stehen in Navigation, Sitemap und llms.txt", async ({
   ).toBeAttached();
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
+  expect(sitemap).toContain("/privatkunden");
   expect(sitemap).toContain("/geschaeftskunden");
 
   const llms = await (await request.get("/llms.txt")).text();

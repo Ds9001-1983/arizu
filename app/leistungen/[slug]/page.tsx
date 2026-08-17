@@ -79,6 +79,7 @@ export default async function ServicePage({
           faqSchema(service.faqs),
           breadcrumbSchema([
             { name: "Start", path: "/" },
+            { name: "Privatkunden", path: "/privatkunden" },
             { name: service.name, path: `/leistungen/${service.slug}` },
           ]),
         ]}
@@ -92,6 +93,14 @@ export default async function ServicePage({
               <li>
                 <Link href="/" className="hover:text-navy">
                   Start
+                </Link>
+              </li>
+              <li aria-hidden className="text-gold">
+                /
+              </li>
+              <li>
+                <Link href="/privatkunden" className="hover:text-navy">
+                  Privatkunden
                 </Link>
               </li>
               <li aria-hidden className="text-gold">

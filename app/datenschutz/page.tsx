@@ -164,11 +164,17 @@ export default function DatenschutzPage() {
       <p>
         Diese Website setzt beim Besuch <strong>keine Cookies</strong> und legt
         weder im lokalen Speicher noch im Sitzungsspeicher Ihres Browsers etwas
-        ab. Es findet <strong>keine Reichweitenmessung</strong>, keine Analyse
-        und kein Tracking statt — weder durch uns noch durch Dritte. Aus diesem
-        Grund gibt es auf dieser Seite auch kein Cookie-Banner: Nach § 25 TDDDG
-        ist eine Einwilligung nur erforderlich, wenn Informationen auf Ihrem
-        Endgerät gespeichert oder ausgelesen werden. Das geschieht hier nicht.
+        ab. Wenn Sie auf der Startseite „Privatkunde“ oder „Geschäftskunde“
+        auswählen, wird ausschließlich der jeweilige Gesamtzähler um eins
+        erhöht. Wir speichern dabei kein einzelnes Ereignis, keinen Zeitpunkt,
+        keine IP-Adresse, keine Gerätekennung und kein Nutzerprofil. Die beiden
+        anonymen Summen zeigen uns lediglich, welcher Seitenweg häufiger gewählt
+        wird. Ein externer Analysedienst ist nicht beteiligt.
+      </p>
+      <p>
+        Ein Cookie-Banner ist nicht erforderlich, weil dabei keine Information
+        auf Ihrem Endgerät gespeichert oder daraus ausgelesen wird (§ 25 TDDDG).
+        Eine Wiedererkennung einzelner Besucher findet nicht statt.
       </p>
       <p>
         Ein einziges Cookie wird gesetzt, wenn sich ein Mitarbeiter im internen
