@@ -78,7 +78,7 @@ export default function KontaktPage() {
                 width={720}
                 height={1219}
                 unoptimized
-                className="h-64 w-full object-cover object-[center_20%]"
+                className="h-64 w-full object-cover object-top"
               />
               <div className="p-6">
                 <p className="font-sans text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
