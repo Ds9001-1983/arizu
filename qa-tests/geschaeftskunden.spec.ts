@@ -45,14 +45,14 @@ test("Hero enthält nur das vereinbarte Leistungsversprechen", async ({ page }) 
 
 test("Festnetz ist Primärnummer und Arian im Kontakt sichtbar", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator('header a[href="tel:+494121420688"]')).toBeAttached();
+  await expect(page.locator('header a[href="tel:+4941214206881"]')).toBeAttached();
   await expect(page.locator("body")).not.toContainText("0179 52 72 126");
 
   await page.goto("/kontakt");
   await expect(
     page.getByRole("img", { name: /Arian Aslani, Inhaber/ }),
   ).toBeVisible();
-  await expect(page.locator("main").getByText("04121 42 06 88").first()).toBeVisible();
+  await expect(page.locator("main").getByText("04121 42 06 881").first()).toBeVisible();
 });
 
 test("Geschäftskundenbereich nennt keinen Richtpreis", async ({ page }) => {

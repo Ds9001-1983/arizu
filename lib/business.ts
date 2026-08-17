@@ -38,9 +38,9 @@ export const business = {
   // So wirkt der Auftritt wie der Betrieb mit Buero, der er inzwischen ist,
   // ohne Arians private Mobilnummer an jeder Stelle zu vervielfachen.
   phone: {
-    display: "04121 42 06 88",
-    e164: "+494121420688",
-    href: "tel:+494121420688",
+    display: "04121 42 06 881",
+    e164: "+4941214206881",
+    href: "tel:+4941214206881",
   },
 
   // WhatsApp ist bei Gebaeudedienstleistung Primaerkanal: Kunden schicken
@@ -132,7 +132,7 @@ export function whatsappHref(text?: string): string {
   return text ? `${base}&text=${encodeURIComponent(text)}` : base;
 }
 
-/** „04121 42 06 88" -> fuer aria-label lesbar machen. */
+/** „04121 42 06 881" -> fuer aria-label lesbar machen. */
 export function spokenPhone(display: string): string {
   return display.split("").join(" ").replace(/\s{2,}/g, " ");
 }
