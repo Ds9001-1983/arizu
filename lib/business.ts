@@ -97,7 +97,8 @@ export const business = {
 export const serviceArea = {
   center: "Elmshorn",
   region: "Kreis Pinneberg",
-  radiusKm: 40,
+  label: "Kreis Pinneberg und Hamburg",
+  radiusKm: 50,
   cities: [
     "Elmshorn",
     "Pinneberg",
@@ -108,12 +109,12 @@ export const serviceArea = {
     "Halstenbek",
     "Rellingen",
     "Quickborn",
-    "Hamburg-West",
+    "Hamburg",
   ],
-  // Kreis Pinneberg + angrenzende Bereiche, Konvention aus dem SUPERBRAND-Skill.
+  // Kreis Pinneberg und Hamburg, wie im Website-Review vom 19.08.2026 erweitert.
   plz: [
     { start: 25335, end: 25499 }, // Kreis Pinneberg
-    { start: 22523, end: 22589 }, // Hamburg West/Elbvororte
+    { start: 20095, end: 22769 }, // Hamburg
   ],
 } as const;
 

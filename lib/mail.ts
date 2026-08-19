@@ -314,9 +314,17 @@ function customerHtml(lead: LeadMail): string {
 
     <tr><td style="padding:22px 32px 30px">
       <p style="margin:0;font:400 13px/1.7 Arial,sans-serif;color:#7a8496">
-        Der im Konfigurator gezeigte Betrag ist eine unverbindliche Schätzung und
-        kein Angebot. Ein Vertrag entsteht erst, wenn Sie ein schriftliches
-        Angebot von uns annehmen. Wenn es eilt, erreichen Sie uns direkt unter
+        ${
+          lead.konfigurator
+            ? `<strong style="color:${NAVY}">Unverbindliche Preisschätzung:</strong>
+               Der angezeigte Preisrahmen dient ausschließlich der ersten Orientierung.
+               Der tatsächliche Preis kann aufgrund der örtlichen Gegebenheiten, des
+               tatsächlichen Aufwands und weiterer nicht im Rechner erfasster Faktoren
+               abweichen. Ein verbindliches Angebot entsteht erst nach individueller
+               Prüfung und Bestätigung durch ${esc(business.shortName)}. `
+            : ""
+        }
+        Wenn es eilt, erreichen Sie uns direkt unter
         <a href="${business.phone.href}" style="color:${NAVY};font-weight:700">${esc(business.phone.display)}</a>.
       </p>
     </td></tr>`;

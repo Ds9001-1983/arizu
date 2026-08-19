@@ -1,7 +1,8 @@
 /* ==================================================================
    Leistungskatalog — Inhalte 1:1 aus Arians Designentwurf vom 12.08.2026.
-   Reihenfolge, Überschriften und alle 38 Einzelleistungen sind übernommen,
-   damit die Website und der Flyer dasselbe versprechen.
+   Die Einzelleistungen stammen aus dem Entwurf und werden mit den
+   nachgereichten Kundenwünschen fortgeführt, damit Website und Angebot
+   dasselbe versprechen.
 
    Die Fließtexte (`teaser`, `body`) sind für Menschen UND für KI-Systeme
    geschrieben: jede Einzelleistung wird benannt und erklärt, statt nur als
@@ -15,6 +16,8 @@ export type Faq = { question: string; answer: string };
 
 export type Service = {
   slug: ConfiguratorSlug;
+  /** Ob diese Leistung im Privatkundenbereich eine öffentliche Preisschätzung hat. */
+  hasPublicCalculator: boolean;
   /** Kurzform für Navigation und Kacheln. */
   name: string;
   /** H1 der Detailseite. */
@@ -23,6 +26,8 @@ export type Service = {
   teaser: string;
   /** Erklärender Absatz auf der Detailseite. */
   body: string;
+  /** Zielgruppengerechter Kurztext für die Geschäftskundenübersicht. */
+  businessTeaser: string;
   /** Die Einzelleistungen aus dem Entwurf, unverändert. */
   items: string[];
   /** Lucide-Icon-Name, wird in der Kachel aufgelöst. */
@@ -43,11 +48,12 @@ export type Service = {
   faqs: Faq[];
 };
 
-export const services: Service[] = [
+const serviceCatalog: Service[] = [
   {
     slug: "objektbetreuung",
+    hasPublicCalculator: false,
     name: "Objektbetreuung",
-    heading: "Objektbetreuung in Elmshorn und Umgebung",
+    heading: "Objektbetreuung",
     teaser:
       "Wir kümmern uns umfassend um Ihre Immobilie – von der Kontrolle über " +
       "die Wartung bis hin zur Werterhaltung.",
@@ -59,6 +65,9 @@ export const services: Service[] = [
       "daraus Schäden werden. Für Eigentümer, Verwaltungen und WEGs übernehmen " +
       "wir die laufende Kontrolle, koordinieren Handwerker und halten fest, was " +
       "wann erledigt wurde – nachvollziehbar für jede Abrechnung.",
+    businessTeaser:
+      "Wir übernehmen die laufende Kontrolle, Koordination und Werterhaltung " +
+      "von Wohnanlagen, Gewerbeimmobilien und weiteren Objekten.",
     items: [
       "Regelmäßige Objektkontrollen",
       "Überwachung & Dokumentation",
@@ -79,21 +88,13 @@ export const services: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Objektbetreuung Elmshorn — Hausmeisterservice für Ihre Immobilie",
+      title: "Objektbetreuung im Kreis Pinneberg und in Hamburg",
       description:
-        "Objektbetreuung und Hausmeisterservice in Elmshorn und im Kreis " +
-        "Pinneberg: Kontrolle, Dokumentation, Kleinreparaturen. Monatspreis " +
-        "online berechnen.",
+        "Objektbetreuung und Hausmeisterservice im Kreis Pinneberg und in Hamburg: " +
+        "Kontrolle, Dokumentation und Kleinreparaturen. Persönliches Angebot " +
+        "nach kostenloser Besichtigung, auch im Umkreis von 50 km um Elmshorn.",
     },
     faqs: [
-      {
-        question: "Was kostet Objektbetreuung pro Wohneinheit im Monat?",
-        answer:
-          "Üblich sind 15 bis 40 Euro pro Wohneinheit und Monat, abhängig davon, " +
-          "welche Module Sie buchen. Unser Konfigurator zeigt Ihnen den Rahmen " +
-          "für Ihr Objekt sofort — die Grundbetreuung mit Objektkontrolle und " +
-          "Mängelmeldung ist immer enthalten.",
-      },
       {
         question: "Übernehmen Sie auch den Winterdienst?",
         answer:
@@ -118,8 +119,9 @@ export const services: Service[] = [
 
   {
     slug: "gebaeudereinigung",
+    hasPublicCalculator: true,
     name: "Gebäudereinigung",
-    heading: "Gebäudereinigung in Elmshorn und Umgebung",
+    heading: "Gebäudereinigung",
     teaser:
       "Sauberkeit, auf die Sie sich verlassen können. Wir reinigen gründlich, " +
       "zuverlässig und sorgen für ein angenehmes Umfeld.",
@@ -130,6 +132,9 @@ export const services: Service[] = [
       "Büros und Praxen, reinigen Glas und Fenster, führen Grundreinigungen durch " +
       "und übergeben Objekte nach Umzug oder Bauarbeiten bezugsfertig. Bei " +
       "Praxen und Gemeinschaftsflächen reinigen wir auf Wunsch desinfizierend.",
+    businessTeaser:
+      "Zuverlässige Unterhalts-, Büro- und Praxisreinigung – abgestimmt auf " +
+      "Nutzung, Betriebszeiten und die Anforderungen Ihres Objekts.",
     items: [
       "Unterhaltsreinigung",
       "Glas- & Fensterreinigung",
@@ -140,6 +145,7 @@ export const services: Service[] = [
       "Bodenpflege & -beschichtung",
       "Sonderreinigungen",
       "Reinigung nach Umzug",
+      "Bau- und Bauendreinigung",
       "Terrassenreinigung",
     ],
     icon: "spray",
@@ -152,21 +158,13 @@ export const services: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Gebäudereinigung Elmshorn — Preis in 60 Sekunden berechnen",
+      title: "Gebäudereinigung im Kreis Pinneberg und in Hamburg",
       description:
-        "Unterhaltsreinigung, Treppenhaus, Büro und Praxis in Elmshorn und im " +
-        "Kreis Pinneberg. Richtpreis online berechnen, Festpreis nach " +
-        "kostenloser Besichtigung.",
+        "Gebäudereinigung, Treppenhaus- sowie Bauendreinigung im Kreis Pinneberg " +
+        "und in Hamburg sowie im Umkreis von 50 km um Elmshorn. Preisrahmen online, " +
+        "Festpreis nach kostenloser Besichtigung.",
     },
     faqs: [
-      {
-        question: "Was kostet eine Gebäudereinigung pro Quadratmeter?",
-        answer:
-          "Für die laufende Unterhaltsreinigung liegen marktübliche Preise " +
-          "zwischen 0,80 und 1,50 Euro pro Quadratmeter, Treppenhausreinigung " +
-          "zwischen 2,50 und 5,00 Euro. Wir kalkulieren am unteren Rand dieser " +
-          "Spanne — den Rahmen für Ihre Fläche sehen Sie im Konfigurator sofort.",
-      },
       {
         question: "Wie oft sollte ein Treppenhaus gereinigt werden?",
         answer:
@@ -195,8 +193,9 @@ export const services: Service[] = [
 
   {
     slug: "gartenpflege",
-    name: "Gartenpflege",
-    heading: "Gartenpflege in Elmshorn und Umgebung",
+    hasPublicCalculator: true,
+    name: "Grün- und Außenanlagenpflege",
+    heading: "Grün- und Außenanlagenpflege",
     teaser:
       "Wir pflegen Ihre Grünanlagen mit Fachkenntnis und Sorgfalt – für ein " +
       "gepflegtes und harmonisches Außenbild.",
@@ -207,6 +206,9 @@ export const services: Service[] = [
       "Für Wohnanlagen und Gewerbeobjekte betreuen wir Grünflächen ganzjährig, " +
       "inklusive Düngung, Bewässerung und Neupflanzungen. Den Grünschnitt nehmen " +
       "wir mit — Sie müssen sich um die Entsorgung nicht kümmern.",
+    businessTeaser:
+      "Wir pflegen Grün- und Außenanlagen regelmäßig und fachgerecht – für ein " +
+      "gepflegtes Erscheinungsbild Ihrer Immobilie.",
     items: [
       "Rasenmähen",
       "Heckenschnitt",
@@ -217,7 +219,7 @@ export const services: Service[] = [
       "Düngung",
       "Beetpflege",
       "Neupflanzungen",
-      "Garten- & Grünanlagenpflege (ganzjährig)",
+      "Grün- und Außenanlagenpflege (ganzjährig)",
     ],
     icon: "sprout",
     emoji: "🌿",
@@ -229,20 +231,13 @@ export const services: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Gartenpflege Elmshorn — Rasen, Hecke, Grünanlagen",
+      title: "Grün- und Außenanlagenpflege im Kreis Pinneberg und in Hamburg",
       description:
-        "Rasenmähen, Heckenschnitt und ganzjährige Grünanlagenpflege in " +
-        "Elmshorn und im Kreis Pinneberg. Monatsrahmen online berechnen.",
+        "Rasenmähen, Heckenschnitt und ganzjährige Grünanlagenpflege im " +
+        "Kreis Pinneberg, in Hamburg und im Umkreis von 50 km um Elmshorn. " +
+        "Voraussichtlichen Preisrahmen online berechnen.",
     },
     faqs: [
-      {
-        question: "Was kostet Rasenmähen pro Quadratmeter?",
-        answer:
-          "Marktüblich sind 0,10 bis 0,15 Euro pro Quadratmeter, alternativ 30 " +
-          "bis 40 Euro pro Stunde. Für einen 400 Quadratmeter großen Garten mit " +
-          "regelmäßiger Pflege liegen Sie meist im Bereich von 150 bis 300 Euro " +
-          "im Monat, abhängig davon, was zum Mähen dazukommt.",
-      },
       {
         question: "Wann ist der richtige Zeitpunkt für den Heckenschnitt?",
         answer:
@@ -270,8 +265,9 @@ export const services: Service[] = [
 
   {
     slug: "entruempelung",
-    name: "Entrümpelung",
-    heading: "Entrümpelung in Elmshorn und Umgebung",
+    hasPublicCalculator: true,
+    name: "Entrümpelung und Auflösung",
+    heading: "Entrümpelung und Auflösung",
     teaser:
       "Wir schaffen Platz – schnell, diskret und zuverlässig. Ob Keller, " +
       "Wohnung oder Büro: Wir entrümpeln für Sie.",
@@ -283,6 +279,9 @@ export const services: Service[] = [
       "und übergeben besenrein — auf Wunsch mit anschließender Grundreinigung, " +
       "sodass die Wohnung direkt an den Vermieter zurückgehen kann. " +
       "Verwertbares Mobiliar rechnen wir an und senken damit Ihren Preis.",
+    businessTeaser:
+      "Wir übernehmen Büro- und Gewerbeentrümpelungen – diskret, planbar und " +
+      "mit fachgerechter Entsorgung.",
     items: [
       "Wohnungsauflösungen",
       "Haushaltsauflösungen",
@@ -305,35 +304,19 @@ export const services: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Entrümpelung Elmshorn — Richtpreis pro m² sofort berechnen",
+      title: "Entrümpelung und Auflösung im Kreis Pinneberg und in Hamburg",
       description:
-        "Wohnungsauflösung, Keller- und Dachbodenentrümpelung in Elmshorn und " +
-        "im Kreis Pinneberg. Richtpreis online berechnen, Besichtigung kostenlos.",
+        "Wohnungsauflösung, Keller- und Dachbodenentrümpelung im Kreis Pinneberg " +
+        "und in Hamburg sowie im Umkreis von 50 km um Elmshorn. Preisrahmen online, " +
+        "Besichtigung kostenlos.",
     },
     faqs: [
-      {
-        question: "Was kostet eine Entrümpelung pro Quadratmeter?",
-        answer:
-          "Marktüblich sind 15 bis 55 Euro pro Quadratmeter, gestaffelt nach " +
-          "Füllgrad: wenig Inventar liegt bei 15 bis 20 Euro, ein normal " +
-          "möblierter Haushalt bei 20 bis 28 Euro, volle Räume bei 28 bis 38 " +
-          "Euro. Wir setzen den unteren Rand an — was Ihr Objekt kostet, zeigt " +
-          "der Konfigurator in unter einer Minute.",
-      },
-      {
-        question: "Warum kostet ein höheres Stockwerk mehr?",
-        answer:
-          "Weil jedes Möbelstück die Treppe hinunter muss, nicht nur einmal der " +
-          "Weg. Ohne Aufzug steigt der Aufwand mit jeder Etage deutlich — bei " +
-          "gleicher Wohnungsgröße kann sich der Quadratmeterpreis dadurch mehr " +
-          "als verdoppeln.",
-      },
       {
         question: "Wird verwertbares Mobiliar angerechnet?",
         answer:
           "Ja. Was sich weiterverkaufen oder weitergeben lässt, rechnen wir " +
           "gegen. Das steht nach der kostenlosen Besichtigung fest und senkt den " +
-          "Preis gegenüber dem Richtwert.",
+          "endgültigen Angebotspreis.",
       },
       {
         question: "Übernehmen Sie auch Messie-Wohnungen und Räumungen nach Todesfällen?",
@@ -346,6 +329,21 @@ export const services: Service[] = [
     ],
   },
 ];
+
+/* Die sichtbare Reihenfolge ist eine redaktionelle Entscheidung und nicht an
+   die historische Reihenfolge der Preis-Specs gekoppelt. Die stabilen Slugs
+   bleiben unverändert, damit Links, Leads und interne Statistiken nicht
+   brechen. */
+const SERVICE_ORDER: ConfiguratorSlug[] = [
+  "gebaeudereinigung",
+  "gartenpflege",
+  "entruempelung",
+  "objektbetreuung",
+];
+
+export const services: Service[] = SERVICE_ORDER.map(
+  (slug) => serviceCatalog.find((service) => service.slug === slug)!,
+);
 
 export function getService(slug: string): Service | undefined {
   return services.find((s) => s.slug === slug);

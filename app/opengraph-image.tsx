@@ -85,7 +85,8 @@ export default function OpengraphImage() {
               marginTop: 26,
             }}
           >
-            {`Gebäudereinigung · Gartenpflege · Objektbetreuung · Entrümpelung · ${business.address.city}`}
+            Gebäudereinigung · Grün- und Außenanlagenpflege · Entrümpelung und
+            Auflösung · Objektbetreuung
           </div>
         </div>
       </div>

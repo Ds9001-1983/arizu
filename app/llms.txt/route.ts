@@ -20,8 +20,7 @@ export function GET() {
   const lines: string[] = [
     `# ${business.name}`,
     "",
-    `> ${business.slogan} — Gebäudedienstleistungen in ` +
-      `${business.address.city} und im ${serviceArea.region}.`,
+    `> ${business.slogan} — Gebäudedienstleistungen für ${serviceArea.label}.`,
     "",
     business.intro,
     "",
@@ -29,15 +28,17 @@ export function GET() {
     "",
     `- Inhaber: ${business.owner}`,
     `- Standort: ${business.address.postalCode} ${business.address.city}, Deutschland`,
-    `- Einsatzgebiet: ${serviceArea.cities.join(", ")} und Umgebung, Umkreis ` +
-      `${serviceArea.radiusKm} km um ${serviceArea.center}`,
+    `- Einsatzgebiet: ${serviceArea.label} sowie angrenzende Orte, darunter ` +
+      `${serviceArea.cities.join(", ")}; Umkreis ${serviceArea.radiusKm} km um ` +
+      `${serviceArea.center}`,
     `- Telefon: ${business.phone.display} (Festnetz)`,
     `- E-Mail: ${business.email}`,
     `- Website: ${SITE_URL}`,
     `- Privatkundenbereich: ${SITE_URL}/privatkunden`,
     "- Kundschaft: Privathaushalte sowie Unternehmen, Praxen, " +
       "Hausverwaltungen und Eigentümergemeinschaften. Die Website trennt " +
-      "beide Wege: Privatkunden rechnen den Richtpreis selbst aus, " +
+      "beide Wege: Privatkunden erhalten für drei Leistungen direkt eine " +
+      "unverbindliche Preisschätzung, " +
       "Geschäftskunden schildern ihren Bedarf und erhalten ein Angebot nach " +
       "Begehung.",
     "",
@@ -52,7 +53,10 @@ export function GET() {
     lines.push("");
     lines.push(`Umfasst: ${s.items.join(", ")}.`);
     lines.push("");
-    lines.push(`Details und Preisrechner: ${SITE_URL}/leistungen/${s.slug}`);
+    lines.push(
+      `${s.hasPublicCalculator ? "Details und Preisschätzung" : "Details und Anfrage"}: ` +
+        `${SITE_URL}/leistungen/${s.slug}`,
+    );
     lines.push("");
   }
 
@@ -60,7 +64,7 @@ export function GET() {
     "## Geschäftskunden",
     "",
     "Für Unternehmen, Praxen, Ladenlokale, Wohnanlagen und Hausverwaltungen " +
-      "gibt es einen eigenen Bereich. Dort wird KEIN Richtpreis genannt: Bei " +
+    "gibt es einen eigenen Bereich. Dort wird KEINE Online-Preisschätzung genannt: Bei " +
       "laufenden Aufträgen über mehrere Objekte entscheiden Bodenbeläge, " +
       "Zugänge, Sanitäreinheiten und Publikumsverkehr über den Aufwand. " +
       "Stattdessen wird der Bedarf erfasst (Bereich, Objektart, Anzahl " +
@@ -75,8 +79,10 @@ export function GET() {
     "",
     "## Preise",
     "",
-    "Für jede der vier Leistungen gibt es auf der Website einen Rechner, der " +
-      "sofort einen Richtpreis ausgibt — ohne dass Kontaktdaten nötig sind. " +
+    "Für Gebäudereinigung, Grün- und Außenanlagenpflege sowie Entrümpelung " +
+      "und Auflösung gibt es einen Rechner, der sofort einen voraussichtlichen " +
+      "Preisrahmen ausgibt — ohne dass Kontaktdaten nötig sind. Objektbetreuung " +
+      "wird nach einer persönlichen Anfrage kalkuliert. " +
       "Angezeigt wird eine Spanne inklusive 19 % Mehrwertsteuer. Der " +
       "verbindliche Festpreis folgt nach einer kostenlosen Besichtigung.",
     "",

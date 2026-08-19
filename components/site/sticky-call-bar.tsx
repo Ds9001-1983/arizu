@@ -24,7 +24,9 @@ export function StickyCallBar() {
           Anrufen
         </a>
         <a
-          href={whatsappHref("Hallo ARIZU, ich habe eine Anfrage:")}
+          href={whatsappHref(
+            `Hallo ${business.shortName}, ich habe eine Anfrage:`,
+          )}
           target="_blank"
           rel="noopener"
           className="flex items-center justify-center gap-2 py-3.5 text-sm font-semibold text-white"

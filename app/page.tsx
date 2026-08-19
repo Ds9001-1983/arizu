@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import {
-  BadgeEuro,
   Handshake,
   Leaf,
   RefreshCw,
@@ -13,24 +12,37 @@ import { Container } from "@/components/site/container";
 import { HeroMedia } from "@/components/site/hero-media";
 import { KundenartWeiche } from "@/components/site/kundenart-weiche";
 import { SectionHeading } from "@/components/site/section-heading";
-import { TrustBar } from "@/components/site/trust-bar";
-import { business } from "@/lib/business";
+import { business, serviceArea } from "@/lib/business";
 import { localBusinessSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   description:
-    "Gebäudereinigung, Gartenpflege, Objektbetreuung und Entrümpelung für " +
-    "Privat- und Geschäftskunden in Elmshorn, im Kreis Pinneberg und im Umkreis von 40 km.",
+    "Gebäudereinigung, Grün- und Außenanlagenpflege, Entrümpelung und Auflösung " +
+    `sowie Objektbetreuung für Privat- und Geschäftskunden. Einsatzgebiet: ` +
+    `${serviceArea.label} sowie weitere Orte im Umkreis von ${serviceArea.radiusKm} km um ` +
+    `${serviceArea.center}.`,
   alternates: { canonical: "/" },
 };
 
 /* „Warum ARIZU?" — vier Werte aus dem Entwurf, zwei Ergänzungen aus Arians
    Website-Review vom 17.08.2026. */
 const reasons = [
-  { icon: ShieldCheck, title: "Zuverlässig", text: "Wir halten, was wir versprechen." },
-  { icon: Sparkles, title: "Qualität", text: "Höchste Standards bei jeder Leistung." },
+  {
+    icon: ShieldCheck,
+    title: "Zuverlässig",
+    text: "Pünktlich und vertrauensvoll: Wir halten, was wir versprechen.",
+  },
+  {
+    icon: Sparkles,
+    title: "Kompetent",
+    text: "Ein erfahrenes Team mit höchsten Standards bei jeder Leistung.",
+  },
   { icon: Scale, title: "Fair", text: "Transparente Preise und ehrliche Beratung." },
-  { icon: Leaf, title: "Nachhaltig", text: "Wir denken heute an morgen." },
+  {
+    icon: Leaf,
+    title: "Nachhaltig",
+    text: "Umweltbewusst handeln: Wir denken heute an morgen.",
+  },
   {
     icon: Handshake,
     title: "Partnerschaftlich",
@@ -76,52 +88,30 @@ export default function Home() {
       </section>
 
       <KundenartWeiche />
-      <TrustBar />
 
       <section className="py-20 sm:py-24">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <SectionHeading
-              eyebrow="Warum ARIZU?"
-              title="Wofür wir stehen"
-              lead="ARIZU ist ein junger Betrieb — und genau deshalb bekommen Sie hier noch den Inhaber selbst am Telefon, nicht die dritte Ebene einer Verwaltung."
+              eyebrow={`Warum ${business.shortName}?`}
+              title="Ein Ansprechpartner. Klare Lösungen. Verlässliche Leistung."
+              lead={`Wir denken mit, packen an und übernehmen Verantwortung. Ob Gebäudereinigung, Grün- und Außenanlagenpflege, Entrümpelung und Auflösung oder eine umfassende Objektbetreuung – ${business.shortName} steht für professionelle Dienstleistungen aus einer Hand, persönliche Betreuung und verlässliche Ergebnisse.`}
             />
-            <ul className="grid gap-px overflow-hidden rounded-sm border border-mist bg-mist sm:grid-cols-2">
-              {reasons.map(({ icon: Icon, title, text }) => (
-                <li key={title} className="bg-surface p-7">
-                  <Icon className="size-7 text-gold" strokeWidth={1.5} aria-hidden />
-                  <h3 className="mt-4 font-display text-base font-bold uppercase tracking-[0.1em] text-navy">
-                    {title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">{text}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Container>
-      </section>
-
-      <section className="bg-navy py-16 text-white">
-        <Container>
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-14">
-            <BadgeEuro
-              className="size-12 shrink-0 text-gold"
-              strokeWidth={1.5}
-              aria-hidden
-            />
-            <div className="max-w-3xl">
-              <h2 className="font-display text-2xl text-white sm:text-3xl">
-                20 % der Arbeitskosten holen Sie vom Finanzamt zurück
-              </h2>
-              <p className="mt-4 text-[1.02rem] leading-relaxed text-white/75">
-                Reinigung, Gartenpflege und Hausmeisterleistungen im Privathaushalt
-                gelten als haushaltsnahe Dienstleistungen. Sie können 20 % der
-                Arbeitskosten von der Steuer absetzen, bis zu 4.000 € im Jahr
-                (§ 35a EStG). Voraussetzung: eine Rechnung und Zahlung per
-                Überweisung — Barzahlung erkennt das Finanzamt nicht an. Wir weisen
-                den Arbeitslohn auf jeder Rechnung getrennt aus, damit Sie den
-                Betrag direkt eintragen können.
-              </p>
+            <div>
+              <h2 className="mb-6 font-display text-2xl text-navy">Wofür wir stehen</h2>
+              <ul className="grid gap-px overflow-hidden rounded-sm border border-mist bg-mist sm:grid-cols-2">
+                {reasons.map(({ icon: Icon, title, text }) => (
+                  <li key={title} className="bg-surface p-7">
+                    <Icon className="size-7 text-gold" strokeWidth={1.5} aria-hidden />
+                    <h3 className="mt-4 font-display text-base font-bold uppercase tracking-[0.1em] text-navy">
+                      {title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                      {text}
+                    </p>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </Container>

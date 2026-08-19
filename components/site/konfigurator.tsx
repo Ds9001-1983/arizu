@@ -1,19 +1,25 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, CheckCircle2, Info, MessageCircle, Phone } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Info,
+  MessageCircle,
+  Phone,
+} from "lucide-react";
 import { whatsappLink, whatsappText, type AnfrageDaten } from "@/lib/anfrage-text";
 import { business } from "@/lib/business";
+import { defaultValues, summarize } from "@/lib/pricing/helpers";
+import { getPublicConfigurator } from "@/lib/pricing/public";
 import {
   type Rates,
   type Values,
-  defaultValues,
   estimateRange,
   euro,
-  getConfigurator,
   gross,
-  summarize,
-} from "@/lib/pricing";
+} from "@/lib/pricing/types";
 import { getService } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +31,7 @@ import { cn } from "@/lib/utils";
  * Preis. Hier bekommt der Kunde tatsächlich eine Zahl, bevor er Daten abgibt.
  *
  * Zwei Schritte in derselben Karte:
- *   1. Rechnen — Eingaben und Richtpreis, ohne jede Datenabfrage
+ *   1. Rechnen — Eingaben und Preisrahmen, ohne jede Datenabfrage
  *   2. Angaben — Name, Adresse, Telefon
  *
  * Warum die Angaben zwingend sind: Eine Anfrage ohne Namen und Adresse ist
@@ -90,7 +96,8 @@ export function Konfigurator({
   rates: Rates;
   className?: string;
 }) {
-  const spec = getConfigurator(slug)!;
+  const spec = getPublicConfigurator(slug);
+  if (!spec) throw new Error(`Kein öffentlicher Rechner für ${slug}.`);
   const leistung = getService(slug)?.name ?? slug;
 
   const [values, setValues] = useState<Values>(() => defaultValues(spec));
@@ -113,14 +120,38 @@ export function Konfigurator({
     // den Rechner, ohne dass die Komponente neu montiert wird.
   }, [spec, values, rates]);
 
-  const preisKurz = `ca. ${euro(result.range.low)} – ${euro(result.range.high)}`;
+  const preisKurz = `${euro(result.range.low)} – ${euro(result.range.high)}`;
   const einmaligZeile = result.oneOffGross
     ? `Dazu einmalig ca. ${euro(result.oneOffGross)} (${result.oneOffLabel}).`
     : undefined;
 
+  /* Die offengelegten Annahmen stammen direkt aus der jeweiligen Spec. So
+     kann kein hart codierter Hinweis veralten, wenn ein Rechnerfeld
+     hinzukommt oder umbenannt wird. */
+  const annahmen = spec.fields.map((field) => {
+    const raw = values[field.id];
+
+    if (field.kind === "number") {
+      const value = typeof raw === "number" ? raw : Number(raw);
+      return `${field.label}: ${Number.isFinite(value) ? value : field.default} ${field.unit}`;
+    }
+
+    if (field.kind === "select") {
+      const selected = field.options.find((option) => option.id === raw);
+      return `${field.label}: ${selected?.label ?? "keine Auswahl"}`;
+    }
+
+    const ids = Array.isArray(raw) ? raw : [];
+    const labels = ids
+      .map((id) => field.options.find((option) => option.id === id)?.label)
+      .filter((label): label is string => Boolean(label));
+    return `${field.label}: ${labels.length > 0 ? labels.join(", ") : "keine Auswahl"}`;
+  });
+
   /** Kompakter Text der Anfrage — geht in Mail und Lead-Inbox. */
   const anfrageText =
-    `${leistung}: ${result.summary}. Richtpreis ${preisKurz} ${result.unit} inkl. MwSt.` +
+    `${leistung}: ${result.summary}. Voraussichtlicher Preisrahmen: ` +
+    `${preisKurz} ${result.unit} inkl. MwSt.` +
     (einmaligZeile ? ` ${einmaligZeile}` : "");
 
   /** Datensatz für die WhatsApp-Nachricht. */
@@ -131,7 +162,7 @@ export function Konfigurator({
     leistung,
     emoji: getService(slug)?.emoji,
     auswahl: result.summary,
-    richtpreis: preisKurz,
+    preisrahmen: preisKurz,
     einheit: result.unit,
     einmalig: einmaligZeile,
   };
@@ -241,7 +272,7 @@ export function Konfigurator({
   const preisSpalte = (
     <div className="flex flex-col bg-navy p-6 text-white sm:p-8">
       <p className="font-sans text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-gold-soft">
-        Ihr Richtpreis
+        Voraussichtlicher Preisrahmen
       </p>
 
       <p
@@ -271,21 +302,72 @@ export function Konfigurator({
         </div>
       )}
 
-      <ul className="mt-6 space-y-2.5 text-xs leading-relaxed text-white/65">
+      <div className="mt-6 rounded-sm border border-gold/35 bg-white/5 p-4">
+        <p className="font-display text-sm font-bold text-gold-soft">
+          Unverbindliche Preisschätzung
+        </p>
+        <p className="mt-2 text-xs leading-relaxed text-white/75">
+          Der angezeigte Betrag dient ausschließlich der ersten Orientierung.
+          Der tatsächliche Preis kann aufgrund der örtlichen Gegebenheiten, des
+          tatsächlichen Aufwands und weiterer nicht im Rechner erfasster Faktoren
+          abweichen. Ein verbindliches Angebot entsteht erst nach individueller
+          Prüfung und Bestätigung durch {business.shortName}.
+        </p>
+      </div>
+
+      <div className="mt-6 border-t border-white/15 pt-5">
+        <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/55">
+          Grundlage der Berechnung
+        </p>
+        <p className="mt-2 text-xs leading-relaxed text-white/65">
+          Die Berechnung basiert auf folgenden Angaben:
+        </p>
+        <ul className="mt-3 space-y-2 text-xs leading-relaxed text-white/75">
+          {annahmen.map((annahme) => (
+            <li key={annahme} className="flex gap-2">
+              <span className="text-gold/80" aria-hidden>
+                •
+              </span>
+              <span>{annahme}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 text-xs leading-relaxed text-white/65">
+          Nicht berücksichtigt werden können beispielsweise außergewöhnliche
+          Verschmutzungen, schwer zugängliche Bereiche, zusätzliche Leistungen,
+          besondere Materialanforderungen oder ein gegenüber den Angaben
+          tatsächlich höherer Arbeitsaufwand.
+        </p>
+      </div>
+
+      <ul className="mt-5 space-y-2.5 text-xs leading-relaxed text-white/65">
         {result.notes.map((n) => (
           <li key={n} className="flex gap-2">
             <Info className="mt-0.5 size-3.5 shrink-0 text-gold/70" aria-hidden />
             <span>{n}</span>
           </li>
         ))}
-        <li className="flex gap-2">
-          <Info className="mt-0.5 size-3.5 shrink-0 text-gold/70" aria-hidden />
-          <span>
-            Unverbindliche Schätzung. Den Festpreis nennen wir nach der kostenlosen
-            Besichtigung.
-          </span>
-        </li>
       </ul>
+
+      {schritt === "rechner" && (
+        <div className="mt-auto pt-7">
+          <button
+            type="button"
+            onClick={() => setSchritt("angaben")}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-gold px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
+          >
+            Unverbindliche Anfrage stellen
+            <ArrowRight className="size-4" aria-hidden />
+          </button>
+          <a
+            href={business.phone.href}
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 text-sm font-semibold text-white/80 hover:text-gold-soft"
+          >
+            <Phone className="size-4" aria-hidden />
+            Lieber anrufen
+          </a>
+        </div>
+      )}
     </div>
   );
 
@@ -483,23 +565,6 @@ export function Konfigurator({
               })}
             </div>
 
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <button
-                type="button"
-                onClick={() => setSchritt("angaben")}
-                className="inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
-              >
-                Unverbindlich anfragen
-                <ArrowRight className="size-4" aria-hidden />
-              </button>
-              <a
-                href={business.phone.href}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-navy hover:text-gold-deep"
-              >
-                <Phone className="size-4" aria-hidden />
-                Lieber anrufen
-              </a>
-            </div>
           </>
         ) : (
           <>

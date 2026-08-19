@@ -15,13 +15,20 @@ import { Konfigurator } from "./konfigurator";
  */
 export function KonfiguratorTabs({
   rates,
-  initial = "entruempelung",
+  initial = "gebaeudereinigung",
 }: {
-  /** Sätze aller vier Rechner, weil hier zwischen ihnen gewechselt wird. */
-  rates: Record<ConfiguratorSlug, Rates>;
+  /** Ausschließlich Sätze der öffentlich angebotenen Rechner. */
+  rates: Partial<Record<ConfiguratorSlug, Rates>>;
   initial?: ConfiguratorSlug;
 }) {
-  const [active, setActive] = useState<ConfiguratorSlug>(initial);
+  const rechnerServices = services.filter((service) => service.hasPublicCalculator);
+  const [active, setActive] = useState<ConfiguratorSlug>(() =>
+    rechnerServices.some((service) => service.slug === initial)
+      ? initial
+      : rechnerServices[0].slug,
+  );
+  const activeRates = rates[active];
+  if (!activeRates) throw new Error(`Keine öffentlichen Sätze für ${active}.`);
 
   return (
     <div>
@@ -30,7 +37,7 @@ export function KonfiguratorTabs({
         aria-label="Leistung wählen"
         className="flex flex-wrap gap-2"
       >
-        {services.map((s) => {
+        {rechnerServices.map((s) => {
           const selected = s.slug === active;
           return (
             <button
@@ -54,7 +61,7 @@ export function KonfiguratorTabs({
       </div>
 
       <div id={`konfigurator-${active}`} role="tabpanel" className="mt-5">
-        <Konfigurator key={active} slug={active} rates={rates[active]} />
+        <Konfigurator key={active} slug={active} rates={activeRates} />
       </div>
     </div>
   );

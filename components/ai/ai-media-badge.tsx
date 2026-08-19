@@ -30,17 +30,17 @@ export type BadgePosition =
   | "caption-below";
 
 const POSITION_CLASSES: Record<Exclude<BadgePosition, "caption-below">, string> = {
-  "top-right": "top-3 right-3",
-  "top-left": "top-3 left-3",
-  "bottom-right": "bottom-3 right-3",
-  "bottom-left": "bottom-3 left-3",
+  "top-right": "top-2 right-2",
+  "top-left": "top-2 left-2",
+  "bottom-right": "bottom-2 right-2",
+  "bottom-left": "bottom-2 left-2",
 };
 
 /** Glasoptik als eine Einheit — auch von anderen Overlays wiederverwendbar. */
 export const glassSurface =
-  "border border-white/35 bg-linear-to-b from-white/22 to-navy/12 " +
-  "backdrop-blur-[16px] backdrop-saturate-180 " +
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_6px_20px_rgba(0,0,0,0.28)]";
+  "border border-white/25 bg-linear-to-b from-white/16 to-navy/10 " +
+  "backdrop-blur-[12px] backdrop-saturate-150 " +
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.38),0_3px_12px_rgba(0,0,0,0.22)]";
 
 export function AiMediaBadge({
   assetId,
@@ -68,11 +68,10 @@ export function AiMediaBadge({
       data-ai-badge={assetId}
       className={cn(
         "pointer-events-none absolute z-20 flex items-center gap-1 rounded-full",
-        // Kompakt gehalten: Schrift und Innenabstände rund 20 % kleiner als
-        // zuvor, senkrecht bewusst noch etwas enger. `leading-none` nimmt die
-        // Zeilenbox-Luft raus — ohne das bliebe die Pille trotz kleinerer
-        // Werte hoch, weil die Zeilenhöhe den Innenraum aufspannt.
-        "px-2.5 py-[3px] text-[0.66rem] leading-none font-semibold tracking-wide text-white",
+        // Dezent, aber weiterhin als Text lesbar: Die Kennzeichnung darf nach
+        // der Kundenanpassung weniger Motivfläche beanspruchen, ohne zu einer
+        // reinen Symbolmarkierung zu werden.
+        "px-2 py-[2px] text-[0.6rem] leading-none font-semibold tracking-wide text-white",
         // Textschatten: hält die Schrift auch dort lesbar, wo unter dem Glas
         // eine sehr helle Stelle liegt (weiße Fassade, Treppenhauswand).
         "[text-shadow:0_1px_3px_rgba(0,0,0,0.55)]",
@@ -80,7 +79,7 @@ export function AiMediaBadge({
         POSITION_CLASSES[position],
       )}
     >
-      <span aria-hidden="true" className="text-[0.62rem] leading-none text-[#ffd89a]">
+      <span aria-hidden="true" className="text-[0.56rem] leading-none text-[#ffd89a]">
         ✦
       </span>
       {label}

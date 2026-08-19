@@ -27,7 +27,7 @@ const wege = [
     id: "privat" as const,
     icon: House,
     titel: "Ich bin Privatkunde",
-    text: "Wohnung, Haus oder Garten. Richtpreis sofort, ohne Daten zu hinterlassen.",
+    text: "Wohnung, Haus oder Außenanlage. Preisschätzung sofort, ohne Daten zu hinterlassen.",
     cta: "Zum Privatkundenbereich",
   },
   {
@@ -47,9 +47,8 @@ export function KundenartWeiche() {
   return (
     <section
       aria-labelledby="kundenart-titel"
-      // Dieselbe Farbe wie die TrustBar direkt darunter: Beide wachsen so zu
-      // einem dunklen Sockel unter dem Hero zusammen, statt einen hellen
-      // Streifen zwischen zwei dunkle Bänder zu setzen.
+      // Dunkler Sockel unter dem Hero: Die Zielgruppenentscheidung bleibt so
+      // optisch mit dem Einstieg verbunden.
       className="border-b border-white/10 bg-navy-band py-8"
     >
       <Container>

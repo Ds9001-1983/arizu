@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, BadgeEuro } from "lucide-react";
 import { JsonLd } from "@/components/seo/json-ld";
 import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
@@ -8,16 +8,16 @@ import { FaqList } from "@/components/site/faq-section";
 import { KonfiguratorTabs } from "@/components/site/konfigurator-tabs";
 import { SectionHeading } from "@/components/site/section-heading";
 import { ServiceGrid } from "@/components/site/service-grid";
-import { business } from "@/lib/business";
 import { getAllRates } from "@/lib/rates-server";
 import { breadcrumbSchema, faqSchema } from "@/lib/seo";
 import { services } from "@/lib/services";
 
 export const metadata: Metadata = {
-  title: "Privatkunden — Richtpreis für Gebäudedienstleistungen",
+  title: "Privatkunden — Preisschätzung für Gebäudedienstleistungen",
   description:
-    "Objektbetreuung, Gebäudereinigung, Gartenpflege und Entrümpelung für " +
-    "Privathaushalte. Richtpreis sofort und ohne Kontaktdaten berechnen.",
+    "Preisschätzung für Gebäudereinigung, Grün- und Außenanlagenpflege sowie " +
+    "Entrümpelung und Auflösung sofort und ohne Kontaktdaten berechnen. " +
+    "Objektbetreuung individuell anfragen.",
   alternates: { canonical: "/privatkunden" },
 };
 
@@ -30,7 +30,12 @@ const privateFaqs = services.map((s) => s.faqs[0]);
 export const revalidate = 86_400;
 
 export default async function PrivatkundenPage() {
-  const rates = await getAllRates();
+  const allRates = await getAllRates();
+  const publicRates = {
+    gebaeudereinigung: allRates.gebaeudereinigung,
+    gartenpflege: allRates.gartenpflege,
+    entruempelung: allRates.entruempelung,
+  };
 
   return (
     <>
@@ -59,17 +64,54 @@ export default async function PrivatkundenPage() {
           <SectionHeading
             as="h1"
             eyebrow="Privatkunden"
-            title="Klare Leistungen. Ein Richtpreis vor der Anfrage."
-            lead={`Von der Treppenhausreinigung bis zur Wohnungsauflösung: ${business.shortName} übernimmt Arbeiten rund um Haus, Wohnung und Garten. Den Preisrahmen sehen Sie sofort — ohne zuerst Kontaktdaten abzugeben.`}
+            title="Klare Leistungen. Eine Preisschätzung vor der Anfrage."
+            lead={
+              <>
+                Wir bieten Ihnen professionelle Dienstleistungen aus einer Hand. Wir
+                stehen für zuverlässige Ausführung, transparente Abläufe und faire
+                Preise.
+                <span className="mt-4 block">
+                  Dank unserer digitalen Preiseinschätzung können Sie sich direkt
+                  einen ersten Eindruck von den Kosten verschaffen – schnell,
+                  unkompliziert und ohne Kontaktdaten.
+                </span>
+              </>
+            }
           />
 
           <a
             href="#richtpreis"
             className="mt-9 inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
           >
-            Richtpreis berechnen
+            Preisschätzung ansehen
             <ArrowRight className="size-4" aria-hidden />
           </a>
+        </Container>
+      </section>
+
+      <section className="bg-navy py-16 text-white">
+        <Container>
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-14">
+            <BadgeEuro
+              className="size-12 shrink-0 text-gold"
+              strokeWidth={1.5}
+              aria-hidden
+            />
+            <div className="max-w-3xl">
+              <h2 className="font-display text-2xl text-white sm:text-3xl">
+                20 % der Arbeitskosten holen Sie vom Finanzamt zurück
+              </h2>
+              <p className="mt-4 text-[1.02rem] leading-relaxed text-white/75">
+                Reinigung, Grün- und Außenanlagenpflege sowie Hausmeisterleistungen
+                im Privathaushalt gelten als haushaltsnahe Dienstleistungen. Sie können
+                20 % der Arbeitskosten von der Steuer absetzen, bis zu 4.000 € im
+                Jahr (§ 35a EStG). Voraussetzung: eine Rechnung und Zahlung per
+                Überweisung — Barzahlung erkennt das Finanzamt nicht an. Wir weisen
+                den Arbeitslohn auf jeder Rechnung getrennt aus, damit Sie den Betrag
+                direkt eintragen können.
+              </p>
+            </div>
+          </div>
         </Container>
       </section>
 
@@ -89,12 +131,12 @@ export default async function PrivatkundenPage() {
       <section id="richtpreis" className="scroll-mt-20 bg-mist/40 py-20 sm:py-24">
         <Container>
           <SectionHeading
-            eyebrow="Richtpreis in 60 Sekunden"
+            eyebrow="Preisschätzung in 60 Sekunden"
             title="Was kostet das? Sehen Sie selbst."
             lead="Sie bekommen sofort eine Zahl — ohne Ihre Daten abzugeben. Erst danach entscheiden Sie, ob Sie anfragen möchten."
           />
           <div className="mt-12">
-            <KonfiguratorTabs rates={rates} />
+            <KonfiguratorTabs rates={publicRates} />
           </div>
         </Container>
       </section>

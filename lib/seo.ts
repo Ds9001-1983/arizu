@@ -98,7 +98,19 @@ export function serviceSchema(service: Service) {
     description: service.seo.description,
     url: `${SITE_URL}/leistungen/${service.slug}`,
     provider: { "@id": BUSINESS_ID },
-    areaServed: serviceArea.cities.map((city) => ({ "@type": "City", name: city })),
+    areaServed: [
+      { "@type": "AdministrativeArea", name: serviceArea.region },
+      ...serviceArea.cities.map((city) => ({ "@type": "City", name: city })),
+      {
+        "@type": "GeoCircle",
+        geoMidpoint: {
+          "@type": "GeoCoordinates",
+          latitude: business.geo.latitude,
+          longitude: business.geo.longitude,
+        },
+        geoRadius: serviceArea.radiusKm * 1000,
+      },
+    ],
     // Jede Einzelleistung als eigenes Angebot: So versteht ein Suchsystem,
     // dass "Treppenhausreinigung" hier tatsächlich angeboten wird, statt nur
     // ein Wort im Fließtext zu sehen.

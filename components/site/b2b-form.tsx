@@ -184,7 +184,7 @@ export function B2bForm() {
     leistung: dienst?.name ?? "Anfrage für Geschäftskunden",
     emoji: dienst?.emoji ?? "🏢",
     // Derselbe Text, den der Server speichert — beide rufen bedarfText() auf,
-    // sie können also nicht auseinanderlaufen. Ohne richtpreis lässt
+    // sie können also nicht auseinanderlaufen. Ohne Preisrahmen lässt
     // whatsappText den Preisblock weg.
     auswahl: bedarfText(angaben),
   });

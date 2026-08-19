@@ -2,20 +2,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
+  BadgeCheck,
   Building,
   Building2,
   CalendarCheck,
-  FileText,
+  GraduationCap,
+  ReceiptText,
+  Shapes,
   Store,
   Stethoscope,
   UserCheck,
+  Workflow,
+  Zap,
 } from "lucide-react";
 import { B2bForm } from "@/components/site/b2b-form";
 import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
 import { SectionHeading } from "@/components/site/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
-import { business } from "@/lib/business";
+import { business, serviceArea } from "@/lib/business";
 import { breadcrumbSchema, faqSchema } from "@/lib/seo";
 import { services, type Faq } from "@/lib/services";
 
@@ -35,9 +40,10 @@ import { services, type Faq } from "@/lib/services";
 export const metadata: Metadata = {
   title: `Geschäftskunden — Gebäudedienstleistungen für Unternehmen`,
   description:
-    "Unterhaltsreinigung, Büro- und Praxisreinigung, Objektbetreuung und " +
-    "Außenanlagen für Unternehmen, Praxen und Hausverwaltungen in Elmshorn " +
-    "und Umgebung. Angebot nach kostenloser Begehung, monatlich kündbar.",
+    "Gebäudereinigung, Grün- und Außenanlagenpflege, Entrümpelung und " +
+    "Auflösung sowie Objektbetreuung für Unternehmen. Einsatzgebiet: " +
+    `${serviceArea.label} sowie weitere Orte im Umkreis von ` +
+    `${serviceArea.radiusKm} km um ${serviceArea.center}.`,
   alternates: { canonical: "/geschaeftskunden" },
 };
 
@@ -62,23 +68,48 @@ const objektarten = [
     titel: "Ladenlokale und Gastronomie",
     text: "Vor Öffnung oder nach Feierabend, damit der Betrieb nicht steht.",
   },
+  {
+    icon: GraduationCap,
+    titel: "Bildung & öffentliche Einrichtungen",
+    text: "Zuverlässige Reinigung und Betreuung für Schulen, Kitas, Verwaltungsgebäude und öffentliche Einrichtungen – abgestimmt auf Nutzung und Betriebszeiten.",
+  },
+  {
+    icon: Shapes,
+    titel: "Weitere Objekte",
+    text: "Individuelle Dienstleistungen für Gewerbe-, Wohn- und Sonderobjekte – flexibel abgestimmt auf die jeweiligen Anforderungen.",
+  },
 ];
 
 const arbeitsweise = [
   {
     icon: UserCheck,
     titel: "Ein Ansprechpartner",
-    text: "Sie rufen nicht in einer Zentrale an, sondern beim Inhaber.",
+    text: "Direkte Kommunikation ohne Umwege.",
+  },
+  {
+    icon: Workflow,
+    titel: "Klare Prozesse",
+    text: "Strukturierte Abläufe von der Anfrage bis zur laufenden Betreuung.",
+  },
+  {
+    icon: BadgeCheck,
+    titel: "Feste Leistungsstandards",
+    text: "Definierte Leistungen sorgen für nachvollziehbare Qualität.",
   },
   {
     icon: CalendarCheck,
-    titel: "Vertretung ist eingeplant",
-    text: "Bei Krankheit und Urlaub steht Ersatz bereit — die Leistung fällt nicht aus.",
+    titel: "Planbare Betreuung",
+    text: "Regelmäßige Leistungen werden zuverlässig eingehalten.",
   },
   {
-    icon: FileText,
-    titel: "Nachvollziehbar abgerechnet",
-    text: "Leistungsverzeichnis je Objekt, eine Sammelrechnung im Monat, monatlich kündbar.",
+    icon: Zap,
+    titel: "Schnelle Reaktion",
+    text: "Zusätzlicher Bedarf wird unkompliziert aufgenommen und abgestimmt.",
+  },
+  {
+    icon: ReceiptText,
+    titel: "Transparente Abrechnung",
+    text: "Nachvollziehbar, übersichtlich und passend zum vereinbarten Leistungsumfang.",
   },
 ];
 
@@ -112,14 +143,6 @@ const b2bFaqs: Faq[] = [
       "im Preis als in der Planbarkeit: feste Termine, feste Ansprechpartner, " +
       "keine Einzelbeauftragung. Kündbar bleibt er monatlich.",
   },
-  {
-    question: "Warum steht hier kein Preis?",
-    answer:
-      "Weil er bei mehreren Objekten von Dingen abhängt, die man sehen muss — " +
-      "Bodenbeläge, Zugänge, Sanitäreinheiten, Publikumsverkehr. Für " +
-      "Privathaushalte nennen wir online einen Richtpreis; im Gewerbe wäre " +
-      "eine Zahl ohne Begehung eine Zahl, die später nicht hält.",
-  },
 ];
 
 export default function GeschaeftskundenPage() {
@@ -150,8 +173,8 @@ export default function GeschaeftskundenPage() {
           <SectionHeading
             as="h1"
             eyebrow="Geschäftskunden"
-            title="Gebäudedienstleistungen für Unternehmen und Verwaltungen"
-            lead="Reinigung, Objektbetreuung und Außenanlagen für Büros, Praxen, Wohnanlagen und Ladenlokale in Elmshorn und Umgebung. Sie schildern den Bedarf, wir sehen uns die Objekte an, Sie bekommen ein schriftliches Angebot."
+            title="Gebäudedienstleistungen für Unternehmen, Hausverwaltungen & Gewerbeimmobilien"
+            lead="Wir übernehmen Reinigung, Objektbetreuung sowie die Pflege von Außenanlagen für Büros, Praxen, Wohnanlagen und Gewerbeobjekte. Nach einer persönlichen Besichtigung vor Ort erhalten Sie ein transparentes Angebot – abgestimmt auf Ihren tatsächlichen Bedarf."
           />
 
           <div className="mt-9 flex flex-wrap gap-4">
@@ -196,22 +219,18 @@ export default function GeschaeftskundenPage() {
           <SectionHeading
             eyebrow="Leistungen"
             title="Was wir für Geschäftskunden übernehmen"
-            lead="Dieselben vier Bereiche wie im Privatkundengeschäft, nur anders zugeschnitten — planbar, wiederkehrend und je Objekt abgerechnet."
+            lead="Von einzelnen Dienstleistungen bis zur umfassenden Objektbetreuung – individuell auf Ihr Objekt und Ihren Bedarf abgestimmt."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2">
             {services.map((s) => (
               <div key={s.slug} className="rounded-sm border border-mist bg-surface p-6">
                 <h3 className="font-display text-lg text-navy">{s.name}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-muted">{s.teaser}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                  {s.businessTeaser}
+                </p>
               </div>
             ))}
           </div>
-          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-muted">
-            Unterhaltsreinigung sowie Büro- und Praxisreinigung kalkulieren wir
-            ausschließlich hier — bei laufenden Aufträgen entscheiden Bodenbeläge,
-            Sanitäreinheiten und Publikumsverkehr über den Aufwand, und die sieht
-            man erst vor Ort.
-          </p>
         </Container>
       </section>
 
@@ -263,7 +282,7 @@ export default function GeschaeftskundenPage() {
               href="/privatkunden#richtpreis"
               className="font-semibold text-navy underline"
             >
-              Zum Richtpreisrechner
+              Zur Preisschätzung
             </Link>{" "}
             — dort sehen Sie den Rahmen sofort, ohne Ihre Daten zu hinterlassen.
           </p>

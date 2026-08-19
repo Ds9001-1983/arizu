@@ -90,9 +90,9 @@ export default function DatenschutzPage() {
       <p>
         Der Preisrechner läuft vollständig in Ihrem Browser. Ihre Eingaben
         werden dabei <strong>nicht</strong> an uns übertragen und nicht
-        gespeichert. Erst wenn Sie auf „Unverbindlich anfragen“ klicken und das
-        Formular absenden, werden die Angaben zusammen mit Ihren Kontaktdaten
-        übermittelt.
+        gespeichert. Erst wenn Sie auf „Unverbindliche Anfrage stellen“ klicken
+        und das Formular absenden, werden die Angaben zusammen mit Ihren
+        Kontaktdaten übermittelt.
       </p>
 
       <h2>5. Anfrageformular</h2>

@@ -58,7 +58,10 @@ test("kein Cookie und kein Browserspeicher für Besucher", async ({ page, contex
 
   // Den Konfigurator bedienen — auch dabei darf nichts abgelegt werden.
   await page.goto("/leistungen/entruempelung");
-  await page.locator("#rechner").getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await page
+    .locator("#rechner")
+    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+    .click();
 
   const cookies = await context.cookies();
   expect(

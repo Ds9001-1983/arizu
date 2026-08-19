@@ -3,7 +3,7 @@ import "./globals.css";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { StickyCallBar } from "@/components/site/sticky-call-bar";
-import { business, SITE_URL } from "@/lib/business";
+import { business, serviceArea, SITE_URL } from "@/lib/business";
 import { archivo, manrope } from "@/lib/fonts";
 
 export const metadata: Metadata = {
@@ -13,9 +13,10 @@ export const metadata: Metadata = {
     template: `%s | ${business.shortName} ${business.address.city}`,
   },
   description:
-    "Gebäudereinigung, Gartenpflege, Objektbetreuung und Entrümpelung für " +
-    `Privat- und Geschäftskunden in ${business.address.city}, im Kreis Pinneberg ` +
-    "und im Umkreis von 40 km.",
+    "Gebäudereinigung, Grün- und Außenanlagenpflege, Entrümpelung und Auflösung " +
+    `sowie Objektbetreuung für Privat- und Geschäftskunden. Einsatzgebiet: ` +
+    `${serviceArea.label} sowie weitere Orte im Umkreis von ` +
+    `${serviceArea.radiusKm} km um ${serviceArea.center}.`,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",

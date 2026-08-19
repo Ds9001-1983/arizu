@@ -1,7 +1,7 @@
 import { type Values, defineConfigurator, many, num, pick, rate, travelFee } from "./types";
 
 /* ==================================================================
-   Entrümpelung — der Konfigurator aus dem Kundengespräch.
+   Entrümpelung und Auflösung — der Konfigurator aus dem Kundengespräch.
    Beispiel von Dennis: 60 m², 3. Stock, 30 km Anfahrt.
 
    Marktrecherche 08/2026 (Bundesdurchschnitt): 15–55 €/m² netto, gestaffelt
@@ -13,9 +13,9 @@ import { type Values, defineConfigurator, many, num, pick, rate, travelFee } fro
 
 export const entruempelung = defineConfigurator({
   slug: "entruempelung",
-  title: "Entrümpelung berechnen",
+  title: "Entrümpelung und Auflösung berechnen",
   intro:
-    "Vier Angaben genügen für einen Richtpreis. Die Besichtigung vor Ort ist " +
+    "Vier Angaben genügen für eine erste Preisschätzung. Die Besichtigung vor Ort ist " +
     "kostenlos — erst danach steht der Festpreis.",
 
   /* Alle Werte netto. VERIFY: recherchierte Marktminima, von Arian zu

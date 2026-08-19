@@ -71,7 +71,10 @@ for (const asset of pflichtig) {
     await badge.scrollIntoViewIfNeeded();
     await expect(badge).toBeVisible();
 
-    // Kein Icon-only-Badge: Der Text ist nach BFSG Pflicht.
+    // Kein Icon-only-Badge: Der Text ist nach BFSG Pflicht. Der Kundenwunsch
+    // nach einer dezenteren Darstellung ändert daran nichts. Bewusst keine
+    // feste Mindestgröße: Sichtbarkeit, Text und freie Motivfläche sind die
+    // belastbaren Anforderungen, nicht ein willkürlicher Pixelwert.
     await expect(badge).toContainText(/KI-generiert|mit KI erstellt/i);
 
     // Das Badge darf kein Produkt-/Hauptmotiv verdecken (Kaminofen-Regel).

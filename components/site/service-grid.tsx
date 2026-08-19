@@ -74,7 +74,9 @@ export function ServiceGrid() {
                 </ul>
 
                 <span className="mt-6 inline-flex items-center gap-2 pt-1 font-display text-sm font-bold text-navy transition-colors group-hover:text-gold-deep">
-                  Richtpreis berechnen
+                  {s.hasPublicCalculator
+                    ? "Preisschätzung ansehen"
+                    : "Objektbetreuung anfragen"}
                   <ArrowRight
                     className="size-4 transition-transform group-hover:translate-x-1"
                     aria-hidden

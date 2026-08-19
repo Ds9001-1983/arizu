@@ -3,7 +3,7 @@
   "type": "standard_business",
   "client": {
     "brand": "ARIZU Gebäudedienstleistungen",
-    "industry": "Gebäudedienstleistung (Reinigung, Gartenpflege, Objektbetreuung, Entrümpelung)",
+    "industry": "Gebäudedienstleistung (Gebäudereinigung, Grün- und Außenanlagenpflege, Entrümpelung und Auflösung, Objektbetreuung)",
     "language": "de",
     "existingUrl": null,
     "logoPath": "public/brand/logo-arizu.svg",
@@ -315,7 +315,7 @@
   },
   "seo": {
     "title": "ARIZU Gebäudedienstleistungen Elmshorn",
-    "description": "Gebäudereinigung, Gartenpflege, Objektbetreuung und Entrümpelung für Privat- und Geschäftskunden in Elmshorn, im Kreis Pinneberg und im Umkreis von 40 km.",
+    "description": "Gebäudereinigung, Grün- und Außenanlagenpflege, Entrümpelung und Auflösung sowie Objektbetreuung für Privat- und Geschäftskunden im Kreis Pinneberg, in Hamburg und im Umkreis von 50 km um Elmshorn.",
     "canonical": "https://www.arizu-gebaeudedienstleistungen.de",
     "robots": "index, follow",
     "structuredData": {
@@ -329,11 +329,22 @@
     }
   },
   "versioning": {
-    "current": "0.5.0",
+    "current": "0.6.0",
     "created": "2026-08-12T14:20:00+02:00",
-    "lastModified": "2026-08-17T11:30:00+02:00",
+    "lastModified": "2026-08-19T12:00:00+02:00",
     "status": "draft",
     "changelog": [
+      {
+        "version": "0.6.0",
+        "date": "2026-08-19",
+        "changes": [
+          "Kundenfeedback aus Änderungen Website.pdf umgesetzt",
+          "Leistungsbegriffe, Reihenfolge und Einsatzgebiet redaktionell aktualisiert",
+          "Objektbetreuung aus der öffentlichen Preisschätzung entfernt und auf Anfrage umgestellt",
+          "Preisschätzungen um Preisrahmen, Annahmen, Ausschlüsse und Unverbindlichkeitshinweis ergänzt",
+          "Privat- und Geschäftskundenwege in allgemeinen Anfragen eindeutig getrennt"
+        ]
+      },
       {
         "version": "0.5.0",
         "date": "2026-08-17",

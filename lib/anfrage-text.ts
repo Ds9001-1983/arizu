@@ -26,8 +26,8 @@ export type AnfrageDaten = {
   emoji?: string;
   /** Auswahl aus dem Konfigurator als "Feld: Wert · Feld: Wert". */
   auswahl?: string;
-  /** Richtpreis ohne Einheit, z. B. "ca. 1.370 € – 1.690 €". */
-  richtpreis?: string;
+  /** Voraussichtlicher Preisrahmen ohne Einheit, z. B. "1.370 € – 1.690 €". */
+  preisrahmen?: string;
   /** Abrechnungseinheit, z. B. "einmalig" oder "pro Monat". */
   einheit?: string;
   /** Einmalposten, falls vorhanden. */
@@ -81,10 +81,10 @@ export function whatsappText(d: AnfrageDaten): string {
   // liest Arian ihn als Wohnadresse des Anfragenden. Das ist er oft nicht.
   block.push("", "📍 *Einsatzort*", adresseEinzeilig(d));
 
-  if (d.richtpreis) {
+  if (d.preisrahmen) {
     block.push(
       "",
-      `💶 Ihr Rechner nennt *${d.richtpreis}*${d.einheit ? ` ${d.einheit}` : ""}, inkl. MwSt.`,
+      `💶 Voraussichtlicher Preisrahmen: *${d.preisrahmen}*${d.einheit ? ` ${d.einheit}` : ""}, inkl. MwSt.`,
     );
   }
   if (d.einmalig) block.push(`➕ ${d.einmalig}`);

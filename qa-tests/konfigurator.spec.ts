@@ -39,23 +39,30 @@ test("Privatkundenbereich: Preis ändert sich bei Eingabe", async ({ page }) => 
   await expect(preis).toHaveText(PREIS);
   const vorher = await preis.textContent();
 
-  const flaeche = panel.getByLabel("Zu räumende Fläche");
-  await flaeche.fill("120");
+  const flaeche = panel.getByLabel("Zu reinigende Fläche");
+  await flaeche.fill("300");
   await flaeche.blur();
 
   await expect(preis).not.toHaveText(vorher!);
-  const zahl = (t: string) => Number(t.replace(/[^\d]/g, "").slice(0, 6));
-  expect(zahl((await preis.textContent())!)).toBeGreaterThan(zahl(vorher!));
+  const untergrenze = (text: string) =>
+    Number(text.match(/([\d.]+)\s*€/)?.[1].replaceAll(".", ""));
+  expect(untergrenze((await preis.textContent())!)).toBeGreaterThan(
+    untergrenze(vorher!),
+  );
 });
 
 test("Leistung wechseln lädt den passenden Rechner", async ({ page }) => {
   await page.goto("/privatkunden");
-  await page.getByRole("tab", { name: "Gartenpflege" }).click();
-  await expect(page.getByRole("tabpanel")).toContainText("Gartenpflege berechnen");
+  await page.getByRole("tab", { name: "Grün- und Außenanlagenpflege" }).click();
+  await expect(page.getByRole("tabpanel")).toContainText(
+    "Grün- und Außenanlagenpflege berechnen",
+  );
   await expect(page.getByLabel("Rasenfläche")).toBeVisible();
 });
 
-test("Gartenpflege weist Einmalposten getrennt aus", async ({ page }) => {
+test("Grün- und Außenanlagenpflege weist Einmalposten getrennt aus", async ({
+  page,
+}) => {
   await page.goto("/leistungen/gartenpflege");
   const hecke = page.getByLabel("Heckenschnitt");
   await hecke.scrollIntoViewIfNeeded();
@@ -68,11 +75,13 @@ test("Anfragen führt zu Schritt 2, der Preis bleibt sichtbar", async ({ page })
   await page.goto("/leistungen/entruempelung");
   await expect(page.getByText("Schritt 1 von 2")).toBeVisible();
 
-  await page.getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await page
+    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+    .click();
 
   await expect(page.getByRole("heading", { name: "Fast geschafft." })).toBeVisible();
   await expect(page.getByText("Schritt 2 von 2")).toBeVisible();
-  // Der Richtpreis muss stehen bleiben — sonst weiß der Kunde nicht mehr,
+  // Der Preisrahmen muss stehen bleiben — sonst weiß der Kunde nicht mehr,
   // worauf er sich gerade einlässt.
   await expect(page.locator("p[aria-live='polite']")).toHaveText(PREIS);
   await expect(page.getByText("Ihre Angaben", { exact: true })).toBeVisible();
@@ -81,7 +90,9 @@ test("Anfragen führt zu Schritt 2, der Preis bleibt sichtbar", async ({ page })
 test("Schritt 2 verlangt Name, Adresse, Telefon und Einwilligung", async ({ page }) => {
   await page.goto("/leistungen/entruempelung");
   const k = rechner(page);
-  await k.getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await k
+    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+    .click();
   await k.getByRole("button", { name: "Anfrage senden" }).click();
 
   await expect(k.getByText("Bitte geben Sie Ihren Namen an.")).toBeVisible();
@@ -105,15 +116,21 @@ test("WhatsApp-Nachricht enthält Name, Adresse und die Konfigurator-Daten", asy
   page,
 }) => {
   await page.goto("/leistungen/entruempelung");
-  await rechner(page).getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await rechner(page)
+    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+    .click();
   await angabenAusfuellen(page, "entruempelung");
 
   const text = await whatsappNachricht(page);
 
-  // Struktur: Leistung mit Emoji, Eckdaten als Liste, Preis, Kontaktblock
-  expect(text).toContain("📦 *Entrümpelung*");
+  // Struktur: Leistung mit Emoji, Eckdaten als Liste, Preisrahmen, Kontaktblock
+  expect(text).toContain("📦 *Entrümpelung und Auflösung*");
   expect(text).toMatch(/^• Zu räumende Fläche: \d+ m²$/m);
-  expect(text).toMatch(/💶 Ihr Rechner nennt \*ca\. .* € – .* €\*/);
+  expect(text).toMatch(
+    /💶 Voraussichtlicher Preisrahmen: \*.* € – .* €\* einmalig, inkl\. MwSt\./,
+  );
+  expect(text).not.toContain("Ihr Rechner nennt");
+  expect(text).not.toContain("Richtpreis");
   // Einsatzort gehört zum Auftrag, nicht zu den Kontaktdaten — er ist oft
   // nicht die Wohnadresse des Anfragenden.
   expect(text).toContain("📍 *Einsatzort*");
@@ -128,12 +145,15 @@ test("WhatsApp-Nachricht enthält Name, Adresse und die Konfigurator-Daten", asy
 
 test("Vorschau zeigt genau die Nachricht, die verschickt wird", async ({ page }) => {
   await page.goto("/leistungen/gartenpflege");
-  await rechner(page).getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await rechner(page)
+    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+    .click();
   await angabenAusfuellen(page, "gartenpflege");
 
   await page.getByText("Nachricht ansehen, die verschickt wird").click();
   const vorschau = (await rechner(page).locator("pre").innerText()).trim();
-  expect(vorschau).toContain("🌿 *Gartenpflege*");
+  expect(vorschau).toContain("🌿 *Grün- und Außenanlagenpflege*");
+  expect(vorschau).toContain("💶 Voraussichtlicher Preisrahmen:");
 
   // Die Vorschau darf kein Marketing sein, sondern muss der Nachricht
   // entsprechen — sonst ist sie schlimmer als keine.
@@ -159,7 +179,9 @@ test("Kein wa.me — WhatsApp läuft über api.whatsapp.com", async ({ page }) =
 
 test("WhatsApp-Link ohne Angaben schickt nichts los", async ({ page }) => {
   await page.goto("/leistungen/entruempelung");
-  await rechner(page).getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await rechner(page)
+    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+    .click();
   // Ohne ausgefüllte Felder muss der Klick abgefangen werden, sonst ginge
   // eine Anfrage ohne Namen und Adresse raus.
   await rechner(page).locator("a[data-whatsapp]").click();
@@ -169,7 +191,9 @@ test("WhatsApp-Link ohne Angaben schickt nichts los", async ({ page }) => {
 
 test("Abgeschickte Anfrage bestätigt mit Namen und Ort", async ({ page }) => {
   await page.goto("/leistungen/entruempelung");
-  await rechner(page).getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await rechner(page)
+    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+    .click();
   await angabenAusfuellen(page, "entruempelung");
   await rechner(page).getByRole("button", { name: "Anfrage senden" }).click();
 
@@ -182,7 +206,9 @@ test("Adressblock ist als Einsatzort ausgewiesen, nicht als Wohnadresse", async 
 }) => {
   await page.goto("/leistungen/entruempelung");
   const k = rechner(page);
-  await k.getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await k
+    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+    .click();
 
   await expect(k.getByText("Wo soll gearbeitet werden?")).toBeVisible();
   await expect(
@@ -197,19 +223,61 @@ test("Zurück zum Rechner behält die Eingaben", async ({ page }) => {
   await flaeche.fill("175");
   await flaeche.blur();
 
-  await page.getByRole("button", { name: "Unverbindlich anfragen" }).click();
+  await page
+    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+    .click();
   await page.getByRole("button", { name: "Angaben im Rechner ändern" }).click();
 
   await expect(page.getByLabel("Zu räumende Fläche")).toHaveValue("175");
 });
 
-test("Allgemeines Formular verlangt ebenfalls die Adresse", async ({ page }) => {
+test("Kontaktformular verlangt Kundengruppe und sendet die gewählte kundenart", async ({
+  page,
+}) => {
+  let payload: Record<string, unknown> | undefined;
+  await page.route("**/api/lead", async (route) => {
+    if (route.request().method() !== "POST") {
+      await route.continue();
+      return;
+    }
+
+    payload = route.request().postDataJSON() as Record<string, unknown>;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true }),
+    });
+  });
+
   // Die Kontaktseite hat keinen Konfigurator, "Anfrage senden" ist dort eindeutig.
   await page.goto("/kontakt");
-  await page.getByRole("button", { name: "Anfrage senden" }).click();
+  const form = page.locator("#anfrage form");
+  await form.getByRole("button", { name: "Anfrage senden" }).click();
 
-  await expect(page.getByText("Bitte geben Sie Ihren Namen an.")).toBeVisible();
-  await expect(page.getByText("Bitte Straße und Hausnummer angeben.")).toBeVisible();
+  await expect(
+    form.getByText("Bitte wählen Sie aus, ob Sie privat oder geschäftlich anfragen."),
+  ).toBeVisible();
+  await expect(form.getByRole("radio", { name: "Privatkunde" })).not.toBeChecked();
+  await expect(form.getByRole("radio", { name: "Geschäftskunde" })).not.toBeChecked();
+
+  await form.getByRole("radio", { name: "Geschäftskunde" }).check();
+  await form.getByLabel(/^Name/).fill("Alex Muster");
+  await form.getByLabel(/^Telefon/).fill("0179 5272126");
+  await form.getByLabel(/^Straße und Hausnummer/).fill("Kaistraße 7");
+  await form.getByLabel(/^PLZ/).fill("25348");
+  await form.getByLabel(/^Ort/).fill("Glückstadt");
+  await form.getByLabel(/^E-Mail/).fill("muster@example.invalid");
+  await form.getByRole("checkbox").check();
+  await form.getByRole("button", { name: "Anfrage senden" }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Anfrage ist angekommen" }),
+  ).toBeVisible();
+  expect(payload).toMatchObject({
+    kundenart: "geschaeft",
+    name: "Alex Muster",
+    source: "formular",
+  });
 });
 
 test("interner Bereich ist ohne Anmeldung gesperrt", async ({ page }) => {

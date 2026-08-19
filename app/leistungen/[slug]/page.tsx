@@ -67,7 +67,9 @@ export default async function ServicePage({
   const spec = getConfigurator(slug);
   if (!service || !spec) notFound();
 
-  const rates = (await getAllRates())[service.slug];
+  const rates = service.hasPublicCalculator
+    ? (await getAllRates())[service.slug]
+    : undefined;
 
   const others = services.filter((s) => s.slug !== service.slug);
 
@@ -123,10 +125,12 @@ export default async function ServicePage({
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
-                  href="#rechner"
+                  href={service.hasPublicCalculator ? "#rechner" : "#anfrage"}
                   className="inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
                 >
-                  Richtpreis berechnen
+                  {service.hasPublicCalculator
+                    ? "Preisschätzung ansehen"
+                    : "Objektbetreuung anfragen"}
                   <ArrowRight className="size-4" aria-hidden />
                 </Link>
                 <a
@@ -195,18 +199,22 @@ export default async function ServicePage({
       </section>
 
       {/* ------------------------------------------------------ Konfigurator */}
-      <section id="rechner" className="scroll-mt-20 bg-mist/40 py-20 sm:py-24">
-        <Container>
-          <SectionHeading
-            eyebrow="Richtpreis in 60 Sekunden"
-            title={`Was kostet ${service.name} bei Ihnen?`}
-            lead="Sie geben vier Angaben ein und sehen sofort den Rahmen. Erst danach entscheiden Sie, ob Sie anfragen."
-          />
-          <div className="mt-12">
-            <Konfigurator slug={service.slug} rates={rates} />
-          </div>
-        </Container>
-      </section>
+      {service.hasPublicCalculator && rates ? (
+        <section id="rechner" className="scroll-mt-20 bg-mist/40 py-20 sm:py-24">
+          <Container>
+            <SectionHeading
+              eyebrow="Preisschätzung in 60 Sekunden"
+              title={`Was kostet ${service.name} bei Ihnen?`}
+              lead="Sie geben die Angaben ein und sehen sofort den voraussichtlichen Preisrahmen. Erst danach entscheiden Sie, ob Sie anfragen."
+            />
+            <div className="mt-12">
+              <Konfigurator slug={service.slug} rates={rates} />
+            </div>
+          </Container>
+        </section>
+      ) : (
+        <AnfrageSection defaultService={service.slug} kundenart="auswahl" />
+      )}
 
       {/* ---------------------------------------------------------- Gebiet */}
       <section className="py-16">
@@ -216,10 +224,11 @@ export default async function ServicePage({
               {service.name} in Ihrer Nähe
             </h2>
             <p className="mt-3 max-w-3xl text-[0.95rem] leading-relaxed text-ink-muted">
-              Wir arbeiten im Umkreis von {serviceArea.radiusKm} km um{" "}
-              {serviceArea.center}. Regelmäßig im Einsatz sind wir in{" "}
-              {serviceArea.cities.join(", ")}. Liegt Ihr Objekt weiter weg? Rufen
-              Sie an — bei größeren Aufträgen fahren wir auch darüber hinaus.
+              Wir arbeiten in {serviceArea.label} sowie angrenzenden Orten im
+              Umkreis von {serviceArea.radiusKm} km um {serviceArea.center}.
+              Regelmäßig im Einsatz sind wir in {serviceArea.cities.join(", ")}.
+              Liegt Ihr Objekt weiter weg? Rufen Sie an — bei größeren Aufträgen
+              fahren wir auch darüber hinaus.
             </p>
           </div>
         </Container>
@@ -262,7 +271,9 @@ export default async function ServicePage({
         </Container>
       </section>
 
-      <AnfrageSection defaultService={service.slug} />
+      {service.hasPublicCalculator && (
+        <AnfrageSection defaultService={service.slug} />
+      )}
     </>
   );
 }

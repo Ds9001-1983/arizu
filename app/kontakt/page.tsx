@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
+import { ProcessTimeline } from "@/components/site/process-timeline";
 import { SectionHeading } from "@/components/site/section-heading";
 import { business, serviceArea, whatsappHref } from "@/lib/business";
 
@@ -23,7 +24,7 @@ export default function KontaktPage() {
             as="h1"
             eyebrow="Kontakt"
             title="Kurzer Weg, schnelle Antwort"
-            lead="Am schnellsten geht es telefonisch — meist sind wir unterwegs, rufen aber zurück. Für Fotos vom Objekt ist WhatsApp der bequemste Weg."
+            lead="Telefonisch, per WhatsApp oder über unser Kontaktformular – wählen Sie den Weg, der für Sie am einfachsten ist. Wenn wir gerade nicht erreichbar sind, melden wir uns selbstverständlich zeitnah bei Ihnen."
           />
 
           <div className="mt-12 overflow-hidden rounded-sm border border-mist bg-surface lg:grid lg:grid-cols-[minmax(18rem,0.78fr)_1.42fr]">
@@ -33,7 +34,7 @@ export default function KontaktPage() {
                   KI-Kennzeichnung steht in story-spec.json. */}
               <Image
                 src="/images/arian-aslani.webp"
-                alt="Arian Aslani, Inhaber von ARIZU Gebäudedienstleistungen"
+                alt={`${business.owner}, Inhaber von ${business.name}`}
                 width={720}
                 height={1219}
                 unoptimized
@@ -76,7 +77,9 @@ export default function KontaktPage() {
                     icon: MessageCircle,
                     title: "WhatsApp",
                     value: "Fotos vom Objekt senden",
-                    href: whatsappHref("Hallo ARIZU, ich habe eine Anfrage:"),
+                    href: whatsappHref(
+                      `Hallo ${business.shortName}, ich habe eine Anfrage:`,
+                    ),
                     hint: "Praktisch für Keller, Garten oder Wohnung",
                     external: true,
                   },
@@ -132,7 +135,7 @@ export default function KontaktPage() {
                     {business.address.postalCode} {business.address.city}
                   </p>
                   <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-                    {serviceArea.region} sowie angrenzende Orte im Umkreis von{" "}
+                    {serviceArea.label} sowie angrenzende Orte im Umkreis von{" "}
                     {serviceArea.radiusKm} km um {serviceArea.center}.
                   </p>
                 </div>
@@ -167,7 +170,8 @@ export default function KontaktPage() {
         </Container>
       </section>
 
-      <AnfrageSection />
+      <ProcessTimeline />
+      <AnfrageSection kundenart="auswahl" />
     </>
   );
 }

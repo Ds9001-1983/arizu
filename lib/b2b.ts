@@ -28,9 +28,9 @@ export type B2bOption = { id: string; label: string; hint?: string };
  */
 export const B2B_LEISTUNGEN: B2bOption[] = [
   { id: "gebaeudereinigung", label: "Gebäudereinigung" },
+  { id: "gartenpflege", label: "Grün- und Außenanlagenpflege" },
+  { id: "entruempelung", label: "Entrümpelung und Auflösung" },
   { id: "objektbetreuung", label: "Objektbetreuung" },
-  { id: "gartenpflege", label: "Gartenpflege und Außenanlagen" },
-  { id: "entruempelung", label: "Entrümpelung und Räumung" },
   { id: "mehreres", label: "Mehreres oder noch offen" },
 ];
 
@@ -38,9 +38,9 @@ export const B2B_LEISTUNGEN: B2bOption[] = [
     Privatbereich ein Modul der Objektbetreuung, kein eigener Rechner. */
 export const B2B_WEITERE: B2bOption[] = [
   { id: "gebaeudereinigung", label: "Gebäudereinigung" },
+  { id: "gartenpflege", label: "Grün- und Außenanlagenpflege" },
+  { id: "entruempelung", label: "Entrümpelung und Auflösung" },
   { id: "objektbetreuung", label: "Objektbetreuung" },
-  { id: "gartenpflege", label: "Gartenpflege und Außenanlagen" },
-  { id: "entruempelung", label: "Entrümpelung und Räumung" },
   { id: "winterdienst", label: "Winterdienst" },
 ];
 
@@ -49,7 +49,8 @@ export const B2B_OBJEKTARTEN: B2bOption[] = [
   { id: "praxis", label: "Praxis oder Gesundheitseinrichtung" },
   { id: "wohnanlage", label: "Wohnanlage oder Hausverwaltung" },
   { id: "laden", label: "Ladenlokal oder Gastronomie" },
-  { id: "anderes", label: "Anderes Gewerbeobjekt" },
+  { id: "bildung", label: "Bildung & öffentliche Einrichtungen" },
+  { id: "anderes", label: "Weitere Objekte" },
 ];
 
 export const B2B_RHYTHMEN: B2bOption[] = [

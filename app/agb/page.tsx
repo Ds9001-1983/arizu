@@ -47,7 +47,8 @@ export default function AgbPage() {
       <p>
         Diese Bedingungen gelten für alle Verträge zwischen {business.legalName}{" "}
         (nachfolgend „wir“) und dem Auftraggeber über Leistungen der
-        Gebäudereinigung, Gartenpflege, Objektbetreuung und Entrümpelung.
+        Gebäudereinigung, Grün- und Außenanlagenpflege, Objektbetreuung sowie
+        Entrümpelung und Auflösung.
         Abweichende Bedingungen des Auftraggebers gelten nur, wenn wir ihnen
         schriftlich zustimmen.
       </p>

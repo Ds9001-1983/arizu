@@ -25,28 +25,49 @@ import { services } from "@/lib/services";
    ================================================================== */
 
 type Status = "idle" | "sending" | "done" | "error";
+export type KundenartModus = "privat" | "geschaeft" | "auswahl";
 type Errors = Partial<
-  Record<"name" | "strasse" | "plz" | "ort" | "phone" | "email" | "consent", string>
+  Record<
+    | "kundenart"
+    | "name"
+    | "strasse"
+    | "plz"
+    | "ort"
+    | "phone"
+    | "email"
+    | "consent",
+    string
+  >
 >;
 
 const FELD =
   "w-full rounded-sm border border-mist bg-surface px-4 py-3 text-[0.95rem] text-navy placeholder:text-ink-muted/60 focus:border-gold focus:outline-none";
 const LABEL = "mb-1.5 block text-sm font-semibold text-navy";
 
-export function LeadForm({ defaultService }: { defaultService?: string }) {
+export function LeadForm({
+  defaultService,
+  kundenart = "privat",
+}: {
+  defaultService?: string;
+  kundenart?: KundenartModus;
+}) {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Errors>({});
   const [serverError, setServerError] = useState<string | null>(null);
 
   function validate(data: Record<string, string>): Errors {
     const e: Errors = {};
+    if (data.kundenart !== "privat" && data.kundenart !== "geschaeft")
+      e.kundenart = "Bitte wählen Sie aus, ob Sie privat oder geschäftlich anfragen.";
     if (data.name.trim().length < 2) e.name = "Bitte geben Sie Ihren Namen an.";
     if (data.strasse.trim().length < 3) e.strasse = "Bitte Straße und Hausnummer angeben.";
     if (!/^\d{5}$/.test(data.plz.trim())) e.plz = "Fünfstellige Postleitzahl.";
     if (data.ort.trim().length < 2) e.ort = "Bitte den Ort angeben.";
     if (data.phone.trim().length < 6)
       e.phone = "Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen.";
-    if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email.trim()))
+    if (data.kundenart === "geschaeft" && !data.email.trim())
+      e.email = "Für Geschäftskunden ist die E-Mail-Adresse erforderlich.";
+    else if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email.trim()))
       e.email = "Bitte prüfen Sie die E-Mail-Adresse.";
     if (data.consent !== "on")
       e.consent = "Ohne Ihre Einwilligung dürfen wir die Anfrage nicht verarbeiten.";
@@ -62,12 +83,13 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
     ) as Record<string, string>;
     // Nicht angehakte Checkboxen fehlen in FormData komplett.
     data.consent = fd.get("consent") ? "on" : "";
+    data.kundenart = kundenart === "auswahl" ? data.kundenart ?? "" : kundenart;
 
     const found = validate(data);
     setErrors(found);
     if (Object.keys(found).length > 0) {
       const first = Object.keys(found)[0];
-      (form.elements.namedItem(first) as HTMLElement | null)?.focus();
+      form.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
       return;
     }
 
@@ -84,7 +106,7 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
         body: JSON.stringify({
           ...data,
           source: "formular",
-          kundenart: "privat",
+          kundenart: data.kundenart,
           consent: true,
         }),
       });
@@ -124,6 +146,35 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
         <label htmlFor="website">Website</label>
         <input id="website" name="website" tabIndex={-1} autoComplete="off" />
       </div>
+
+      {kundenart === "auswahl" && (
+        <fieldset aria-invalid={Boolean(errors.kundenart)}>
+          <legend className={LABEL}>
+            Sie fragen an als <span className="text-gold-deep">*</span>
+          </legend>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[
+              { value: "privat", label: "Privatkunde" },
+              { value: "geschaeft", label: "Geschäftskunde" },
+            ].map((option) => (
+              <label
+                key={option.value}
+                className="flex cursor-pointer items-center gap-3 rounded-sm border border-mist px-4 py-3 text-sm font-semibold text-navy transition-colors has-checked:border-gold has-checked:bg-gold/8"
+              >
+                <input
+                  type="radio"
+                  name="kundenart"
+                  value={option.value}
+                  required
+                  className="size-4 shrink-0 accent-gold"
+                />
+                {option.label}
+              </label>
+            ))}
+          </div>
+          {errors.kundenart && <Err>{errors.kundenart}</Err>}
+        </fieldset>
+      )}
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
@@ -231,7 +282,7 @@ export function LeadForm({ defaultService }: { defaultService?: string }) {
             className={FELD}
           />
           <p className="mt-1 text-xs text-ink-muted">
-            Für die Bestätigung Ihrer Anfrage — sonst rufen wir einfach an.
+            Für die Bestätigung Ihrer Anfrage; bei Geschäftskunden erforderlich.
           </p>
           {errors.email && <Err>{errors.email}</Err>}
         </div>

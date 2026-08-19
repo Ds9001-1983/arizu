@@ -1,7 +1,7 @@
 import { type Values, defineConfigurator, many, num, pick } from "./types";
 
 /* ==================================================================
-   Gartenpflege — Rasenfläche, Beetfläche, Heckenmeter, Turnus.
+   Grün- und Außenanlagenpflege — Rasenfläche, Beetfläche, Heckenmeter, Turnus.
 
    Marktrecherche 08/2026: Rasenmähen 0,10–0,15 €/m² oder 30–40 €/h,
    Heckenschnitt 3–10 € pro laufenden Meter, Stundensätze 15–25 € für
@@ -32,7 +32,7 @@ const TURNUS: Record<string, { perMonth: number; label: string }> = {
 
 export const gartenpflege = defineConfigurator({
   slug: "gartenpflege",
-  title: "Gartenpflege berechnen",
+  title: "Grün- und Außenanlagenpflege berechnen",
   intro:
     "Flächen, Heckenmeter, Turnus — fertig. Leistungen, die nur ein- bis " +
     "zweimal im Jahr anfallen, weisen wir getrennt aus.",

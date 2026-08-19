@@ -102,7 +102,7 @@ export function SiteFooter() {
 
         <div className="border-t border-white/12 py-6 text-xs text-white/55">
           <p className="leading-relaxed">
-            Einsatzgebiet: {serviceArea.region} sowie angrenzende Orte im Umkreis von{" "}
+            Einsatzgebiet: {serviceArea.label} sowie angrenzende Orte im Umkreis von{" "}
             {serviceArea.radiusKm} km um {serviceArea.center}.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1">
