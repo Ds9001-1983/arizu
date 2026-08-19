@@ -3,17 +3,9 @@ import { cn } from "@/lib/utils";
 /* ==================================================================
    Sichtbare KI-Kennzeichnung nach Art. 50 EU AI Act (Pflicht seit 02.08.2026).
 
-   Optik: helles Glas nach Apple-Vorbild. Was den Effekt ausmacht, ist nicht
-   die Transparenz allein, sondern das Zusammenspiel aus vier Dingen:
-     1. backdrop-blur + Sättigungsanhebung — der Untergrund wird nicht nur
-        verwischt, sondern farbiger, dadurch wirkt das Glas "lebendig"
-     2. eine helle Haarlinie als Kante (die Lichtbrechung am Glasrand)
-     3. ein heller Innenschein oben (box-shadow inset) — das Glanzlicht
-     4. ein weicher Schlagschatten, der das Element abhebt
-
-   Die Füllung liegt bei 18 % Weiß mit einem Hauch Navy im Verlauf. Reines
-   Weiß-auf-Weiß wäre eleganter, kippt aber auf hellen Motiven — und dieses
-   Badge sitzt auch auf dem fast weißen Treppenhausbild.
+   Optik: eine kleine, randlose Glasfläche. Hintergrundunschärfe und ein
+   weicher Schlagschatten halten den Pflichttext auf hellen wie dunklen
+   Motiven lesbar, ohne eine sichtbare Umrandung um das Badge zu zeichnen.
 
    Zwei Details, die kein Zufall sind:
    - Das Badge trägt IMMER Text, nie nur das ✦-Zeichen. Ein reines Farb- oder
@@ -30,17 +22,16 @@ export type BadgePosition =
   | "caption-below";
 
 const POSITION_CLASSES: Record<Exclude<BadgePosition, "caption-below">, string> = {
-  "top-right": "top-2 right-2",
-  "top-left": "top-2 left-2",
-  "bottom-right": "bottom-2 right-2",
-  "bottom-left": "bottom-2 left-2",
+  "top-right": "top-1.5 right-1.5",
+  "top-left": "top-1.5 left-1.5",
+  "bottom-right": "bottom-1.5 right-1.5",
+  "bottom-left": "bottom-1.5 left-1.5",
 };
 
 /** Glasoptik als eine Einheit — auch von anderen Overlays wiederverwendbar. */
 export const glassSurface =
-  "border border-white/25 bg-linear-to-b from-white/16 to-navy/10 " +
-  "backdrop-blur-[12px] backdrop-saturate-150 " +
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.38),0_3px_12px_rgba(0,0,0,0.22)]";
+  "bg-navy/40 backdrop-blur-[8px] backdrop-saturate-150 " +
+  "shadow-[0_2px_8px_rgba(0,0,0,0.2)]";
 
 export function AiMediaBadge({
   assetId,
@@ -67,11 +58,11 @@ export function AiMediaBadge({
     <span
       data-ai-badge={assetId}
       className={cn(
-        "pointer-events-none absolute z-20 flex items-center gap-1 rounded-full",
+        "pointer-events-none absolute z-20 flex items-center gap-0.5 rounded-full",
         // Dezent, aber weiterhin als Text lesbar: Die Kennzeichnung darf nach
         // der Kundenanpassung weniger Motivfläche beanspruchen, ohne zu einer
         // reinen Symbolmarkierung zu werden.
-        "px-2 py-[2px] text-[0.6rem] leading-none font-semibold tracking-wide text-white",
+        "px-1.5 py-[1.5px] text-[0.52rem] leading-none font-semibold tracking-wide text-white",
         // Textschatten: hält die Schrift auch dort lesbar, wo unter dem Glas
         // eine sehr helle Stelle liegt (weiße Fassade, Treppenhauswand).
         "[text-shadow:0_1px_3px_rgba(0,0,0,0.55)]",
@@ -79,7 +70,7 @@ export function AiMediaBadge({
         POSITION_CLASSES[position],
       )}
     >
-      <span aria-hidden="true" className="text-[0.56rem] leading-none text-[#ffd89a]">
+      <span aria-hidden="true" className="text-[0.48rem] leading-none text-[#ffd89a]">
         ✦
       </span>
       {label}

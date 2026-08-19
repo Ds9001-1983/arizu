@@ -187,7 +187,7 @@ export default function DatenschutzPage() {
       <h2>9. Keine Einbindung externer Dienste</h2>
       <p>
         Beim Aufruf dieser Website wird <strong>kein einziger fremder Server
-        kontaktiert</strong>. Schriften, Bilder und das Video im Seitenkopf
+        kontaktiert</strong>. Schriften, Bilder und Videos in den Seitenköpfen
         werden von unserem eigenen Server geladen. Es besteht insbesondere
         keine Verbindung zu Google-Servern, es wird also auch keine IP-Adresse
         an Google übermittelt.
@@ -208,11 +208,11 @@ export default function DatenschutzPage() {
         oder die E-Mail.
       </p>
 
-      <h2>11. Bilder auf dieser Website</h2>
+      <h2>11. KI-generierte Medien auf dieser Website</h2>
       <p>
-        Ein Teil der Bilder auf dieser Website wurde mit Hilfe künstlicher
-        Intelligenz erzeugt. Diese Bilder sind sichtbar als „KI-generiert“
-        gekennzeichnet und zusätzlich in den Metadaten der Bilddatei
+        Ein Teil der Bilder und Videos auf dieser Website wurde mit Hilfe
+        künstlicher Intelligenz erzeugt. Diese Medien sind sichtbar als
+        „KI-generiert“ gekennzeichnet und zusätzlich in den Dateimetadaten
         ausgewiesen. Sobald eigene Aufnahmen von Einsätzen vorliegen, ersetzen
         wir sie.
       </p>

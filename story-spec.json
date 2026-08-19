@@ -69,6 +69,63 @@
       }
     },
     {
+      "id": "img-privatgarten-hero",
+      "type": "hero_video",
+      "ai_disclosure": {
+        "required": true,
+        "reason": "photorealistic_real_motif",
+        "badge": {
+          "position": "bottom-right",
+          "label": "KI-generiert"
+        },
+        "metadata_tagged": true,
+        "metadata_target": "master_and_delivery_files",
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-19T09:02:00+02:00",
+        "evidence_screenshot": "qa-reports/ai-disclosure/img-privatgarten-hero.png"
+      },
+      "generation": {
+        "motion": {
+          "model": "seedance_2_0",
+          "prompt": "Fotorealistischer ruhiger Kameraschwenk durch einen gepflegten privaten Garten an einem modernen norddeutschen Einfamilienhaus. Sattgrüner Rasen, präzise geschnittene Hecken, natürliche Staudenbeete mit dezenten weißen und violetten Blüten, hochwertige Steinterrasse und einzelne kleine Laubbäume. Weiches Morgenlicht nach leichtem Sommerregen, frische natürliche Farben, gehobene aber glaubwürdige Wohnatmosphäre, dokumentarische Architekturfotografie, 35-mm-Look. Breite Website-Hero-Komposition: links eine ruhige etwas dunklere Rasen- und Heckenfläche für weißen Text, der schönste Garten und die Hausansicht rechts. Die Kamera fährt extrem langsam und gleichmäßig leicht nach rechts, nur sanfte Blattbewegung im Wind, keine Schnitte, kein Zoom, kein Wackeln, stabile Geometrie. Erste und letzte Bildstimmung möglichst ähnlich für eine unauffällige Schleife. Keine Menschen, keine Tiere, keine Fahrzeuge, keine Gartengeräte, keine Schilder, kein Text, keine Logos, kein Wasserzeichen, keine übertriebenen Farben.",
+          "genre": "auto",
+          "duration": 5,
+          "fps": 24,
+          "aspectRatio": "16:9",
+          "resolution": "720p",
+          "bitrateMode": "high"
+        }
+      },
+      "output": {
+        "master": {
+          "file": "assets-source/ai-master/hero-privatgarten.mp4",
+          "width": 1280,
+          "height": 720,
+          "kb": 8740
+        },
+        "desktop": {
+          "file": "public/video/hero-privatgarten.mp4",
+          "width": 1280,
+          "height": 720,
+          "kb": 716,
+          "silent": true,
+          "faststart": true,
+          "poster": "public/images/hero-privatgarten.webp",
+          "posterKb": 76,
+          "hinweis": "Poster ist das erste Videobild — dadurch ist der Übergang vom Standbild ins Video unsichtbar."
+        },
+        "mobile": {
+          "file": "public/video/hero-privatgarten-mobil.mp4",
+          "width": 854,
+          "height": 480,
+          "kb": 232,
+          "poster": "public/images/hero-privatgarten-mobil.webp",
+          "posterKb": 38,
+          "hinweis": "Eigene, leichtere Videofassung fürs Handy. Kein Video bei prefers-reduced-motion oder aktivem Save-Data."
+        }
+      }
+    },
+    {
       "id": "img-objektbetreuung",
       "type": "static_image",
       "ai_disclosure": {

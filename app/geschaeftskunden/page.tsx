@@ -18,6 +18,7 @@ import {
 import { B2bForm } from "@/components/site/b2b-form";
 import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
+import { HeroMedia } from "@/components/site/hero-media";
 import { SectionHeading } from "@/components/site/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business, serviceArea } from "@/lib/business";
@@ -31,10 +32,9 @@ import { services, type Faq } from "@/lib/services";
    steht in lib/b2b.ts. Kein Konfigurator, kein Richtpreis: So im
    Kundengespräch vom 14.08.2026 verabredet.
 
-   Ohne eigenes Bildmotiv, nur mit Icons. Ein neues fotorealistisches KI-Bild
-   bräuchte einen story-spec-Eintrag, ein sichtbares Badge und
-   EXIF-Metadaten (AGENTS.md) — für eine Seite, die von Sachlichkeit lebt,
-   wäre das Aufwand ohne Gegenwert.
+   Im Hero wird das vorhandene Startseitenmotiv bewusst wiederverwendet. So
+   bleibt der Geschäftskunden-Einstieg visuell konsistent, ohne ein weiteres
+   fotorealistisches KI-Asset einzuführen.
    ================================================================== */
 
 export const metadata: Metadata = {
@@ -158,20 +158,30 @@ export default function GeschaeftskundenPage() {
         ]}
       />
 
-      <section className="bg-shell pt-10 pb-16 sm:pt-14">
-        <Container>
-          <nav aria-label="Brotkrumen" className="mb-8 text-sm text-ink-muted">
-            <Link href="/" className="hover:text-navy">
+      <section className="relative isolate flex min-h-[clamp(39rem,78svh,48rem)] items-end overflow-hidden">
+        <HeroMedia
+          assetId="img-hero"
+          alt="Modernes Mehrfamilienhaus mit gepflegtem Weg und geschnittenen Hecken"
+          poster="/images/hero-gebaeude.webp"
+          posterMobile="/images/hero-gebaeude-mobil.webp"
+          video="/video/hero-gebaeude.mp4"
+          videoMobile="/video/hero-gebaeude-mobil.mp4"
+        />
+
+        <Container className="relative z-10 py-12 sm:py-16">
+          <nav aria-label="Brotkrumen" className="mb-8 text-sm text-white/70">
+            <Link href="/" className="hover:text-white">
               Start
             </Link>
             <span className="mx-2" aria-hidden>
               ›
             </span>
-            <span className="text-navy">Geschäftskunden</span>
+            <span className="text-white">Geschäftskunden</span>
           </nav>
 
           <SectionHeading
             as="h1"
+            invert
             eyebrow="Geschäftskunden"
             title="Gebäudedienstleistungen für Unternehmen, Hausverwaltungen & Gewerbeimmobilien"
             lead="Wir übernehmen Reinigung, Objektbetreuung sowie die Pflege von Außenanlagen für Büros, Praxen, Wohnanlagen und Gewerbeobjekte. Nach einer persönlichen Besichtigung vor Ort erhalten Sie ein transparentes Angebot – abgestimmt auf Ihren tatsächlichen Bedarf."
@@ -180,14 +190,14 @@ export default function GeschaeftskundenPage() {
           <div className="mt-9 flex flex-wrap gap-4">
             <a
               href="#bedarf"
-              className="inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
+              className="inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
             >
               Bedarf schildern
               <ArrowRight className="size-4" aria-hidden />
             </a>
             <a
               href={business.phone.href}
-              className="inline-flex items-center gap-2 rounded-sm border border-mist px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:border-gold"
+              className="inline-flex items-center gap-2 rounded-sm border border-white/35 px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:border-gold"
             >
               {business.phone.display}
             </a>

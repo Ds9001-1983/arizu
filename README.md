@@ -116,7 +116,7 @@ und Datenschutz samt Bedienung des Konfigurators kontaktierte **keinen
 einzigen fremden Host**, setzte **keinen Cookie** und ließ `localStorage`
 wie `sessionStorage` leer. Nach § 25 TDDDG ist eine Einwilligung nur nötig,
 wenn auf dem Endgerät gespeichert oder ausgelesen wird — hier passiert
-beides nicht. Schriften und das Hero-Video liegen selbst gehostet, es gibt
+beides nicht. Schriften und die Hero-Videos liegen selbst gehostet, es gibt
 keine eingebetteten Karten oder Plugins. Die Startseiten-Weiche erhöht nur
 einen von zwei anonymen Summenzählern (Privat-/Geschäftskunde): kein einzelnes
 Ereignis, kein Zeitpunkt, keine IP-Adresse, keine Gerätekennung und kein
@@ -129,9 +129,10 @@ Playwright-Lauf wiederholen.
 
 ## Bilder und KI-Kennzeichnung
 
-Es existieren noch keine echten Einsatzfotos, deshalb sind fünf Einsatzmotive
-KI-generiert. Alle tragen ein sichtbares Badge „✦ KI-generiert" **und** den
-IPTC-Metadatensatz `DigitalSourceType = trainedAlgorithmicMedia`. Details und
+Es existieren noch keine echten Einsatzfotos, deshalb sind sechs fotorealistische
+Einsatzmotive KI-generiert. Alle Bilder und Videos tragen ein sichtbares Badge
+„✦ KI-generiert" **und** den IPTC-Metadatensatz
+`DigitalSourceType = trainedAlgorithmicMedia`. Details und
 die Entscheidung pro Asset: `docs/ki-transparenz-policy.md` und
 `story-spec.json` → `assets[].ai_disclosure`.
 
@@ -143,9 +144,9 @@ Deshalb ist die Next-Bildoptimierung projektweit aus (`next.config.ts`): Der
 Optimizer re-encodiert und würde die Metadaten verwerfen. Die Dateien liegen
 bereits als WebP in Zielgröße vor.
 
-**Sobald Arian echte Fotos schickt**, ersetzen sie die KI-Bilder in
-`public/images/`; Badge und Metadaten-Tag entfallen dann für das jeweilige
-Motiv.
+**Sobald Arian echte Fotos schickt**, ersetzen sie die KI-Medien in
+`public/images/` und `public/video/`; Badge und Metadaten-Tag entfallen dann
+für das jeweilige Motiv.
 
 ## Messwerte (12.08.2026, Produktionsbuild)
 

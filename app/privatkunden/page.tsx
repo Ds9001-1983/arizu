@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
+import { HeroMedia } from "@/components/site/hero-media";
 import { KonfiguratorTabs } from "@/components/site/konfigurator-tabs";
 import { SectionHeading } from "@/components/site/section-heading";
 import { ServiceGrid } from "@/components/site/service-grid";
@@ -49,20 +50,30 @@ export default async function PrivatkundenPage() {
         ]}
       />
 
-      <section className="bg-shell pt-10 pb-16 sm:pt-14">
-        <Container>
-          <nav aria-label="Brotkrumen" className="mb-8 text-sm text-ink-muted">
-            <Link href="/" className="hover:text-navy">
+      <section className="relative isolate flex min-h-[clamp(36rem,72svh,43rem)] items-end overflow-hidden">
+        <HeroMedia
+          assetId="img-privatgarten-hero"
+          alt="Gepflegter Privatgarten mit Rasen, Hecken, Staudenbeeten und moderner Terrasse"
+          poster="/images/hero-privatgarten.webp"
+          posterMobile="/images/hero-privatgarten-mobil.webp"
+          video="/video/hero-privatgarten.mp4"
+          videoMobile="/video/hero-privatgarten-mobil.mp4"
+        />
+
+        <Container className="relative z-10 py-12 sm:py-16">
+          <nav aria-label="Brotkrumen" className="mb-8 text-sm text-white/70">
+            <Link href="/" className="hover:text-white">
               Start
             </Link>
             <span className="mx-2" aria-hidden>
               ›
             </span>
-            <span className="text-navy">Privatkunden</span>
+            <span className="text-white">Privatkunden</span>
           </nav>
 
           <SectionHeading
             as="h1"
+            invert
             eyebrow="Privatkunden"
             title="Klare Leistungen. Eine Preisschätzung vor der Anfrage."
             lead={
@@ -81,7 +92,7 @@ export default async function PrivatkundenPage() {
 
           <a
             href="#richtpreis"
-            className="mt-9 inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
+            className="mt-9 inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
           >
             Preisschätzung ansehen
             <ArrowRight className="size-4" aria-hidden />

@@ -32,6 +32,7 @@ const pflichtig = spec.assets.filter((a) => a.ai_disclosure.required);
 /* Wo welches Asset zu sehen ist. */
 const seiten: Record<string, string> = {
   "img-hero": "/",
+  "img-privatgarten-hero": "/privatkunden",
   "img-objektbetreuung": "/privatkunden",
   "img-gebaeudereinigung": "/privatkunden",
   "img-gartenpflege": "/privatkunden",
@@ -100,6 +101,25 @@ for (const asset of pflichtig) {
     });
   });
 }
+
+test("Startseitenmotiv wird im Geschäftskunden-Hero korrekt wiederverwendet", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/geschaeftskunden");
+  const hero = page.locator("main > section").first();
+
+  await expect(hero.locator('[data-ai-badge="img-hero"]')).toBeVisible();
+  await expect(hero.locator("img")).toHaveAttribute(
+    "src",
+    "/images/hero-gebaeude.webp",
+  );
+  await expect(hero.locator("video")).toHaveAttribute(
+    "src",
+    testInfo.project.name === "mobil"
+      ? "/video/hero-gebaeude-mobil.mp4"
+      : "/video/hero-gebaeude.mp4",
+  );
+});
 
 test("kein Chatbot vorhanden, also auch kein AiNotice nötig", async ({ page }) => {
   await page.goto("/");
