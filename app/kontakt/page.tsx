@@ -32,7 +32,7 @@ export default function KontaktPage() {
             <div className="border-b border-mist lg:border-r lg:border-b-0">
               <AiMedia assetId="img-arian-portrait-v2" badgePosition="top-right">
                 <Image
-                  src="/images/arian-aslani-v2.webp"
+                  src="/images/arian-aslani-v3.webp"
                   alt={`${business.owner}, Inhaber von ${business.name}`}
                   width={1122}
                   height={1402}
