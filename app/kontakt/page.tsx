@@ -30,9 +30,9 @@ export default function KontaktPage() {
 
           <div className="mt-12 overflow-hidden rounded-sm border border-mist bg-surface lg:grid lg:grid-cols-[minmax(18rem,0.78fr)_1.42fr]">
             <div className="border-b border-mist lg:border-r lg:border-b-0">
-              <AiMedia assetId="img-arian-portrait-v2" badgePosition="top-right">
+              <AiMedia assetId="img-arian-portrait-v3" badgePosition="top-right">
                 <Image
-                  src="/images/arian-aslani-v3.webp"
+                  src="/images/arian-aslani-v4.webp"
                   alt={`${business.owner}, Inhaber von ${business.name}`}
                   width={1122}
                   height={1402}

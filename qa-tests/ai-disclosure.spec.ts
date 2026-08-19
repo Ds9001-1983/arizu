@@ -37,7 +37,7 @@ const seiten: Record<string, string> = {
   "img-gebaeudereinigung": "/privatkunden",
   "img-gartenpflege": "/privatkunden",
   "img-entruempelung": "/privatkunden",
-  "img-arian-portrait-v2": "/kontakt",
+  "img-arian-portrait-v3": "/kontakt",
 };
 
 const EVIDENCE = "qa-reports/ai-disclosure";

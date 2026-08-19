@@ -352,14 +352,10 @@
     {
       "id": "img-arian-portrait-v2",
       "type": "static_image",
-      "status": "selected_for_publication",
+      "status": "superseded_delivery",
       "ai_disclosure": {
-        "required": true,
-        "reason": "photorealistic_real_person_ai_edit",
-        "badge": {
-          "position": "top-right",
-          "label": "KI-generiert"
-        },
+        "required": false,
+        "reason": "superseded_not_published",
         "metadata_tagged": true,
         "metadata_target": "master_and_delivery_file",
         "digital_source_type": "trainedAlgorithmicMedia",
@@ -384,6 +380,43 @@
           "width": 1122,
           "height": 1402,
           "kb": 349
+        }
+      }
+    },
+    {
+      "id": "img-arian-portrait-v3",
+      "type": "static_image",
+      "status": "selected_for_publication",
+      "ai_disclosure": {
+        "required": true,
+        "reason": "photorealistic_real_person_ai_edit",
+        "badge": {
+          "position": "top-right",
+          "label": "KI-generiert"
+        },
+        "metadata_tagged": true,
+        "metadata_target": "master_and_delivery_file",
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-19T14:52:26+02:00",
+        "evidence_screenshot": "qa-reports/ai-disclosure/img-arian-portrait-v3.png"
+      },
+      "generation": {
+        "model": "gpt-image",
+        "mode": "identity-preserve",
+        "reference": "assets-source/arian-portrait-options/arian-variante-03d-hemd-hintergrund-02-warm.png",
+        "direction": "Gezielte Nachschärfung mit natürlicher Mikrodetaillierung an Augen, Haaren, Bart, Hemd und Strickstoff bei unverändertem Gesicht, Ausdruck, Hintergrund und Zuschnitt"
+      },
+      "output": {
+        "master": {
+          "file": "assets-source/arian-portrait-options/arian-variante-03e-hemd-hintergrund-02-warm-scharf.png",
+          "width": 1122,
+          "height": 1402
+        },
+        "desktop": {
+          "file": "public/images/arian-aslani-v4.webp",
+          "width": 1122,
+          "height": 1402,
+          "kb": 415
         }
       }
     },
