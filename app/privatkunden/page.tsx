@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BadgeEuro } from "lucide-react";
 import { JsonLd } from "@/components/seo/json-ld";
-import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
 import { HeroMedia } from "@/components/site/hero-media";
@@ -161,10 +160,27 @@ export default async function PrivatkundenPage() {
           <div className="mt-10">
             <FaqList faqs={privateFaqs} />
           </div>
+
+          <div className="mt-12 rounded-sm border border-mist bg-surface p-6 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-8">
+            <div className="max-w-2xl">
+              <h2 className="font-display text-xl text-navy sm:text-2xl">
+                Sie möchten Ihr Vorhaben persönlich besprechen?
+              </h2>
+              <p className="mt-3 text-[0.95rem] leading-relaxed text-ink-muted">
+                Auf der Kontaktseite erreichen Sie uns telefonisch, per WhatsApp
+                oder über das zentrale Anfrageformular.
+              </p>
+            </div>
+            <Link
+              href="/kontakt"
+              className="mt-6 inline-flex shrink-0 items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band sm:mt-0"
+            >
+              Zum Kontakt
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </div>
         </Container>
       </section>
-
-      <AnfrageSection />
     </>
   );
 }

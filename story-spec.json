@@ -275,6 +275,196 @@
       }
     },
     {
+      "id": "img-arian-option-01",
+      "type": "static_image",
+      "status": "internal_selection_draft",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "internal_selection_draft_not_published",
+        "metadata_tagged": true,
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-19T10:50:00+02:00"
+      },
+      "generation": {
+        "model": "gpt-image",
+        "mode": "identity-preserve",
+        "reference": "public/images/arian-aslani.webp",
+        "direction": "Navy-Overshirt über Anthrazit-Shirt, neutraler Hintergrund"
+      },
+      "output": {
+        "selection": {
+          "file": "assets-source/arian-portrait-options/arian-variante-01-navy-overshirt.png",
+          "width": 1122,
+          "height": 1402
+        }
+      }
+    },
+    {
+      "id": "img-arian-option-02",
+      "type": "static_image",
+      "status": "internal_selection_draft",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "internal_selection_draft_not_published",
+        "metadata_tagged": true,
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-19T10:50:00+02:00"
+      },
+      "generation": {
+        "model": "gpt-image",
+        "mode": "identity-preserve",
+        "reference": "public/images/arian-aslani.webp",
+        "direction": "Anthrazit-Pullover, warmer neutraler Hintergrund"
+      },
+      "output": {
+        "selection": {
+          "file": "assets-source/arian-portrait-options/arian-variante-02-anthrazit-pullover.png",
+          "width": 1122,
+          "height": 1402
+        }
+      }
+    },
+    {
+      "id": "img-arian-option-03",
+      "type": "static_image",
+      "status": "selected_as_reference_for_final",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "internal_selection_draft_not_published",
+        "metadata_tagged": true,
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-19T10:50:00+02:00"
+      },
+      "generation": {
+        "model": "gpt-image",
+        "mode": "identity-preserve",
+        "reference": "public/images/arian-aslani.webp",
+        "direction": "Navy-Strick mit dezentem Goldakzent"
+      },
+      "output": {
+        "selection": {
+          "file": "assets-source/arian-portrait-options/arian-variante-03-navy-gold.png",
+          "width": 1122,
+          "height": 1402
+        }
+      }
+    },
+    {
+      "id": "img-arian-portrait-v2",
+      "type": "static_image",
+      "status": "selected_for_publication",
+      "ai_disclosure": {
+        "required": true,
+        "reason": "photorealistic_real_person_ai_edit",
+        "badge": {
+          "position": "top-right",
+          "label": "KI-generiert"
+        },
+        "metadata_tagged": true,
+        "metadata_target": "master_and_delivery_file",
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-19T11:08:00+02:00",
+        "evidence_screenshot": "qa-reports/ai-disclosure/img-arian-portrait-v2.png"
+      },
+      "generation": {
+        "model": "gpt-image",
+        "mode": "identity-preserve",
+        "reference": "assets-source/arian-portrait-options/arian-variante-03b-navy-gold-hemdkragen.png",
+        "background_reference": "assets-source/arian-portrait-options/arian-variante-02-anthrazit-pullover.png",
+        "direction": "Navy-Zippullover und weißes Hemd mit sichtbar natürlichem Kragen vor dem ausgewählten warmen cremeweißen Wandhintergrund"
+      },
+      "output": {
+        "master": {
+          "file": "assets-source/arian-portrait-options/arian-variante-03d-hemd-hintergrund-02-warm.png",
+          "width": 1122,
+          "height": 1402
+        },
+        "desktop": {
+          "file": "public/images/arian-aslani-v2.webp",
+          "width": 1122,
+          "height": 1402,
+          "kb": 147
+        }
+      }
+    },
+    {
+      "id": "img-arian-option-03-background-01",
+      "type": "static_image",
+      "status": "internal_selection_draft",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "internal_selection_draft_not_published",
+        "metadata_tagged": true,
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-19T11:04:44+02:00"
+      },
+      "generation": {
+        "model": "gpt-image",
+        "mode": "identity-preserve",
+        "reference": "assets-source/arian-portrait-options/arian-variante-03b-navy-gold-hemdkragen.png",
+        "background_reference": "assets-source/arian-portrait-options/arian-variante-01-navy-overshirt.png",
+        "direction": "Finales Motiv mit dem kühlen hellgrau-blauen Studiohintergrund aus Entwurf 1"
+      },
+      "output": {
+        "selection": {
+          "file": "assets-source/arian-portrait-options/arian-variante-03c-hemd-hintergrund-01-kuehl.png",
+          "width": 1122,
+          "height": 1402
+        }
+      }
+    },
+    {
+      "id": "img-arian-option-03-background-02",
+      "type": "static_image",
+      "status": "selected_as_final_background",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "selection_source_not_published_directly",
+        "metadata_tagged": true,
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-19T11:08:00+02:00"
+      },
+      "generation": {
+        "model": "gpt-image",
+        "mode": "identity-preserve",
+        "reference": "assets-source/arian-portrait-options/arian-variante-03b-navy-gold-hemdkragen.png",
+        "background_reference": "assets-source/arian-portrait-options/arian-variante-02-anthrazit-pullover.png",
+        "direction": "Finales Motiv mit dem warmen cremeweißen Wandhintergrund aus Entwurf 2"
+      },
+      "output": {
+        "selection": {
+          "file": "assets-source/arian-portrait-options/arian-variante-03d-hemd-hintergrund-02-warm.png",
+          "width": 1122,
+          "height": 1402
+        }
+      }
+    },
+    {
+      "id": "img-arian-option-04",
+      "type": "static_image",
+      "status": "internal_selection_draft",
+      "ai_disclosure": {
+        "required": false,
+        "reason": "internal_selection_draft_not_published",
+        "metadata_tagged": true,
+        "digital_source_type": "trainedAlgorithmicMedia",
+        "decided_at": "2026-08-19T10:50:00+02:00"
+      },
+      "generation": {
+        "model": "gpt-image",
+        "mode": "identity-preserve",
+        "reference": "public/images/arian-aslani.webp",
+        "direction": "Navy-Workwear vor einem Wohngebäude"
+      },
+      "output": {
+        "selection": {
+          "file": "assets-source/arian-portrait-options/arian-variante-04-aussenaufnahme.png",
+          "width": 1122,
+          "height": 1402
+        }
+      }
+    },
+    {
       "id": "logo-arizu",
       "type": "static_image",
       "ai_disclosure": {

@@ -27,10 +27,11 @@
      Marken-Golds, ist aber dunkler: 4,6–5,4:1 auf allen hellen Flächen. */
   --color-gold-deep: #876527;
 
-  /* Flächen — warmes Off-White statt reinem Weiß */
-  --color-shell: #f5f3ef;
+  /* Flächen — nach Arians Review vom 19.08.2026 liegt Weiß außen, der
+     bisherige warme Ton hebt Karten und abgegrenzte Inhalte davon ab. */
+  --color-shell: #ffffff;
   --color-mist: #e8e5df;
-  --color-surface: #ffffff;
+  --color-surface: #f5f3ef;
 
   /* Text */
   --color-ink: #0b1a2f;

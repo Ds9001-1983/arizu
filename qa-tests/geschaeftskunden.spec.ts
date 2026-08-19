@@ -69,6 +69,28 @@ test("Privatkundenkacheln stehen in der vereinbarten Reihenfolge", async ({
   await expect(objektbetreuung).toContainText("Objektbetreuung anfragen");
 });
 
+test("Privatkunden nutzen den zentralen Kontaktweg statt eines zweiten Formulars", async ({
+  page,
+}) => {
+  await page.goto("/privatkunden");
+
+  await expect(page.locator("#anfrage")).toHaveCount(0);
+  const kontakt = page.getByRole("link", { name: "Zum Kontakt", exact: true });
+  await expect(kontakt).toBeVisible();
+  await expect(kontakt).toHaveAttribute("href", "/kontakt");
+});
+
+test("weiße Grundfläche und warme Karten bilden die vereinbarte Farbrolle", async ({
+  page,
+}) => {
+  await page.goto("/privatkunden");
+
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(
+    page.locator('a[href="/leistungen/gebaeudereinigung"]').first(),
+  ).toHaveCSS("background-color", "rgb(245, 243, 239)");
+});
+
 test("genau drei Live-Rechner zeigen Preisrahmen, Hinweise und Anfrage-CTA", async ({
   page,
 }) => {
@@ -176,6 +198,9 @@ test("Objektbetreuung hat keinen öffentlichen Rechner und führt zur Anfrage", 
   await expect(page.locator("#anfrage select[name='service']")).toHaveValue(
     "objektbetreuung",
   );
+  await expect(
+    page.getByText("Hausmeister-Service", { exact: true }),
+  ).toBeVisible();
 });
 
 test("Hero enthält nur das vereinbarte Leistungsversprechen", async ({ page }) => {

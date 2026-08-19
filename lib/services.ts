@@ -69,6 +69,7 @@ const serviceCatalog: Service[] = [
       "Wir übernehmen die laufende Kontrolle, Koordination und Werterhaltung " +
       "von Wohnanlagen, Gewerbeimmobilien und weiteren Objekten.",
     items: [
+      "Hausmeister-Service",
       "Regelmäßige Objektkontrollen",
       "Überwachung & Dokumentation",
       "Schließ- & Öffnungsdienste",
