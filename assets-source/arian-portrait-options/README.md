@@ -15,7 +15,7 @@ Kragen ergänzt. Das erste Zwischenmotiv liegt als
 Für die weitere Hintergrundauswahl liegen zwei zusätzliche Varianten bereit:
 
 - `arian-variante-03c-hemd-hintergrund-01-kuehl.png` — kühler, hellgrau-blauer Studiohintergrund aus Entwurf 1
-- `arian-variante-03d-hemd-hintergrund-02-warm.png` — warmer, cremeweißer Wandhintergrund aus Entwurf 2 — ausgewählt und als `public/images/arian-aslani-v2.webp` veröffentlicht
+- `arian-variante-03d-hemd-hintergrund-02-warm.png` — warmer, cremeweißer Wandhintergrund aus Entwurf 2 — ausgewählt und als hochwertig komprimiertes `public/images/arian-aslani-v3.webp` veröffentlicht
 
 Alle PNG-Entwürfe und die veröffentlichte WebP-Datei tragen den IPTC/XMP-Wert
 `trainedAlgorithmicMedia`. Die Kontaktseite zeigt für das finale Motiv zudem
