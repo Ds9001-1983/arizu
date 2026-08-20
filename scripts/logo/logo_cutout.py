@@ -20,7 +20,8 @@ from PIL import Image
 SRC = sys.argv[1] if len(sys.argv) > 1 else "logo-source.jpeg"
 OUT = sys.argv[2] if len(sys.argv) > 2 else "logo-arizu.png"
 
-# Aus dem Bild gemessen (siehe Plan): Navy #0B1A2F, Gold #C99B46, Grund #FDFDFD.
+# Historische Quellfarben des ursprünglichen Bildes; die aktuelle Markenfarbe
+# wird erst beim Bau der Logo-Lockups gesetzt.
 BG = (253, 253, 253)
 INKS = {"navy": (11, 26, 47), "gold": (201, 155, 70)}
 # Ab diesem Abstand zur bg->ink-Linie gilt ein Pixel als "gehoert nicht dazu".

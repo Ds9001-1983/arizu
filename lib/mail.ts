@@ -19,7 +19,7 @@ import { getService } from "./services";
    ================================================================== */
 
 const NAVY = "#0b1a2f";
-const GOLD = "#c99b46";
+const GOLD = "#c3893c";
 const SHELL = "#f5f3ef";
 
 let cached: Transporter | null = null;

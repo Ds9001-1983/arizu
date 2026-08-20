@@ -13,7 +13,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const NAVY = "#0b1a2f";
-const GOLD = "#c99b46";
+const GOLD = "#c3893c";
 
 /**
  * Satori (der Renderer hinter ImageResponse) löst keine CSS-Variablen auf.
@@ -26,7 +26,7 @@ function logoDataUri(): string {
     "utf8",
   )
     .replace(/var\(--logo-ink,\s*#0B1A2F\)/g, "#ffffff")
-    .replace(/var\(--logo-accent,\s*#C99B46\)/g, GOLD);
+    .replace(/var\(--logo-accent,\s*#C3893C\)/g, GOLD);
   return `data:image/svg+xml;base64,${Buffer.from(raw).toString("base64")}`;
 }
 

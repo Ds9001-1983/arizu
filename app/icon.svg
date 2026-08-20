@@ -3,11 +3,11 @@
   <title>ARIZU</title>
   <rect width="695" height="695" fill="var(--logo-ink, #0B1A2F)"/>
   <g transform="translate(-543.682,85.607)">
-  <g fill="var(--logo-accent, #C99B46)">
+  <g fill="var(--logo-accent, #C3893C)">
     <title>Z</title>
     <path d="M814.38 529.00V482.09L1008.81 247.85L1017.49 274.35H818.06V215.00H1082.38V261.91L888.21 496.15L879.27 469.65H1088.74V529.00Z"/>
   </g>
-  <g transform="translate(-13.463,547.213) scale(0.0344977538,-0.0344977538)" fill="var(--logo-accent, #C99B46)">
+  <g transform="translate(-13.463,547.213) scale(0.0344977538,-0.0344977538)" fill="var(--logo-accent, #C3893C)">
     <title>Dachkontur</title>
     <path d="M26215 15823 c-104 -106 -196 -193 -205 -193 -8 0 -285 -270 -615
 -600 -330 -330 -607 -600 -615 -600 -8 0 -251 -236 -540 -525 -387 -388 -530

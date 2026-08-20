@@ -2,10 +2,8 @@
 
 /* ==================================================================
    ARIZU Design-Tokens
-   Farben aus dem Logo gemessen (nicht geraten): Navy #0B1A2F, Gold
-   #C99B46. Der Flyer nutzt minimal abweichende Werte (#011C39 /
-   #CE9949) — das Logo gilt als kanonisch, der Flyer-Navy lebt als
-   Band-Ton weiter, statt ihn wegzuwerfen.
+   Markenfarben: Navy #0B1A2F und der von Arian am 20.08.2026 aktualisierte
+   Kupferton #C3893C. Der Flyer-Navy #011C39 lebt als Band-Ton weiter.
 
    Bewusst KEIN prefers-color-scheme-Dark-Schema: eine Handwerks-/
    Dienstleistungsseite soll bei jedem Kunden identisch und
@@ -19,13 +17,12 @@
   --color-navy-deep: #060f1c; /* tiefste Stufe, abgeleitet */
   --color-navy-soft: #16283f; /* Karten auf Navy */
 
-  --color-gold: #c99b46;
-  --color-gold-soft: #e0bc7a; /* Hover, Icon-Ringe */
-  /* Text-Gold auf hellem Grund. #a87c31 erreichte nur 3,2–3,8:1 und fiel
-     damit unter die WCAG-AA-Schwelle von 4,5:1 für normalen Text (per
-     Lighthouse nachgewiesen). Dieser Ton hält Hue 38,9° und Sättigung des
-     Marken-Golds, ist aber dunkler: 4,6–5,4:1 auf allen hellen Flächen. */
-  --color-gold-deep: #876527;
+  --color-gold: #c3893c;
+  --color-gold-soft: #e0b47a; /* Hover, Icon-Ringe */
+  /* Text-Akzent auf hellem Grund. Der Markenton selbst erreicht dort kein
+     WCAG AA für normalen Text. Diese dunkle Stufe hält den neuen Hue 34,2°
+     und erreicht 4,6–5,7:1 auf allen hellen Flächen. */
+  --color-gold-deep: #875e27;
 
   /* Flächen — nach Arians Review vom 19.08.2026 liegt Weiß außen, der
      bisherige warme Ton hebt Karten und abgegrenzte Inhalte davon ab. */

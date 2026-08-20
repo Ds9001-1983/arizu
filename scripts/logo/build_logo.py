@@ -36,7 +36,7 @@ WORD = "ARIZU"
 GOLD_LETTERS = {"Z"}
 
 NAVY = "#0B1A2F"
-GOLD = "#C99B46"
+GOLD = "#C3893C"
 
 
 def roof_path() -> tuple[str, float]:

@@ -39,7 +39,7 @@ GAP_ABOVE_RULE = 44.0
 GAP_BELOW_RULE = 40.0
 
 NAVY = "#0B1A2F"
-GOLD = "#C99B46"
+GOLD = "#C3893C"
 OUT = Path.home() / "Desktop/DEV/ARIZU/arizu/public/brand"
 
 font = instancer.instantiateVariableFont(TTFont("Montserrat.ttf"), {"wght": 700})
