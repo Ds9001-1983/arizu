@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
-import { AiMedia } from "@/components/ai/ai-media";
 import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
 import { ProcessTimeline } from "@/components/site/process-timeline";
@@ -31,16 +30,17 @@ export default function KontaktPage() {
 
           <div className="mt-12 overflow-hidden rounded-sm border border-mist bg-surface lg:grid lg:grid-cols-[minmax(18rem,0.78fr)_1.42fr]">
             <div className="border-b border-mist lg:border-r lg:border-b-0">
-              <AiMedia assetId="img-arian-portrait-v3" badgePosition="top-right">
-                <Image
-                  src="/images/arian-aslani-v4.webp"
-                  alt={`${business.owner}, Inhaber von ${business.name}`}
-                  width={1122}
-                  height={1402}
-                  unoptimized
-                  className="aspect-[4/5] w-full object-cover object-top"
-                />
-              </AiMedia>
+              {/* Echtes Shooting-Foto vom 21.08.2026 — kein KI-Motiv, deshalb
+                  bewusst ohne <AiMedia> und ohne XMP-Tag. Genau der in
+                  docs/ki-transparenz-policy.md §4 beschriebene Zielzustand. */}
+              <Image
+                src="/images/arian-aslani-foto.webp"
+                alt={`${business.owner}, Inhaber von ${business.name}`}
+                width={1122}
+                height={1402}
+                unoptimized
+                className="aspect-[4/5] w-full object-cover object-top"
+              />
               <div className="p-6 sm:p-8">
                 <p className="font-sans text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
                   Ihr Ansprechpartner

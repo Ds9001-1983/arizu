@@ -179,7 +179,7 @@ def main() -> None:
             group(gold_paths, acc, "Z"),
             group([roof_d], acc, "Dachkontur", roof_tf),
             f'  <rect x="0" y="{rule_y:.1f}" width="{TARGET_INK_WIDTH:.0f}" '
-            f'height="{RULE_THICK}" fill="{ink}"/>',
+            f'height="{RULE_THICK}" fill="{acc}"/>',
             group([p for _, p in sub_letters], ink, "Gebäudedienstleistungen"),
         ]
     )

@@ -1,6 +1,6 @@
 # KI-Transparenz-Policy — ARIZU Gebäudedienstleistungen
 
-Stand: 19.08.2026
+Stand: 22.08.2026
 Rechtsgrundlage: Art. 50 Verordnung (EU) 2024/1689 (EU AI Act), gültig ab 02.08.2026
 
 ---
@@ -15,6 +15,10 @@ Rechtsgrundlage: Art. 50 Verordnung (EU) 2024/1689 (EU AI Act), gültig ab 02.08
   ein Bild für Objektbetreuung, Gebäudereinigung, Gartenpflege und
   Entrümpelung). Grund: Der Betrieb startet gerade, es existieren noch keine
   eigenen Aufnahmen von Einsätzen.
+- **Inhaberporträt auf der Kontaktseite:** nein, nicht mehr. Bis zum
+  21.08.2026 war dort ein KI-Porträt zu sehen; seit dem 22.08.2026 steht dort
+  ein echtes Shooting-Foto. Badge und Metadaten-Tag sind damit entfallen
+  (siehe Abschnitt 4).
 - **KI-gestützte Texte:** ja, als Hilfsfunktion bei Formulierung und
   Korrektur. Inhaltlich verantwortlich ist der Inhaber; die Leistungs- und
   Preisangaben sind fachlich geprüft.
@@ -53,6 +57,12 @@ den Hinweis dort, wo er zählt:
 - **Sobald echte Einsatzfotos vorliegen**, ersetzen sie die KI-Medien. Danach
   entfällt für die ersetzten Motive Badge und Metadaten-Tag — das ist der
   ausdrückliche Zielzustand, nicht ein Dauerzustand.
+- **Bereits eingelöst:** Am 22.08.2026 hat das echte Shooting-Foto von Arian
+  Aslani das KI-Porträt auf der Kontaktseite abgelöst
+  (`img-arian-portrait-v3` → `img-arian-portrait-foto`). Das KI-Motiv bleibt
+  als abgelöste Fassung im story-spec dokumentiert, wird aber nicht mehr
+  ausgeliefert. Am echten Foto wäre eine KI-Kennzeichnung eine
+  Falschauskunft — sie wurde deshalb bewusst entfernt, nicht vergessen.
 
 ## 5. Nachweise
 
