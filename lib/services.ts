@@ -89,11 +89,10 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Objektbetreuung im Kreis Pinneberg und in Hamburg",
+      title: "Objektbetreuung in Pinneberg & Hamburg",
       description:
-        "Objektbetreuung und Hausmeisterservice im Kreis Pinneberg und in Hamburg: " +
-        "Kontrolle, Dokumentation und Kleinreparaturen. Persönliches Angebot " +
-        "nach kostenloser Besichtigung, auch im Umkreis von 50 km um Elmshorn.",
+        "Objektbetreuung und Hausmeisterservice in Elmshorn, Kreis Pinneberg " +
+        "und Hamburg: Kontrolle, Dokumentation und Kleinreparaturen.",
     },
     faqs: [
       {
@@ -159,11 +158,10 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Gebäudereinigung im Kreis Pinneberg und in Hamburg",
+      title: "Gebäudereinigung in Pinneberg & Hamburg",
       description:
-        "Gebäudereinigung, Treppenhaus- sowie Bauendreinigung im Kreis Pinneberg " +
-        "und in Hamburg sowie im Umkreis von 50 km um Elmshorn. Preisrahmen online, " +
-        "Festpreis nach kostenloser Besichtigung.",
+        "Gebäudereinigung, Treppenhaus- und Bauendreinigung in Elmshorn, Kreis " +
+        "Pinneberg und Hamburg. Preis online schätzen, Besichtigung kostenlos.",
     },
     faqs: [
       {
@@ -232,11 +230,10 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Grün- und Außenanlagenpflege im Kreis Pinneberg und in Hamburg",
+      title: "Gartenpflege in Pinneberg & Hamburg",
       description:
-        "Rasenmähen, Heckenschnitt und ganzjährige Grünanlagenpflege im " +
-        "Kreis Pinneberg, in Hamburg und im Umkreis von 50 km um Elmshorn. " +
-        "Voraussichtlichen Preisrahmen online berechnen.",
+        "Rasenmähen, Heckenschnitt und ganzjährige Grünanlagenpflege in " +
+        "Elmshorn, Kreis Pinneberg und Hamburg. Preis online schätzen.",
     },
     faqs: [
       {
@@ -305,11 +302,10 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Entrümpelung und Auflösung im Kreis Pinneberg und in Hamburg",
+      title: "Entrümpelung in Pinneberg & Hamburg",
       description:
-        "Wohnungsauflösung, Keller- und Dachbodenentrümpelung im Kreis Pinneberg " +
-        "und in Hamburg sowie im Umkreis von 50 km um Elmshorn. Preisrahmen online, " +
-        "Besichtigung kostenlos.",
+        "Wohnungsauflösung, Keller- und Dachbodenentrümpelung in Elmshorn, " +
+        "Kreis Pinneberg und Hamburg. Preis online, Besichtigung kostenlos.",
     },
     faqs: [
       {

@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { Fehlt, LegalLayout } from "@/components/site/legal-layout";
 import { business } from "@/lib/business";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Allgemeine Geschäftsbedingungen",
   description: `Allgemeine Geschäftsbedingungen von ${business.name}.`,
-  alternates: { canonical: "/agb" },
+  path: "/agb",
   // Solange es ein Entwurf ist, hat der Text in keinem Suchindex etwas zu suchen.
   robots: { index: false, follow: true },
-};
+});
 
 /* ==================================================================
    ENTWURF. Kein Rechtsrat.

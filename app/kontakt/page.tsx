@@ -7,14 +7,15 @@ import { Container } from "@/components/site/container";
 import { ProcessTimeline } from "@/components/site/process-timeline";
 import { SectionHeading } from "@/components/site/section-heading";
 import { business, serviceArea, whatsappHref } from "@/lib/business";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: `Kontakt — ${business.shortName} ${business.address.city}`,
+export const metadata: Metadata = pageMetadata({
+  title: "Kontakt",
   description:
     `So erreichen Sie ${business.name}: Telefon, WhatsApp, E-Mail und ` +
     "Anfrageformular. Besichtigung und Angebot sind kostenlos.",
-  alternates: { canonical: "/kontakt" },
-};
+  path: "/kontakt",
+});
 
 export default function KontaktPage() {
   return (

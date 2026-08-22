@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/site/legal-layout";
 import { business } from "@/lib/business";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Impressum",
   description: `Impressum und Anbieterkennzeichnung von ${business.name}.`,
-  alternates: { canonical: "/impressum" },
+  path: "/impressum",
   robots: { index: true, follow: true },
-};
+});
 
 export default function ImpressumPage() {
   return (

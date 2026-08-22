@@ -13,7 +13,12 @@ import { SectionHeading } from "@/components/site/section-heading";
 import { business, serviceArea } from "@/lib/business";
 import { getConfigurator } from "@/lib/pricing";
 import { getAllRates } from "@/lib/rates-server";
-import { breadcrumbSchema, faqSchema, serviceSchema } from "@/lib/seo";
+import {
+  breadcrumbSchema,
+  faqSchema,
+  pageMetadata,
+  serviceSchema,
+} from "@/lib/seo";
 import { getService, services } from "@/lib/services";
 
 /* Alle vier Seiten sind statisch — es gibt keine dynamischen Slugs. */
@@ -45,16 +50,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const service = getService(slug);
   if (!service) return {};
-  return {
+  return pageMetadata({
     title: service.seo.title,
     description: service.seo.description,
-    alternates: { canonical: `/leistungen/${service.slug}` },
-    openGraph: {
-      title: service.seo.title,
-      description: service.seo.description,
-      url: `/leistungen/${service.slug}`,
-    },
-  };
+    path: `/leistungen/${service.slug}`,
+  });
 }
 
 export default async function ServicePage({

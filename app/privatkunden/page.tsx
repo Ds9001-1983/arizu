@@ -9,17 +9,16 @@ import { KonfiguratorTabs } from "@/components/site/konfigurator-tabs";
 import { SectionHeading } from "@/components/site/section-heading";
 import { ServiceGrid } from "@/components/site/service-grid";
 import { getAllRates } from "@/lib/rates-server";
-import { breadcrumbSchema, faqSchema } from "@/lib/seo";
+import { breadcrumbSchema, faqSchema, pageMetadata } from "@/lib/seo";
 import { services } from "@/lib/services";
 
-export const metadata: Metadata = {
-  title: "Privatkunden — Preisschätzung für Gebäudedienstleistungen",
+export const metadata: Metadata = pageMetadata({
+  title: "Gebäudedienste für Privatkunden",
   description:
-    "Preisschätzung für Gebäudereinigung, Grün- und Außenanlagenpflege sowie " +
-    "Entrümpelung und Auflösung sofort und ohne Kontaktdaten berechnen. " +
-    "Objektbetreuung individuell anfragen.",
-  alternates: { canonical: "/privatkunden" },
-};
+    "Preise für Gebäudereinigung, Gartenpflege und Entrümpelung online und " +
+    "ohne Kontaktdaten schätzen. Objektbetreuung persönlich anfragen.",
+  path: "/privatkunden",
+});
 
 /* Je Leistung die stärkste Frage auf der Übersichtsseite. Die vollständigen
    FAQs bleiben auf den vier Detailseiten. */

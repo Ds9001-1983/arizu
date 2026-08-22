@@ -12,16 +12,25 @@ import { Container } from "@/components/site/container";
 import { HeroMedia } from "@/components/site/hero-media";
 import { KundenartWeiche } from "@/components/site/kundenart-weiche";
 import { SectionHeading } from "@/components/site/section-heading";
-import { business, serviceArea } from "@/lib/business";
+import { business, serviceArea, SITE_URL } from "@/lib/business";
 import { localBusinessSchema } from "@/lib/seo";
 
+const description =
+  "Gebäudereinigung, Gartenpflege, Entrümpelung und Objektbetreuung für " +
+  `Privat- und Geschäftskunden in ${serviceArea.center}, ` +
+  `${serviceArea.region} und Hamburg.`;
+
 export const metadata: Metadata = {
-  description:
-    "Gebäudereinigung, Grün- und Außenanlagenpflege, Entrümpelung und Auflösung " +
-    `sowie Objektbetreuung für Privat- und Geschäftskunden. Einsatzgebiet: ` +
-    `${serviceArea.label} sowie weitere Orte im Umkreis von ${serviceArea.radiusKm} km um ` +
-    `${serviceArea.center}.`,
+  description,
   alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "de_DE",
+    siteName: `${business.shortName} Gebäudedienstleistungen`,
+    title: `Gebäudedienstleistungen in ${business.address.city} — ${business.shortName}`,
+    description,
+    url: SITE_URL,
+  },
 };
 
 /* „Warum ARIZU?" — vier Werte aus dem Entwurf, zwei Ergänzungen aus Arians

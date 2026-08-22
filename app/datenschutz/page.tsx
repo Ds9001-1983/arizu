@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/site/legal-layout";
 import { business } from "@/lib/business";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Datenschutzerklärung",
   description: `Wie ${business.name} personenbezogene Daten verarbeitet.`,
-  alternates: { canonical: "/datenschutz" },
-};
+  path: "/datenschutz",
+});
 
 /* ==================================================================
    Datenschutzerklärung.

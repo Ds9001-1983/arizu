@@ -9,14 +9,13 @@ import { archivo, manrope } from "@/lib/fonts";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${business.shortName} Gebäudedienstleistungen ${business.address.city} — ${business.slogan}`,
+    default: `Gebäudedienstleistungen in ${business.address.city} — ${business.shortName}`,
     template: `%s | ${business.shortName} ${business.address.city}`,
   },
   description:
-    "Gebäudereinigung, Grün- und Außenanlagenpflege, Entrümpelung und Auflösung " +
-    `sowie Objektbetreuung für Privat- und Geschäftskunden. Einsatzgebiet: ` +
-    `${serviceArea.label} sowie weitere Orte im Umkreis von ` +
-    `${serviceArea.radiusKm} km um ${serviceArea.center}.`,
+    "Gebäudereinigung, Gartenpflege, Entrümpelung und Objektbetreuung für " +
+    `Privat- und Geschäftskunden in ${serviceArea.center}, ` +
+    `${serviceArea.region} und Hamburg.`,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",

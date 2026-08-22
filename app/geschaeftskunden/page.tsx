@@ -22,7 +22,7 @@ import { HeroMedia } from "@/components/site/hero-media";
 import { SectionHeading } from "@/components/site/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business, serviceArea } from "@/lib/business";
-import { breadcrumbSchema, faqSchema } from "@/lib/seo";
+import { breadcrumbSchema, faqSchema, pageMetadata } from "@/lib/seo";
 import { services, type Faq } from "@/lib/services";
 
 /* ==================================================================
@@ -37,15 +37,13 @@ import { services, type Faq } from "@/lib/services";
    fotorealistisches KI-Asset einzuführen.
    ================================================================== */
 
-export const metadata: Metadata = {
-  title: `Geschäftskunden — Gebäudedienstleistungen für Unternehmen`,
+export const metadata: Metadata = pageMetadata({
+  title: "Gebäudedienste für Unternehmen",
   description:
-    "Gebäudereinigung, Grün- und Außenanlagenpflege, Entrümpelung und " +
-    "Auflösung sowie Objektbetreuung für Unternehmen. Einsatzgebiet: " +
-    `${serviceArea.label} sowie weitere Orte im Umkreis von ` +
-    `${serviceArea.radiusKm} km um ${serviceArea.center}.`,
-  alternates: { canonical: "/geschaeftskunden" },
-};
+    "Reinigung, Außenanlagenpflege, Entrümpelung und Objektbetreuung für " +
+    `Unternehmen in ${serviceArea.center}, ${serviceArea.region} und Hamburg.`,
+  path: "/geschaeftskunden",
+});
 
 const objektarten = [
   {

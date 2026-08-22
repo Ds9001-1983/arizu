@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { business, serviceArea, SITE_URL } from "./business";
 import type { Faq, Service } from "./services";
 
@@ -24,6 +25,47 @@ const DAYS: Record<string, string> = {
 };
 
 const BUSINESS_ID = `${SITE_URL}/#business`;
+
+/**
+ * Vollstaendige Seiten-Metadaten statt nur einzelner Open-Graph-Felder.
+ * Next ersetzt verschachtelte Metadata-Objekte auf der konkreteren Route;
+ * deshalb muessen Seitentitel, Beschreibung und globale OG-Angaben hier
+ * gemeinsam ausgegeben werden.
+ */
+export function pageMetadata({
+  title,
+  description,
+  path,
+  robots,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  robots?: Metadata["robots"];
+}): Metadata {
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      locale: "de_DE",
+      siteName: `${business.shortName} Gebäudedienstleistungen`,
+      title,
+      description,
+      url: path,
+      images: [
+        {
+          url: `${SITE_URL}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `${business.name} — ${business.slogan}`,
+        },
+      ],
+    },
+    ...(robots ? { robots } : {}),
+  };
+}
 
 export function localBusinessSchema() {
   return {
