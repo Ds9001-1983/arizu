@@ -90,10 +90,11 @@ export const business = {
     instagram: null as string | null,
   },
 
-  // Verifiziertes Google-Unternehmensprofil. Die Adresse ist dort als
-  // Einzugsgebiet eingetragen und ausgeblendet — Arian empfaengt keine Kunden.
-  // Links darauf deshalb nie mit „Standort“ beschriften. Speist hasMap/sameAs
-  // im JSON-LD und die Adresslinks in Footer und Kontaktseite.
+  // Verifiziertes Google-Unternehmensprofil. Die Adresse ist dort sichtbar
+  // (Unternehmensstandort mit Pin, dazu das Einzugsgebiet) — so von Dennis
+  // am 24.09.2026 entschieden, weil sie die Sichtbarkeit in Maps fuer
+  // Elmshorn-Suchen stuetzt. Speist hasMap/sameAs im JSON-LD und die
+  // Adresslinks in Footer und Kontaktseite.
   googleBusinessUrl: "https://maps.google.com/?cid=11166987475011513876" as string | null,
 } as const;
 

@@ -100,8 +100,10 @@ Die Seite ist online, aber noch nicht in jedem Punkt abgeschlossen. Offen:
 
 ### Erledigt
 
-**Google-Unternehmensprofil** ist verifiziert (Einzugsgebiet, Adresse im
-Profil ausgeblendet) und seit dem SEO-Rollout vom 24.09.2026 mit der Website
+**Google-Unternehmensprofil** ist verifiziert (Adresse Am Dornbusch 17
+sichtbar mit Pin, dazu Einzugsgebiet Kreis Pinneberg und Hamburg; Adresse
+bleibt laut Entscheidung vom 24.09.2026 sichtbar) und seit dem SEO-Rollout
+vom 24.09.2026 mit der Website
 verknüpft: `googleBusinessUrl` in `lib/business.ts` speist `hasMap`/`sameAs`
 im LocalBusiness-JSON-LD, das jetzt auf jeder Seite steht, und die
 Adresslinks in Footer und Kontaktseite.
