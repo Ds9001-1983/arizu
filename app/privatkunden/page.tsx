@@ -8,12 +8,13 @@ import { HeroMedia } from "@/components/site/hero-media";
 import { KonfiguratorTabs } from "@/components/site/konfigurator-tabs";
 import { SectionHeading } from "@/components/site/section-heading";
 import { ServiceGrid } from "@/components/site/service-grid";
+import { serviceArea } from "@/lib/business";
 import { getAllRates } from "@/lib/rates-server";
 import { breadcrumbSchema, faqSchema, pageMetadata } from "@/lib/seo";
 import { services } from "@/lib/services";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Gebäudedienste für Privatkunden",
+  title: `Gebäudedienste für Privatkunden in ${serviceArea.center}`,
   description:
     "Preise für Gebäudereinigung, Gartenpflege und Entrümpelung online und " +
     "ohne Kontaktdaten schätzen. Objektbetreuung persönlich anfragen.",

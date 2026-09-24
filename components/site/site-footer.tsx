@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { business, serviceArea } from "@/lib/business";
+import { services } from "@/lib/services";
 import { Container } from "./container";
 import { LogoClaim } from "./logo";
 
@@ -14,7 +15,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-auto bg-navy-band text-white">
       <Container>
-        <div className="grid gap-12 py-16 md:grid-cols-[1.2fr_1fr_1fr] md:gap-8">
+        <div className="grid gap-12 py-16 md:grid-cols-2 md:gap-x-8 lg:grid-cols-[1.1fr_0.8fr_1fr_1.5fr]">
           <div>
             {/* Dieselbe SVG-Quelle wie im Header, nur umgefärbt: die
                 Buchstaben laufen über --logo-ink, das Z bleibt Gold. */}
@@ -56,6 +57,28 @@ export function SiteFooter() {
             </ul>
           </div>
 
+          {/* Die Leistungsseiten waren nur über /privatkunden erreichbar —
+              Header, Footer und Startseite verlinkten keine davon, und in der
+              Search Console hatten sie 0 Klicks. Diese Liste gibt jeder Seite
+              einen direkten Link auf alle vier. */}
+          <div>
+            <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold-soft">
+              Leistungen
+            </h2>
+            <ul className="mt-5 space-y-3 text-sm">
+              {services.map((s) => (
+                <li key={s.slug}>
+                  <Link
+                    href={`/leistungen/${s.slug}`}
+                    className="text-white/80 transition-colors hover:text-gold-soft"
+                  >
+                    {s.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <div>
             <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold-soft">
               Kontakt
@@ -63,10 +86,26 @@ export function SiteFooter() {
             <ul className="mt-5 space-y-3 text-sm text-white/80">
               <li className="flex gap-3">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
-                <span>
-                  {business.address.street ? `${business.address.street}, ` : ""}
-                  {business.address.postalCode} {business.address.city}
-                </span>
+                {/* Verlinkt aufs Google-Unternehmensprofil. Kein aria-label,
+                    das den sichtbaren Text ersetzt (WCAG 2.5.3); das Ziel
+                    ergänzt nur der sr-only-Zusatz. */}
+                {business.googleBusinessUrl ? (
+                  <a
+                    href={business.googleBusinessUrl}
+                    target="_blank"
+                    rel="noopener"
+                    className="hover:text-gold-soft"
+                  >
+                    {business.address.street ? `${business.address.street}, ` : ""}
+                    {business.address.postalCode} {business.address.city}
+                    <span className="sr-only"> – in Google Maps öffnen (neuer Tab)</span>
+                  </a>
+                ) : (
+                  <span>
+                    {business.address.street ? `${business.address.street}, ` : ""}
+                    {business.address.postalCode} {business.address.city}
+                  </span>
+                )}
               </li>
               <li className="flex gap-3">
                 <Phone className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
@@ -79,7 +118,7 @@ export function SiteFooter() {
               </li>
               <li className="flex gap-3">
                 <Mail className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
-                <a href={`mailto:${business.email}`} className="break-all hover:text-gold-soft">
+                <a href={`mailto:${business.email}`} className="wrap-break-word hover:text-gold-soft">
                   {business.email}
                 </a>
               </li>

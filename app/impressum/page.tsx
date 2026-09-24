@@ -5,7 +5,10 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Impressum",
-  description: `Impressum und Anbieterkennzeichnung von ${business.name}.`,
+  description:
+    `Impressum von ${business.name}, ${business.address.city}: ` +
+    "Anbieterkennzeichnung nach § 5 DDG mit Anschrift, Telefon, E-Mail und " +
+    `Inhaber ${business.owner}.`,
   path: "/impressum",
   robots: { index: true, follow: true },
 });

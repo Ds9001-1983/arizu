@@ -5,7 +5,9 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Datenschutzerklärung",
-  description: `Wie ${business.name} personenbezogene Daten verarbeitet.`,
+  description:
+    `Wie ${business.name} Ihre Anfrage verarbeitet, warum der Preisrechner ` +
+    "nichts überträgt, wie lange wir speichern und welche Rechte Sie haben.",
   path: "/datenschutz",
 });
 

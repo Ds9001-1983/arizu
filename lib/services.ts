@@ -14,6 +14,17 @@ import type { ConfiguratorSlug } from "./pricing";
 
 export type Faq = { question: string; answer: string };
 
+/**
+ * Vertiefender Abschnitt auf der Detailseite (H2 + Fließtext, optional als
+ * nummerierter Ablauf). Nur mit Aussagen füllen, die Arian bestätigt hat —
+ * die Texte erscheinen sichtbar auf der Seite.
+ */
+export type ServiceSection = {
+  heading: string;
+  paragraphs: string[];
+  steps?: { title: string; text: string }[];
+};
+
 export type Service = {
   slug: ConfiguratorSlug;
   /** Ob diese Leistung im Privatkundenbereich eine öffentliche Preisschätzung hat. */
@@ -44,7 +55,11 @@ export type Service = {
    * zu jedem pflichtigen Bild ein sichtbares Badge existiert.
    */
   image: { src: string; alt: string; assetId: string; width: number; height: number };
+  /** Seitentitel ohne Marke — das Root-Layout hängt „| ARIZU“ an. Max. 52 Zeichen. */
   seo: { title: string; description: string };
+  /** Vertiefende Abschnitte, bisher nur bei der Entrümpelung. */
+  sections?: ServiceSection[];
+  /** faqs[0] erscheint zusätzlich auf /privatkunden — neue Fragen hinten anhängen. */
   faqs: Faq[];
 };
 
@@ -53,7 +68,7 @@ const serviceCatalog: Service[] = [
     slug: "objektbetreuung",
     hasPublicCalculator: false,
     name: "Objektbetreuung",
-    heading: "Objektbetreuung",
+    heading: "Objektbetreuung und Hausmeisterservice",
     teaser:
       "Wir kümmern uns umfassend um Ihre Immobilie – von der Kontrolle über " +
       "die Wartung bis hin zur Werterhaltung.",
@@ -89,7 +104,7 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Objektbetreuung in Pinneberg & Hamburg",
+      title: "Objektbetreuung & Hausmeisterservice in Elmshorn",
       description:
         "Objektbetreuung und Hausmeisterservice in Elmshorn, Kreis Pinneberg " +
         "und Hamburg: Kontrolle, Dokumentation und Kleinreparaturen.",
@@ -121,7 +136,7 @@ const serviceCatalog: Service[] = [
     slug: "gebaeudereinigung",
     hasPublicCalculator: true,
     name: "Gebäudereinigung",
-    heading: "Gebäudereinigung",
+    heading: "Gebäudereinigung, Büro- und Treppenhausreinigung",
     teaser:
       "Sauberkeit, auf die Sie sich verlassen können. Wir reinigen gründlich, " +
       "zuverlässig und sorgen für ein angenehmes Umfeld.",
@@ -158,7 +173,7 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Gebäudereinigung in Pinneberg & Hamburg",
+      title: "Gebäudereinigung & Treppenhausreinigung Elmshorn",
       description:
         "Gebäudereinigung, Treppenhaus- und Bauendreinigung in Elmshorn, Kreis " +
         "Pinneberg und Hamburg. Preis online schätzen, Besichtigung kostenlos.",
@@ -194,7 +209,9 @@ const serviceCatalog: Service[] = [
     slug: "gartenpflege",
     hasPublicCalculator: true,
     name: "Grün- und Außenanlagenpflege",
-    heading: "Grün- und Außenanlagenpflege",
+    // Die H1 nimmt die Suchbegriffe der Kunden auf; der Kurzname aus Arians
+    // Umbenennung vom 19.08.2026 bleibt in Kacheln, Tabs und Nachrichten.
+    heading: "Gartenpflege, Heckenschnitt und Rasenpflege",
     teaser:
       "Wir pflegen Ihre Grünanlagen mit Fachkenntnis und Sorgfalt – für ein " +
       "gepflegtes und harmonisches Außenbild.",
@@ -230,7 +247,7 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Gartenpflege in Pinneberg & Hamburg",
+      title: "Gartenpflege & Heckenschnitt in Elmshorn",
       description:
         "Rasenmähen, Heckenschnitt und ganzjährige Grünanlagenpflege in " +
         "Elmshorn, Kreis Pinneberg und Hamburg. Preis online schätzen.",
@@ -265,7 +282,9 @@ const serviceCatalog: Service[] = [
     slug: "entruempelung",
     hasPublicCalculator: true,
     name: "Entrümpelung und Auflösung",
-    heading: "Entrümpelung und Auflösung",
+    // So suchen die Kunden laut Search Console: „haushaltsauflösung
+    // pinneberg“, „wohnungsräumung pinneberg“, „entrümpelung elmshorn“.
+    heading: "Entrümpelung, Haushaltsauflösung und Wohnungsräumung",
     teaser:
       "Wir schaffen Platz – schnell, diskret und zuverlässig. Ob Keller, " +
       "Wohnung oder Büro: Wir entrümpeln für Sie.",
@@ -302,11 +321,134 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Entrümpelung in Pinneberg & Hamburg",
+      title: "Entrümpelung & Haushaltsauflösung Elmshorn/Pinneberg",
       description:
-        "Wohnungsauflösung, Keller- und Dachbodenentrümpelung in Elmshorn, " +
-        "Kreis Pinneberg und Hamburg. Preis online, Besichtigung kostenlos.",
+        "Entrümpelung, Haushaltsauflösung und Wohnungsräumung in Elmshorn, " +
+        "Pinneberg und Hamburg: besenrein, mit Entsorgungsnachweis, " +
+        "Besichtigung kostenlos.",
     },
+    /* Inhalte aus dem SEO-Handoff vom 23.09.2026. Dennis hat die Aussagen
+       am Telefon mit Arian abgestimmt (Entsorgungsnachweis, Garagen,
+       Festpreis nach Besichtigung, Anrechnung). Alles Übrige stammt aus
+       Fließtext, FAQ und Preisrechner dieser Leistung. */
+    sections: [
+      {
+        heading: "Haushaltsauflösung nach Todesfall oder Umzug ins Pflegeheim",
+        paragraphs: [
+          "Eine Haushaltsauflösung kommt selten allein. Meist ist ein Angehöriger " +
+            "gestorben oder zieht in ein Pflegeheim, und neben Trauer oder Sorge " +
+            "drängen Fristen: Die Wohnung muss geräumt und an den Vermieter oder " +
+            "die Erben übergeben werden. Diesen Teil nehmen wir Ihnen ab.",
+          "Bei der kostenlosen Besichtigung legen Sie fest, was bleiben soll und " +
+            "was geräumt wird. Dokumente, Fotos und persönliche Fundstücke, auf die " +
+            "wir beim Räumen stoßen, sichern wir und übergeben sie Ihnen. Den Rest " +
+            "räumen wir aus, trennen ihn und entsorgen ihn umweltgerecht. " +
+            "Verwertbares Mobiliar rechnen wir auf den Preis an.",
+          "Solche Aufträge brauchen Zurückhaltung. Wir arbeiten diskret und ohne " +
+            "Aufsehen im Haus, auf Wunsch mit unbeschriftetem Fahrzeug, und wir " +
+            "sprechen nicht mit Nachbarn über den Anlass. Am Ende übergeben wir die " +
+            "Räume besenrein — auf Wunsch mit Grundreinigung, sodass die Wohnung " +
+            "direkt zurückgegeben werden kann.",
+        ],
+      },
+      {
+        heading: "Wohnungsauflösung und Wohnungsräumung",
+        paragraphs: [
+          "Wer eine Wohnung zurückgeben muss, braucht sie leer und in einem " +
+            "Zustand, den der Vermieter abnimmt. Wir räumen vollständig: Möbel, " +
+            "Hausrat, Kartons und alles, was sich über die Jahre angesammelt hat. " +
+            "Schränke und Betten bauen wir auf Wunsch vorher ab, damit sie durch " +
+            "Flur und Treppenhaus passen.",
+          "Am Ende übergeben wir die Räume besenrein. Soll die Wohnung direkt an " +
+            "den Vermieter zurückgehen, übernehmen wir zusätzlich die " +
+            "Grundreinigung — dann ist sie übergabefertig, ohne dass Sie noch " +
+            "einmal selbst putzen müssen.",
+          "Was die Räumung kostet, hängt vor allem von drei Dingen ab: der " +
+            "Fläche, wie voll die Räume sind und wie viele Treppen alles hinunter " +
+            "muss. Erdgeschoss oder Aufzug ist am einfachsten, der dritte bis fünfte " +
+            "Stock ohne Aufzug deutlich aufwendiger. Mit dem Preisrechner auf dieser " +
+            "Seite sehen Sie Ihren Preisrahmen, ohne Kontaktdaten anzugeben.",
+        ],
+      },
+      {
+        heading: "Keller-, Dachboden- und Garagenentrümpelung",
+        paragraphs: [
+          "Keller, Dachboden und Garage füllen sich über Jahre, meist mit Dingen, " +
+            "die niemand mehr braucht, die aber auch keiner wegbringen mag. " +
+            "Irgendwann ist kein Durchkommen mehr. Wir räumen diese Räume " +
+            "komplett oder nur den Teil, den Sie loswerden möchten.",
+          "Neben der Fläche kommt es hier auf den Weg nach draußen an: " +
+            "Eine enge Kellertreppe oder der Abstieg vom Dachboden kostet Zeit, " +
+            "jedes Stück muss einzeln getragen werden. Deshalb fragt der " +
+            "Preisrechner eigens nach Keller oder Dachboden.",
+          "Gerade in Kellern und Garagen stehen oft Reste von Farben, Ölen oder " +
+            "Chemikalien. Das gehört nicht in den Hausmüll. Wir entsorgen " +
+            "Sondermüll getrennt und fachgerecht und weisen die Entsorgung nach. " +
+            "Alles andere trennen wir nach Materialien und entsorgen es " +
+            "umweltgerecht, verwertbare Stücke rechnen wir an.",
+        ],
+      },
+      {
+        heading: "Was mit verwertbaren Gegenständen passiert",
+        paragraphs: [
+          "Nicht alles, was aus einer Wohnung heraus muss, ist Müll. Gut " +
+            "erhaltene Möbel, funktionierende Geräte oder Hausrat, der sich " +
+            "weiterverkaufen oder weitergeben lässt, haben noch einen Wert. Diesen " +
+            "Wert rechnen wir an: Er wird mit den Kosten der Räumung verrechnet und " +
+            "senkt Ihren Preis. Je mehr Brauchbares in den Räumen steht, desto " +
+            "günstiger kann die Räumung also werden. Ob sich ein Stück lohnt, " +
+            "hängt vom Zustand ab — das beurteilen wir vor Ort, nicht aus der Ferne.",
+          "Was sich anrechnen lässt, stellen wir bei der kostenlosen Besichtigung " +
+            "fest. Der Betrag steckt dann bereits im Festpreis, den Sie nach dem " +
+            "Termin bekommen. Es gibt also keine nachträgliche Verrechnung und " +
+            "keine Überraschung auf der Rechnung.",
+          "Persönliches ist davon ausgenommen. Dokumente, Fotos und " +
+            "Erinnerungsstücke werden nicht verwertet, sondern gesichert und " +
+            "Ihnen übergeben. Was keinen Wert mehr hat, trennen wir und entsorgen " +
+            "es umweltgerecht.",
+        ],
+      },
+      {
+        heading: "Ablauf: von der Besichtigung bis zur Übergabe",
+        paragraphs: [
+          "Jede Entrümpelung läuft bei uns in denselben fünf Schritten. So wissen " +
+            "Sie vorher, was passiert und was es kostet — und nach der Besichtigung " +
+            "ändert sich am Preis nichts mehr.",
+        ],
+        steps: [
+          {
+            title: "Besichtigung",
+            text:
+              "Wir sehen uns das Objekt vor Ort an, kostenlos und unverbindlich. " +
+              "Vorab können Sie mit dem Preisrechner einen ersten Preisrahmen schätzen.",
+          },
+          {
+            title: "Festpreis",
+            text:
+              "Nach der Besichtigung nennen wir Ihnen einen verbindlichen Festpreis. " +
+              "Verwertbares Mobiliar ist darin bereits angerechnet.",
+          },
+          {
+            title: "Räumung",
+            text:
+              "Zum vereinbarten Termin räumen wir, auf Wunsch mit unbeschriftetem " +
+              "Fahrzeug. Dokumente und Fotos, die wir finden, sichern wir für Sie.",
+          },
+          {
+            title: "Entsorgung",
+            text:
+              "Wir trennen nach Materialien und entsorgen umweltgerecht, Sondermüll " +
+              "gesondert. Die Entsorgung weisen wir nach.",
+          },
+          {
+            title: "Übergabe",
+            text:
+              "Sie bekommen die Räume besenrein zurück, auf Wunsch mit " +
+              "Grundreinigung und damit übergabefertig für den Vermieter.",
+          },
+        ],
+      },
+    ],
     faqs: [
       {
         question: "Wird verwertbares Mobiliar angerechnet?",
@@ -322,6 +464,26 @@ const serviceCatalog: Service[] = [
           "zurückhaltend um: unbeschriftetes Fahrzeug auf Wunsch, keine " +
           "Gespräche mit Nachbarn, Fundstücke wie Dokumente oder Fotos werden " +
           "gesichert und Ihnen übergeben.",
+      },
+      {
+        question: "Was kostet eine Haushaltsauflösung in Pinneberg?",
+        answer:
+          "Das hängt vor allem von der Fläche ab, davon, wie voll die Räume sind, " +
+          "und vom Zugang — also wie viele Treppen alles hinunter muss. Mit " +
+          "unserem Online-Preisrechner sehen Sie in einer Minute Ihren " +
+          "Preisrahmen, ohne Kontaktdaten anzugeben. Verbindlich wird es nach der " +
+          "kostenlosen Besichtigung: Dann nennen wir Ihnen einen Festpreis, in " +
+          "dem verwertbares Mobiliar bereits angerechnet ist. Das gilt in " +
+          "Pinneberg genauso wie in Elmshorn oder Hamburg.",
+      },
+      {
+        question: "Wie schnell ist eine Wohnung geräumt?",
+        answer:
+          "Das hängt von der Größe der Wohnung ab, davon, wie voll sie ist, und " +
+          "vom Zugang. Deshalb nennen wir Dauer und Termin nach der kostenlosen " +
+          "Besichtigung, zusammen mit dem Festpreis. Haben Sie eine Frist, etwa " +
+          "die Übergabe an den Vermieter, sagen Sie es uns gleich bei der " +
+          "Anfrage — wir planen den Termin danach.",
       },
     ],
   },

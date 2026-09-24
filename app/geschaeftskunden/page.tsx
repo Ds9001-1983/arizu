@@ -38,7 +38,7 @@ import { services, type Faq } from "@/lib/services";
    ================================================================== */
 
 export const metadata: Metadata = pageMetadata({
-  title: "Gebäudedienste für Unternehmen",
+  title: `Gebäudedienste für Unternehmen in ${serviceArea.center}`,
   description:
     "Reinigung, Außenanlagenpflege, Entrümpelung und Objektbetreuung für " +
     `Unternehmen in ${serviceArea.center}, ${serviceArea.region} und Hamburg.`,

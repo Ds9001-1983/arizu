@@ -1,31 +1,49 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { JsonLd } from "@/components/seo/json-ld";
 import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
 import { ProcessTimeline } from "@/components/site/process-timeline";
 import { SectionHeading } from "@/components/site/section-heading";
 import { business, serviceArea, whatsappHref } from "@/lib/business";
-import { pageMetadata } from "@/lib/seo";
+import { contactPageSchema, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Kontakt",
+/* Titel und Beschreibung speisen Metadaten UND das ContactPage-Schema,
+   deshalb als gemeinsame Konstante. */
+const seo = {
+  title: `Kontakt – Gebäudedienstleistungen ${business.address.city}`,
   description:
     `So erreichen Sie ${business.name}: Telefon, WhatsApp, E-Mail und ` +
     "Anfrageformular. Besichtigung und Angebot sind kostenlos.",
   path: "/kontakt",
-});
+};
+
+export const metadata: Metadata = pageMetadata(seo);
 
 export default function KontaktPage() {
   return (
     <>
+      <JsonLd data={contactPageSchema(seo)} />
+
       <section className="bg-shell pt-10 pb-16 sm:pt-14">
         <Container>
+          {/* Firmenname in der H1 statt nur des Claims — der Claim bleibt als
+              erste Zeile darunter. Der Lead-Satz ist mit Arian vereinbart
+              und steht wörtlich im QA-Test, also unverändert lassen. */}
           <SectionHeading
             as="h1"
-            eyebrow="Kontakt"
-            title="Kurzer Weg, schnelle Antwort"
-            lead="Telefonisch, per WhatsApp oder über unser Kontaktformular – wählen Sie den Weg, der für Sie am einfachsten ist. Wenn wir gerade nicht erreichbar sind, melden wir uns selbstverständlich zeitnah bei Ihnen."
+            // hyphens-auto: „Gebäudedienstleistungen“ ist auf 360 px breiter
+            // als die Spalte und würde sonst abgeschnitten.
+            title={<span className="hyphens-auto">Kontakt zu {business.name}</span>}
+            lead={
+              <>
+                <span className="mb-2 block font-display text-lg font-bold text-gold-deep">
+                  Kurzer Weg, schnelle Antwort.
+                </span>
+                Telefonisch, per WhatsApp oder über unser Kontaktformular – wählen Sie den Weg, der für Sie am einfachsten ist. Wenn wir gerade nicht erreichbar sind, melden wir uns selbstverständlich zeitnah bei Ihnen.
+              </>
+            }
           />
 
           <div className="mt-12 overflow-hidden rounded-sm border border-mist bg-surface lg:grid lg:grid-cols-[minmax(18rem,0.78fr)_1.42fr]">
@@ -127,13 +145,7 @@ export default function KontaktPage() {
                   <p className="mt-3 text-sm leading-relaxed text-ink-muted">
                     {business.name}
                     <br />
-                    {business.address.street ? (
-                      <>
-                        {business.address.street}
-                        <br />
-                      </>
-                    ) : null}
-                    {business.address.postalCode} {business.address.city}
+                    <AddressLines />
                   </p>
                   <p className="mt-4 text-sm leading-relaxed text-ink-muted">
                     {serviceArea.label} sowie angrenzende Orte im Umkreis von{" "}
@@ -174,5 +186,35 @@ export default function KontaktPage() {
       <ProcessTimeline />
       <AnfrageSection kundenart="auswahl" />
     </>
+  );
+}
+
+/* Anschrift, verlinkt aufs Google-Unternehmensprofil. Der sichtbare Text
+   bleibt der Linkname (kein aria-label, das ihn ersetzt — WCAG 2.5.3), das
+   Ziel wird nur für Screenreader ergänzt. Unterstrichen, weil der Link sonst
+   allein über die Farbe erkennbar wäre (WCAG 1.4.1). */
+function AddressLines() {
+  const lines = (
+    <>
+      {business.address.street ? (
+        <>
+          {business.address.street}
+          <br />
+        </>
+      ) : null}
+      {business.address.postalCode} {business.address.city}
+    </>
+  );
+  if (!business.googleBusinessUrl) return lines;
+  return (
+    <a
+      href={business.googleBusinessUrl}
+      target="_blank"
+      rel="noopener"
+      className="underline decoration-gold/60 underline-offset-4 transition-colors hover:text-navy"
+    >
+      {lines}
+      <span className="sr-only"> – in Google Maps öffnen (neuer Tab)</span>
+    </a>
   );
 }

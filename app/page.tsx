@@ -7,27 +7,30 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import { JsonLd } from "@/components/seo/json-ld";
 import { Container } from "@/components/site/container";
 import { HeroMedia } from "@/components/site/hero-media";
 import { KundenartWeiche } from "@/components/site/kundenart-weiche";
 import { SectionHeading } from "@/components/site/section-heading";
 import { business, serviceArea, SITE_URL } from "@/lib/business";
-import { localBusinessSchema } from "@/lib/seo";
+import { HOME_TITLE } from "@/lib/seo";
 
 const description =
   "Gebäudereinigung, Gartenpflege, Entrümpelung und Objektbetreuung für " +
   `Privat- und Geschäftskunden in ${serviceArea.center}, ` +
   `${serviceArea.region} und Hamburg.`;
 
+/* `absolute`, weil das Template des Root-Layouts sonst „| ARIZU“ ein zweites
+   Mal anhängen würde. Das LocalBusiness-JSON-LD steht seit 24.09.2026 im
+   Root-Layout und damit auch hier. */
 export const metadata: Metadata = {
+  title: { absolute: HOME_TITLE },
   description,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "de_DE",
     siteName: `${business.shortName} Gebäudedienstleistungen`,
-    title: `Gebäudedienstleistungen in ${business.address.city} — ${business.shortName}`,
+    title: HOME_TITLE,
     description,
     url: SITE_URL,
   },
@@ -67,8 +70,6 @@ const reasons = [
 export default function Home() {
   return (
     <>
-      <JsonLd data={localBusinessSchema()} />
-
       {/* Minimaler Einstieg: Positionierung und Leistungsversprechen, danach
           sofort die Entscheidung zwischen Privat- und Geschäftskunden. */}
       <section className="relative isolate flex min-h-[clamp(34rem,80svh,44rem)] items-end overflow-hidden mt-[calc(var(--header-h)*-1)]">
@@ -83,7 +84,19 @@ export default function Home() {
 
         <Container wide className="relative z-10 pt-32 pb-14 sm:pb-20">
           <div className="max-w-2xl">
+            {/* Die Dachzeile gehört zur H1: Der Slogan allein sagt Google
+                nicht, was ARIZU macht und wo. Sichtbar statt sr-only, damit
+                Sehende und Screenreader dieselbe Überschrift bekommen.
+                Wieder aufgenommen am 24.09.2026 (SEO-Handoff), nachdem sie
+                am 17.08. als separate Zeile entfallen war. */}
             <h1 className="font-display text-[2.7rem] font-extrabold leading-[0.98] text-white sm:text-6xl lg:text-[4.4rem]">
+              {/* Der Schatten dunkelt das Bild direkt hinter der kleinen
+                  Schrift ab: Auf 360 und 1024 px liegt die Zeile teils vor der
+                  hellen Fassade, dort fiel der Kontrast ohne ihn auf 2,7:1. */}
+              <span className="mb-5 block font-sans text-[0.68rem] font-semibold uppercase leading-normal tracking-[0.24em] text-gold-soft [text-shadow:0_0_12px_rgb(6_15_28),0_0_4px_rgb(6_15_28/0.95),0_1px_2px_rgb(6_15_28)]">
+                Gebäudedienstleistungen in {serviceArea.center} &amp;{" "}
+                {serviceArea.region}
+              </span>
               Alles aus
               <br />
               einer Hand.

@@ -49,7 +49,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const service = getService(slug);
-  if (!service) return {};
+  // notFound() statt `return {}`: Sonst trägt der RSC-Payload die Layout-
+  // Defaults (Startseiten-Titel, „index, follow“), und nach der Hydration
+  // steht auf der 404 der Titel der Startseite.
+  if (!service) notFound();
   return pageMetadata({
     title: service.seo.title,
     description: service.seo.description,
@@ -114,7 +117,9 @@ export default async function ServicePage({
 
           <div className="mt-8 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
             <div>
-              <h1 className="font-display text-[2.2rem] font-extrabold leading-[1.03] text-navy sm:text-5xl">
+              {/* hyphens-auto: „Haushaltsauflösung“ und „Wohnungsräumung“ sind
+                  auf 360 px breiter als die Spalte. */}
+              <h1 className="font-display text-[2.2rem] font-extrabold leading-[1.03] text-navy hyphens-auto sm:text-5xl">
                 {service.heading}
               </h1>
               <p className="mt-5 font-display text-lg font-bold text-gold-deep">
@@ -215,6 +220,54 @@ export default async function ServicePage({
       ) : (
         <AnfrageSection defaultService={service.slug} kundenart="auswahl" />
       )}
+
+      {/* --------------------------------------------------- Vertiefung */}
+      {/* Ausführliche Abschnitte zu den Begriffen, unter denen Kunden suchen
+          (bisher nur Entrümpelung). Ein Abschnitt mit Ablaufschritten läuft
+          über die volle Breite, deshalb steht er in den Daten am Ende. */}
+      {service.sections?.length ? (
+        <section className="pt-16">
+          <Container>
+            <div className="grid gap-5 lg:grid-cols-2">
+              {service.sections.map((sec) => (
+                <article
+                  key={sec.heading}
+                  className={`rounded-sm border border-mist bg-surface p-7 sm:p-9${sec.steps ? " lg:col-span-2" : ""}`}
+                >
+                  <h2 className="font-display text-xl text-navy">{sec.heading}</h2>
+                  {sec.paragraphs.map((p) => (
+                    <p
+                      key={p.slice(0, 32)}
+                      className="mt-3 text-[0.95rem] leading-relaxed text-ink-muted"
+                    >
+                      {p}
+                    </p>
+                  ))}
+                  {sec.steps ? (
+                    <ol className="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+                      {sec.steps.map((step, index) => (
+                        <li key={step.title} className="flex gap-4 lg:flex-col lg:gap-3">
+                          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-navy font-display text-sm font-bold text-gold">
+                            {index + 1}
+                          </span>
+                          <span>
+                            <span className="block font-display text-base font-bold text-navy">
+                              {step.title}
+                            </span>
+                            <span className="mt-1 block text-sm leading-relaxed text-ink-muted">
+                              {step.text}
+                            </span>
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
 
       {/* ---------------------------------------------------------- Gebiet */}
       <section className="py-16">
