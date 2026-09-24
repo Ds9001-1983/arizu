@@ -88,15 +88,23 @@ Die Seite ist online, aber noch nicht in jedem Punkt abgeschlossen. Offen:
    es dringender: Sie sind nur ein Entwurf auf `noindex` und haben neun offene
    Stellen (Zahlungsziel, Stornofrist, Anzahlungsgrenze, Versicherer). Kritisch
    sind Stornopauschale (§ 309 Nr. 5 BGB) und Widerrufsrecht.
-3. **Stammdaten prüfen** — die Postleitzahl 25337 stammt aus dem
-   Designentwurf und ist nie gegen „Am Dornbusch 17“ abgeglichen worden
-   (Elmshorn hat drei). Ebenso ungeprüft: Öffnungszeiten und Rechtsform.
-   Alle mit `VERIFY` in `lib/business.ts` markiert.
-4. **Google Business Profile** — vorbereiten, Verifizierung braucht Arian.
-   Vorher die Koordinaten präzisieren, sie zeigen auf den Ortsmittelpunkt.
-5. **Zweitdomain `arizu.de`** und **DMARC** — laufen bei Dennis parallel.
+3. **Rechtsform bestätigen** — offen ist nur noch der vollständige
+   Firmenname fürs Impressum (`VERIFY` in `lib/business.ts`). PLZ,
+   Koordinaten und Öffnungszeiten sind seit 23.09.2026 gegen OpenStreetMap
+   und das Google-Unternehmensprofil abgeglichen.
+4. **Zweitdomain `arizu.de`** und **DMARC** — laufen bei Dennis parallel.
+5. **Stufe 2 des SEO-Handoffs vom 23.09.2026** — Über-uns,
+   echte Projektfotos und Orts-Landingpages brauchen Material von Arian
+   (Werdegang, Qualifikationen, Versicherung, Referenzobjekte je Ort).
+   Ohne echte Inhalte pro Ort keine Ortsseiten, sonst sind es Doorway-Pages.
 
 ### Erledigt
+
+**Google-Unternehmensprofil** ist verifiziert (Einzugsgebiet, Adresse im
+Profil ausgeblendet) und seit dem SEO-Rollout vom 24.09.2026 mit der Website
+verknüpft: `googleBusinessUrl` in `lib/business.ts` speist `hasMap`/`sameAs`
+im LocalBusiness-JSON-LD, das jetzt auf jeder Seite steht, und die
+Adresslinks in Footer und Kontaktseite.
 
 **Domain** `arizu-gebaeudedienstleistungen.de` läuft seit dem 14.08.2026 bei
 Hetzner. `A @` und `CNAME www` zeigen auf Vercel, der nackte Name leitet per

@@ -57,22 +57,24 @@ export const business = {
   address: {
     // Von Arian am 14.08.2026 nachgereicht.
     street: "Am Dornbusch 17",
-    // VERIFY: Postleitzahl gegen die Strasse pruefen. Elmshorn hat drei
-    // (25335, 25336, 25337); die 25337 stammt noch aus dem Designentwurf,
-    // als die Strasse unbekannt war. Eine falsche PLZ im Impressum faellt
-    // spaetestens bei der Google-Verifizierung per Postkarte auf.
+    // Am 23.09.2026 gegen die Strasse geprueft: OpenStreetMap fuehrt 25337
+    // sowohl am Gebaeude als auch an der Strasse, und Googles Eintrag zum
+    // Unternehmensprofil normalisiert die Adresse auf dieselbe PLZ.
     postalCode: "25337",
     city: "Elmshorn",
     country: "DE",
     countryName: "Deutschland",
   },
 
-  // VERIFY: Koordinaten sind weiterhin der Ortsmittelpunkt Elmshorn, nicht
-  // die Hausnummer. Fuer das LocalBusiness-JSON-LD ausreichend; vor dem
-  // Google-Business-Profil praezisieren.
-  geo: { latitude: 53.7544, longitude: 9.6533 },
+  // Koordinate, die Google selbst fuer das Unternehmensprofil fuehrt (Maps-
+  // Eintrag der cid, abgerufen 23.09.2026); sie trifft das Gebaeude laut
+  // OpenStreetMap auf 1,5 m. Vorher stand hier der Ortsmittelpunkt, 1,8 km
+  // daneben und nur mit vier Nachkommastellen — Google verlangt mindestens
+  // fuenf. Speist geo, den Mittelpunkt des Einzugsgebiets und die
+  // Service-Schemas der Leistungsseiten.
+  geo: { latitude: 53.7406567, longitude: 9.6684892 },
 
-  // VERIFY: Erreichbarkeitszeiten mit Arian klaeren (auch fuer Google-Profil).
+  // Deckungsgleich mit den Zeiten im Google-Unternehmensprofil (23.09.2026).
   openingHours: [
     { days: ["Mo", "Di", "Mi", "Do", "Fr"], opens: "07:00", closes: "18:00" },
     { days: ["Sa"], opens: "09:00", closes: "14:00" },
@@ -88,9 +90,11 @@ export const business = {
     instagram: null as string | null,
   },
 
-  // VERIFY: Google-Business-Profil wird vorbereitet, Verifizierung braucht
-  // Arian (Postkarte oder Telefoncode). URL nachtragen, sobald live.
-  googleBusinessUrl: null as string | null,
+  // Verifiziertes Google-Unternehmensprofil. Die Adresse ist dort als
+  // Einzugsgebiet eingetragen und ausgeblendet — Arian empfaengt keine Kunden.
+  // Links darauf deshalb nie mit „Standort“ beschriften. Speist hasMap/sameAs
+  // im JSON-LD und die Adresslinks in Footer und Kontaktseite.
+  googleBusinessUrl: "https://maps.google.com/?cid=11166987475011513876" as string | null,
 } as const;
 
 /** Einsatzgebiet — speist Fliesstext, areaServed im JSON-LD und die Kontaktseite. */

@@ -26,6 +26,22 @@ const DAYS: Record<string, string> = {
 
 const BUSINESS_ID = `${SITE_URL}/#business`;
 
+/* Titel der Startseite, zugleich Fallback im Root-Layout. Die beiden
+   meistgesuchten Leistungen plus Ort statt des Slogans: Laut Search Console
+   (18.08.–20.09.2026) kommen Impressionen fast nur über „entrümpelung
+   elmshorn/pinneberg“. 51 Zeichen, unter der 60er-Grenze. */
+export const HOME_TITLE =
+  `Gebäudereinigung & Entrümpelung in ${business.address.city} | ${business.shortName}`;
+
+/* Profile, die dieselbe Firma zeigen: das Google-Unternehmensprofil und —
+   sobald es sie gibt — die Social-Media-Konten. Leere Einträge fallen heraus,
+   weil ein `null` in sameAs ungültiges Markup wäre. */
+const PROFILE_URLS = [
+  business.googleBusinessUrl,
+  business.social.facebook,
+  business.social.instagram,
+].filter((url): url is string => Boolean(url));
+
 /**
  * Vollstaendige Seiten-Metadaten statt nur einzelner Open-Graph-Felder.
  * Next ersetzt verschachtelte Metadata-Objekte auf der konkreteren Route;
@@ -85,6 +101,10 @@ export function localBusinessSchema() {
     email: business.email,
     image: `${SITE_URL}/opengraph-image`,
     logo: `${SITE_URL}/brand/logo-arizu-print.png`,
+    // Verknüpft Website und Google-Unternehmensprofil in beide Richtungen:
+    // Das Profil verlinkt die Website, hier verweist die Website zurück.
+    ...(business.googleBusinessUrl ? { hasMap: business.googleBusinessUrl } : {}),
+    ...(PROFILE_URLS.length ? { sameAs: PROFILE_URLS } : {}),
     address: {
       "@type": "PostalAddress",
       // Seit 14.08.2026 gefuellt. Die Bedingung bleibt trotzdem stehen: Ohne
@@ -127,6 +147,32 @@ export function localBusinessSchema() {
     // erkennt das Finanzamt nicht an. Das ist ein echtes Kundenkriterium.
     paymentAccepted: "Überweisung, Rechnung",
     currenciesAccepted: "EUR",
+  };
+}
+
+/**
+ * Kontaktseite als eigene Entität. `about` zeigt auf die Firma, die seit dem
+ * SEO-Rollout vom 24.09.2026 auf jeder Seite im Root-Layout steht — die
+ * Referenz löst also auf derselben Seite auf.
+ */
+export function contactPageSchema({
+  title,
+  description,
+  path,
+}: {
+  title: string;
+  description: string;
+  path: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "@id": `${SITE_URL}${path}#contactpage`,
+    url: `${SITE_URL}${path}`,
+    name: title,
+    description,
+    inLanguage: "de-DE",
+    about: { "@id": BUSINESS_ID },
   };
 }
 
