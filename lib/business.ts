@@ -28,6 +28,10 @@ export const business = {
   legalName: "Arian Aslani — ARIZU Gebäudedienstleistungen",
   owner: "Arian Aslani",
 
+  // Umsatzsteuer-Identifikationsnummer nach § 27 a UStG, am 13.10.2026
+  // nachgereicht. Speist Impressum und vatID im JSON-LD.
+  vatId: "DE464409520",
+
   slogan: "Alles aus einer Hand.",
   intro:
     "Wir bieten Ihnen professionelle Dienstleistungen rund um Ihre Immobilie " +

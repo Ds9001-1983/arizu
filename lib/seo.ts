@@ -94,6 +94,7 @@ export function localBusinessSchema() {
     name: business.name,
     legalName: business.legalName,
     founder: { "@type": "Person", name: business.owner },
+    vatID: business.vatId,
     slogan: business.slogan,
     description: business.intro,
     url: SITE_URL,

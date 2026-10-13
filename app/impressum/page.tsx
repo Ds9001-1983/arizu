@@ -39,9 +39,9 @@ export default function ImpressumPage() {
 
       <h2>Umsatzsteuer</h2>
       <p>
-        Eine Umsatzsteuer-Identifikationsnummer gemäß § 27 a
-        Umsatzsteuergesetz liegt noch nicht vor — der Betrieb befindet sich in
-        Gründung. Sie wird hier ergänzt, sobald sie erteilt ist.
+        Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:
+        <br />
+        {business.vatId}
       </p>
 
       <h2>Verantwortlich für den Inhalt</h2>
