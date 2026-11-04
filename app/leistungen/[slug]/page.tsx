@@ -10,7 +10,7 @@ import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
 import { Konfigurator } from "@/components/site/konfigurator";
 import { SectionHeading } from "@/components/site/section-heading";
-import { business, serviceArea } from "@/lib/business";
+import { business, einsatzorteText, serviceArea } from "@/lib/business";
 import { getConfigurator } from "@/lib/pricing";
 import { getAllRates } from "@/lib/rates-server";
 import {
@@ -287,7 +287,7 @@ export default async function ServicePage({
             <p className="mt-3 max-w-3xl text-[0.95rem] leading-relaxed text-ink-muted">
               Wir arbeiten in {serviceArea.label} sowie angrenzenden Orten im
               Umkreis von {serviceArea.radiusKm} km um {serviceArea.center}.
-              Regelmäßig im Einsatz sind wir in {serviceArea.cities.join(", ")}.
+              Regelmäßig im Einsatz sind wir in {einsatzorteText}.
               Liegt Ihr Objekt weiter weg? Rufen Sie an — bei größeren Aufträgen
               fahren wir auch darüber hinaus.
             </p>

@@ -13,6 +13,7 @@ import { B2bForm } from "@/components/site/b2b-form";
 import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
 import { HeroMedia } from "@/components/site/hero-media";
+import { Mitgliedschaften } from "@/components/site/mitgliedschaften";
 import { ObjektartenGrid } from "@/components/site/objektarten";
 import { SectionHeading } from "@/components/site/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -238,6 +239,8 @@ export default function GeschaeftskundenPage() {
           </div>
         </Container>
       </section>
+
+      <Mitgliedschaften className="pb-0 sm:pb-0" />
 
       <section className="py-20 sm:py-24">
         <Container>

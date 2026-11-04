@@ -19,10 +19,16 @@ import { FaqList } from "@/components/site/faq-section";
 import { HeroMedia } from "@/components/site/hero-media";
 import { KundenartWeiche } from "@/components/site/kundenart-weiche";
 import { ObjektartenGrid } from "@/components/site/objektarten";
+import { Mitgliedschaften } from "@/components/site/mitgliedschaften";
 import { ProcessTimeline } from "@/components/site/process-timeline";
 import { SectionHeading } from "@/components/site/section-heading";
 import { ServiceGrid } from "@/components/site/service-grid";
-import { business, serviceArea, whatsappHref } from "@/lib/business";
+import {
+  business,
+  einsatzorteText,
+  serviceArea,
+  whatsappHref,
+} from "@/lib/business";
 import { faqSchema, HOME_TITLE, pageMetadata } from "@/lib/seo";
 import type { Faq } from "@/lib/services";
 
@@ -111,7 +117,7 @@ const homeFaqs: Faq[] = [
     answer:
       `Wir arbeiten in ${serviceArea.label} sowie im Umkreis von ` +
       `${serviceArea.radiusKm} km um ${serviceArea.center}, regelmäßig in ` +
-      `${serviceArea.cities.join(", ")}. Bei größeren Aufträgen fahren wir ` +
+      `${einsatzorteText}. Bei größeren Aufträgen fahren wir ` +
       "auch darüber hinaus.",
   },
   {
@@ -278,6 +284,8 @@ export default function Home() {
         </Container>
       </section>
 
+      <Mitgliedschaften className="pt-0 sm:pt-0" />
+
       <ProcessTimeline />
 
       {/* ------------------------------------------------- Gebiet und FAQ */}
@@ -292,16 +300,26 @@ export default function Home() {
               Unser Sitz ist in {serviceArea.center}. Wir arbeiten im Umkreis von{" "}
               {serviceArea.radiusKm} km, regelmäßig in diesen Orten:
             </p>
-            <ul className="mt-5 flex flex-wrap gap-2">
-              {serviceArea.cities.map((city) => (
-                <li
-                  key={city}
-                  className="rounded-full border border-mist bg-shell px-3.5 py-1.5 text-sm text-navy"
-                >
-                  {city}
-                </li>
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              {[
+                { titel: `${serviceArea.center} und Umland`, orte: serviceArea.umland },
+                { titel: "Hamburg", orte: serviceArea.hamburgStadtteile },
+              ].map((gruppe) => (
+                <div key={gruppe.titel}>
+                  <h3 className="text-sm font-semibold text-navy">{gruppe.titel}</h3>
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {gruppe.orte.map((ort) => (
+                      <li
+                        key={ort}
+                        className="rounded-full border border-mist bg-shell px-3.5 py-1.5 text-sm text-navy"
+                      >
+                        {ort}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
           <div className="mt-20">

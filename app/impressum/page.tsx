@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/site/legal-layout";
-import { business } from "@/lib/business";
+import { business, mitgliedschaften } from "@/lib/business";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -42,6 +42,16 @@ export default function ImpressumPage() {
         Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:
         <br />
         {business.vatId}
+      </p>
+
+      <h2>Mitgliedschaften</h2>
+      <p>
+        {mitgliedschaften.map((m, i) => (
+          <span key={m.name}>
+            {i > 0 && <br />}
+            {m.name}
+          </span>
+        ))}
       </p>
 
       <h2>Verantwortlich für den Inhalt</h2>

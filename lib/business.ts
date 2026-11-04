@@ -103,13 +103,41 @@ export const business = {
   googleBusinessUrl: "https://maps.google.com/?cid=11166987475011513876" as string | null,
 } as const;
 
+/**
+ * Mitgliedschaften, von Arian am 04.11.2026 per WhatsApp bestätigt. Speist den
+ * Vertrauensblock auf Startseite und Geschäftskundenseite, das Impressum und
+ * memberOf im JSON-LD.
+ *
+ * Bewusst ohne die Logos der Verbände: Deren Nutzung braucht deren
+ * Zustimmung. Liefert Arian ein freigegebenes Mitgliedssignet, kann es hier
+ * dazukommen.
+ */
+export const mitgliedschaften = [
+  {
+    name: "Handwerkskammer Lübeck",
+    kurz: "Mitglied der Handwerkskammer Lübeck",
+    text: "Eingetragener Handwerksbetrieb bei der Kammer, die für Elmshorn und den Kreis Pinneberg zuständig ist.",
+    url: "https://www.hwk-luebeck.de",
+  },
+  {
+    name: "BG BAU – Berufsgenossenschaft der Bauwirtschaft",
+    kurz: "Mitglied der BG BAU",
+    text: "Unser Team ist über die Berufsgenossenschaft der Bauwirtschaft gesetzlich unfallversichert.",
+    url: "https://www.bgbau.de",
+  },
+] as const;
+
 /** Einsatzgebiet — speist Fliesstext, areaServed im JSON-LD und die Kontaktseite. */
 export const serviceArea = {
   center: "Elmshorn",
   region: "Kreis Pinneberg",
   label: "Kreis Pinneberg und Hamburg",
   radiusKm: 50,
-  cities: [
+  // Seit 04.11.2026 nach Hamburg und Umland getrennt und erweitert (Frage von
+  // Arian nach dem Vergleich mit einem Mitbewerber, Freigabe Dennis). Nur Orte,
+  // die ARIZU tatsaechlich anfaehrt; Hamburg nur auf der Elmshorner Seite der
+  // Stadt. Dasselbe Gebiet steht im Google-Unternehmensprofil.
+  umland: [
     "Elmshorn",
     "Pinneberg",
     "Uetersen",
@@ -119,7 +147,27 @@ export const serviceArea = {
     "Halstenbek",
     "Rellingen",
     "Quickborn",
-    "Hamburg",
+    "Schenefeld",
+    "Moorrege",
+    "Horst",
+    "Glückstadt",
+    "Ellerhoop",
+    "Norderstedt",
+    "Henstedt-Ulzburg",
+    "Kaltenkirchen",
+    "Itzehoe",
+  ],
+  hamburgStadtteile: [
+    "Schnelsen",
+    "Eidelstedt",
+    "Niendorf",
+    "Lurup",
+    "Osdorf",
+    "Rissen",
+    "Blankenese",
+    "Stellingen",
+    "Eimsbüttel",
+    "Altona",
   ],
   // Kreis Pinneberg und Hamburg, wie im Website-Review vom 19.08.2026 erweitert.
   plz: [
@@ -127,6 +175,11 @@ export const serviceArea = {
     { start: 20095, end: 22769 }, // Hamburg
   ],
 } as const;
+
+/** Ortsliste als Fliesstext, fuer FAQ, Leistungsseiten und llms.txt. */
+export const einsatzorteText =
+  `${serviceArea.umland.join(", ")} sowie in Hamburg ` +
+  `(${serviceArea.hamburgStadtteile.join(", ")})`;
 
 /**
  * WhatsApp-Link mit optional vorbefuellter Nachricht.

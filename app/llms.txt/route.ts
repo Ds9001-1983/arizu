@@ -1,4 +1,4 @@
-import { business, serviceArea, SITE_URL } from "@/lib/business";
+import { business, einsatzorteText, serviceArea, SITE_URL } from "@/lib/business";
 import { services } from "@/lib/services";
 
 /* ==================================================================
@@ -29,7 +29,7 @@ export function GET() {
     `- Inhaber: ${business.owner}`,
     `- Standort: ${business.address.postalCode} ${business.address.city}, Deutschland`,
     `- Einsatzgebiet: ${serviceArea.label} sowie angrenzende Orte, darunter ` +
-      `${serviceArea.cities.join(", ")}; Umkreis ${serviceArea.radiusKm} km um ` +
+      `${einsatzorteText}; Umkreis ${serviceArea.radiusKm} km um ` +
       `${serviceArea.center}`,
     `- Telefon: ${business.phone.display} (Festnetz)`,
     `- E-Mail: ${business.email}`,

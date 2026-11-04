@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { business, serviceArea, SITE_URL } from "./business";
+import { business, mitgliedschaften, serviceArea, SITE_URL } from "./business";
 import type { Faq, Service } from "./services";
 
 /* ==================================================================
@@ -84,6 +84,18 @@ export function pageMetadata({
   };
 }
 
+/** Orte für areaServed: Städte als City, Hamburger Stadtteile als Place. */
+function orteSchema() {
+  return [
+    ...serviceArea.umland.map((ort) => ({ "@type": "City", name: ort })),
+    { "@type": "City", name: "Hamburg" },
+    ...serviceArea.hamburgStadtteile.map((teil) => ({
+      "@type": "Place",
+      name: `Hamburg-${teil}`,
+    })),
+  ];
+}
+
 export function localBusinessSchema() {
   return {
     "@context": "https://schema.org",
@@ -107,6 +119,11 @@ export function localBusinessSchema() {
     // Das Profil verlinkt die Website, hier verweist die Website zurück.
     ...(business.googleBusinessUrl ? { hasMap: business.googleBusinessUrl } : {}),
     ...(PROFILE_URLS.length ? { sameAs: PROFILE_URLS } : {}),
+    memberOf: mitgliedschaften.map((m) => ({
+      "@type": "Organization",
+      name: m.name,
+      url: m.url,
+    })),
     address: {
       "@type": "PostalAddress",
       // Seit 14.08.2026 gefuellt. Die Bedingung bleibt trotzdem stehen: Ohne
@@ -130,10 +147,7 @@ export function localBusinessSchema() {
     })),
     areaServed: [
       { "@type": "AdministrativeArea", name: serviceArea.region },
-      ...serviceArea.cities.map((city) => ({
-        "@type": "City",
-        name: city,
-      })),
+      ...orteSchema(),
     ],
     serviceArea: {
       "@type": "GeoCircle",
@@ -190,7 +204,7 @@ export function serviceSchema(service: Service) {
     provider: { "@id": BUSINESS_ID },
     areaServed: [
       { "@type": "AdministrativeArea", name: serviceArea.region },
-      ...serviceArea.cities.map((city) => ({ "@type": "City", name: city })),
+      ...orteSchema(),
       {
         "@type": "GeoCircle",
         geoMidpoint: {
