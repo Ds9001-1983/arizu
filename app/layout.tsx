@@ -4,6 +4,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { StickyCallBar } from "@/components/site/sticky-call-bar";
+import { services } from "@/lib/services";
 import { business, serviceArea, SITE_URL } from "@/lib/business";
 import { archivo, manrope } from "@/lib/fonts";
 import { HOME_TITLE, localBusinessSchema } from "@/lib/seo";
@@ -43,17 +44,23 @@ export default function RootLayout({
       lang="de"
       className={`${archivo.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      {/* pb-16 auf Mobil: hält die fixe Aktionsleiste vom Inhalt und vom
+          Footer frei. Am <body> statt am <main>, sonst verdeckt sie die
+          letzte Footerzeile. */}
+      <body className="min-h-full flex flex-col pb-16 lg:pb-0">
         {/* Firmen-Entität auf jeder Seite: Die Service-Schemas der
             Leistungsseiten und die Kontaktseite verweisen per @id darauf.
             Stand sie nur auf der Startseite, lief die Referenz auf allen
             Unterseiten ins Leere. */}
         <JsonLd data={localBusinessSchema()} />
         <SiteHeader />
-        {/* pb-14 auf Mobil: hält die fixe Anruf-Leiste vom Footer frei. */}
-        <main className="flex-1 pb-14 lg:pb-0">{children}</main>
+        <main className="flex-1">{children}</main>
         <SiteFooter />
-        <StickyCallBar />
+        {/* Nur die Slugs, nicht der Katalog: services.ts im Client-Bundle
+            wären mehrere KB Text. */}
+        <StickyCallBar
+          rechnerSlugs={services.filter((s) => s.hasPublicCalculator).map((s) => s.slug)}
+        />
       </body>
     </html>
   );

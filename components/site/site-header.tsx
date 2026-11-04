@@ -9,10 +9,13 @@ import { cn } from "@/lib/utils";
 import { Container } from "./container";
 import { LogoWordmark } from "./logo";
 
-/* „Leistungen“ seit 04.11.2026: Vorher führte der Header nur in die beiden
-   Bereiche, die Leistungen selbst waren von oben nicht erreichbar. */
+/* „Leistungen“ und „Preisrechner“ seit 04.11.2026: Vorher führte der Header
+   nur in die beiden Bereiche, die Leistungen und der Rechner waren von oben
+   nicht erreichbar. Der Rechner gilt nur für Privatkunden, deshalb führt der
+   Punkt direkt dorthin. */
 const nav = [
   { href: "/#leistungen", label: "Leistungen" },
+  { href: "/privatkunden#richtpreis", label: "Preisrechner" },
   { href: "/privatkunden", label: "Privatkunden" },
   { href: "/geschaeftskunden", label: "Geschäftskunden" },
   { href: "/kontakt", label: "Kontakt" },
