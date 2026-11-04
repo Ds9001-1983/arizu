@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Building2, Sprout, SprayCan, Truck } from "lucide-react";
 import { AiMedia } from "@/components/ai/ai-media";
@@ -19,13 +18,22 @@ const icons = {
  * im Wechsel 7/5 und 5/7 bricht das typische "drei identische Kacheln"-Muster
  * auf und gibt der Seite Rhythmus, ohne die Lesbarkeit zu opfern.
  *
- * `unoptimized` bei den Bildern ist eine bewusste Entscheidung: Der
- * Next-Optimizer re-encodiert und verwirft dabei die XMP-Metadaten mit dem
- * KI-Kennzeichnungs-Hinweis. Die Dateien sind bereits als WebP in Zielgröße
- * abgelegt (30–160 KB), es gibt also nichts zu gewinnen — dafür bleibt die
- * maschinenlesbare Kennzeichnung bis zum Browser erhalten.
+ * Natives `<img>` statt next/image: Der Next-Optimizer re-encodiert und
+ * verwirft dabei die XMP-Metadaten mit dem KI-Kennzeichnungs-Hinweis, die
+ * Bilder liefen deshalb ohnehin `unoptimized`. Übrig blieben nur rund 6 KB
+ * Client-JS (gzip) für die Komponente selbst — auf der Startseite seit
+ * 04.11.2026 gemessen. Die Dateien liegen bereits als WebP in Zielgröße vor.
+ *
+ * `uebersicht` ist die Variante für die Startseite: Dort lesen Privat- und
+ * Geschäftskunden mit, deshalb führt die Kachel neutral zur Leistung statt
+ * zur Preisschätzung, und die Bilder sind etwas flacher.
  */
-export function ServiceGrid() {
+export function ServiceGrid({
+  variant = "privat",
+}: {
+  variant?: "privat" | "uebersicht";
+}) {
+  const uebersicht = variant === "uebersicht";
   return (
     <ul className="grid gap-5 lg:grid-cols-12">
       {services.map((s, i) => {
@@ -40,14 +48,22 @@ export function ServiceGrid() {
               href={`/leistungen/${s.slug}`}
               className="group flex h-full flex-col overflow-hidden rounded-sm border border-mist bg-surface transition-colors hover:border-gold"
             >
-              <AiMedia assetId={s.image.assetId} className="h-52 shrink-0 rounded-none">
-                <Image
+              <AiMedia
+                assetId={s.image.assetId}
+                className={cn("shrink-0 rounded-none", uebersicht ? "h-44" : "h-52")}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- Optimizer verwirft die KI-Metadaten, Begründung oben */}
+                <img
                   src={s.image.src}
                   alt={s.image.alt}
                   width={s.image.width}
                   height={s.image.height}
-                  unoptimized
-                  className="h-52 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  loading="lazy"
+                  decoding="async"
+                  className={cn(
+                    "w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]",
+                    uebersicht ? "h-44" : "h-52",
+                  )}
                 />
               </AiMedia>
 
@@ -74,9 +90,11 @@ export function ServiceGrid() {
                 </ul>
 
                 <span className="mt-6 inline-flex items-center gap-2 pt-1 font-display text-sm font-bold text-navy transition-colors group-hover:text-gold-deep">
-                  {s.hasPublicCalculator
-                    ? "Preisschätzung ansehen"
-                    : "Objektbetreuung anfragen"}
+                  {uebersicht
+                    ? `Mehr zu ${s.name}`
+                    : s.hasPublicCalculator
+                      ? "Preisschätzung ansehen"
+                      : "Hausmeisterservice anfragen"}
                   <ArrowRight
                     className="size-4 transition-transform group-hover:translate-x-1"
                     aria-hidden

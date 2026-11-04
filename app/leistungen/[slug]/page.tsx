@@ -37,7 +37,7 @@ export function generateStaticParams() {
    `NoFallbackError`. Die vier gültigen Pfade stehen weiterhin in
    generateStaticParams und werden beim Bauen vorgerendert. */
 
-/* Ein Tag — Begründung steht in app/page.tsx. Die Seite bleibt statisch:
+/* Ein Tag — Begründung steht in app/privatkunden/page.tsx. Die Seite bleibt statisch:
    Dynamisch würde sie erst durch cookies(), headers() oder searchParams, nicht
    durch eine Datenbankabfrage beim Bauen. */
 export const revalidate = 86_400;
@@ -82,9 +82,12 @@ export default async function ServicePage({
         data={[
           serviceSchema(service),
           faqSchema(service.faqs),
+          /* Seit 04.11.2026 ohne „Privatkunden“ dazwischen: Die Seiten
+             gelten für beide Zielgruppen. Eine Übersichtsseite /leistungen
+             gibt es nicht, deshalb hat die Brotkrume „Leistungen“ (Sprung
+             auf die Startseite) hier keinen eigenen Eintrag. */
           breadcrumbSchema([
             { name: "Start", path: "/" },
-            { name: "Privatkunden", path: "/privatkunden" },
             { name: service.name, path: `/leistungen/${service.slug}` },
           ]),
         ]}
@@ -104,8 +107,8 @@ export default async function ServicePage({
                 /
               </li>
               <li>
-                <Link href="/privatkunden" className="hover:text-navy">
-                  Privatkunden
+                <Link href="/#leistungen" className="hover:text-navy">
+                  Leistungen
                 </Link>
               </li>
               <li aria-hidden className="text-gold">
@@ -135,7 +138,7 @@ export default async function ServicePage({
                 >
                   {service.hasPublicCalculator
                     ? "Preisschätzung ansehen"
-                    : "Objektbetreuung anfragen"}
+                    : "Hausmeisterservice anfragen"}
                   <ArrowRight className="size-4" aria-hidden />
                 </Link>
                 <a
@@ -186,9 +189,11 @@ export default async function ServicePage({
                   und wer über Google direkt hier landet, sieht die Weiche auf
                   der Startseite nie. */}
               <div className="mt-5 rounded-sm border border-navy/15 bg-navy/4 p-6">
-                <p className="text-[0.95rem] leading-relaxed text-navy">
-                  Sie fragen für ein Unternehmen, eine Praxis oder eine
-                  Hausverwaltung an?
+                <h2 className="font-display text-base font-bold text-navy">
+                  Für Unternehmen und Hausverwaltungen
+                </h2>
+                <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-muted">
+                  {service.businessTeaser}
                 </p>
                 <Link
                   href="/geschaeftskunden"
@@ -223,7 +228,7 @@ export default async function ServicePage({
 
       {/* --------------------------------------------------- Vertiefung */}
       {/* Ausführliche Abschnitte zu den Begriffen, unter denen Kunden suchen
-          (bisher nur Entrümpelung). Ein Abschnitt mit Ablaufschritten läuft
+          (Entrümpelung, Winterdienst). Ein Abschnitt mit Ablaufschritten läuft
           über die volle Breite, deshalb steht er in den Daten am Ende. */}
       {service.sections?.length ? (
         <section className="pt-16">
@@ -232,7 +237,10 @@ export default async function ServicePage({
               {service.sections.map((sec) => (
                 <article
                   key={sec.heading}
-                  className={`rounded-sm border border-mist bg-surface p-7 sm:p-9${sec.steps ? " lg:col-span-2" : ""}`}
+                  id={sec.id}
+                  // Volle Breite für Abläufe und für einen einzelnen Abschnitt,
+                  // der sonst als halbe Karte neben einer Lücke stünde.
+                  className={`scroll-mt-24 rounded-sm border border-mist bg-surface p-7 sm:p-9${sec.steps || service.sections?.length === 1 ? " lg:col-span-2" : ""}`}
                 >
                   <h2 className="font-display text-xl text-navy">{sec.heading}</h2>
                   {sec.paragraphs.map((p) => (

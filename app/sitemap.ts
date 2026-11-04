@@ -13,9 +13,9 @@ import { services } from "@/lib/services";
    Reine Metadaten-, Design- oder Preisänderungen zählen nicht — Google
    ignoriert lastmod, sobald es nicht zum sichtbaren Inhalt passt. */
 const LAST_CONTENT_UPDATE = {
-  home: "2026-09-24",
+  home: "2026-11-04",
   privatkunden: "2026-08-19",
-  geschaeftskunden: "2026-08-19",
+  geschaeftskunden: "2026-11-04",
   kontakt: "2026-09-24",
   impressum: "2026-08-17",
   datenschutz: "2026-08-19",
@@ -24,10 +24,10 @@ const LAST_CONTENT_UPDATE = {
 // Record über alle Slugs: Kommt eine Leistung dazu, fehlt ihr Datum hier als
 // Compilerfehler statt still.
 const SERVICE_UPDATE: Record<ConfiguratorSlug, string> = {
-  gebaeudereinigung: "2026-09-24",
-  gartenpflege: "2026-09-24",
-  entruempelung: "2026-09-24",
-  objektbetreuung: "2026-09-24",
+  gebaeudereinigung: "2026-11-04",
+  gartenpflege: "2026-11-04",
+  entruempelung: "2026-11-04",
+  objektbetreuung: "2026-11-04",
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {

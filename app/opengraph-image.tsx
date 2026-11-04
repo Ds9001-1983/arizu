@@ -85,8 +85,8 @@ export default function OpengraphImage() {
               marginTop: 26,
             }}
           >
-            Gebäudereinigung · Grün- und Außenanlagenpflege · Entrümpelung und
-            Auflösung · Objektbetreuung
+            Hausmeisterservice · Gebäudereinigung · Winterdienst · Grün- und
+            Außenanlagenpflege · Entrümpelung
           </div>
         </div>
       </div>

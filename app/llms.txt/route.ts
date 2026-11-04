@@ -81,8 +81,9 @@ export function GET() {
     "",
     "Für Gebäudereinigung, Grün- und Außenanlagenpflege sowie Entrümpelung " +
       "und Auflösung gibt es einen Rechner, der sofort einen voraussichtlichen " +
-      "Preisrahmen ausgibt — ohne dass Kontaktdaten nötig sind. Objektbetreuung " +
-      "wird nach einer persönlichen Anfrage kalkuliert. " +
+      "Preisrahmen ausgibt — ohne dass Kontaktdaten nötig sind. Hausmeisterservice " +
+      "und Objektbetreuung (inklusive Winterdienst) werden nach einer " +
+      "persönlichen Anfrage kalkuliert. " +
       "Angezeigt wird eine Spanne inklusive 19 % Mehrwertsteuer. Der " +
       "verbindliche Festpreis folgt nach einer kostenlosen Besichtigung.",
     "",

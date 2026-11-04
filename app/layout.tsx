@@ -22,8 +22,8 @@ export const metadata: Metadata = {
     template: `%s | ${business.shortName}`,
   },
   description:
-    "Gebäudereinigung, Gartenpflege, Entrümpelung und Objektbetreuung für " +
-    `Privat- und Geschäftskunden in ${serviceArea.center}, ` +
+    "Hausmeisterservice, Gebäudereinigung, Winterdienst, Gartenpflege und " +
+    `Entrümpelung für Privat- und Geschäftskunden in ${serviceArea.center}, ` +
     `${serviceArea.region} und Hamburg.`,
   openGraph: {
     type: "website",

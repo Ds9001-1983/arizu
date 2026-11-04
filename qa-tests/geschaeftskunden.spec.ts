@@ -3,10 +3,13 @@ import { expect, test } from "@playwright/test";
 /* ==================================================================
    Trennung Privat- und Geschäftskunden (Kundengespräch 14.08.2026).
 
-   Geprüft wird das, was Arian ausdrücklich verlangt hat: eine minimalistische
-   Startseite, getrennte Privat-/Geschäftskundenwege, ein Geschäftskundenbereich
-   OHNE öffentlichen Preisrahmen und ein Formular mit den wesentlichen
-   Pflichtangaben.
+   Geprüft wird das, was Arian ausdrücklich verlangt hat: getrennte
+   Privat-/Geschäftskundenwege, ein Geschäftskundenbereich OHNE öffentlichen
+   Preisrahmen und ein Formular mit den wesentlichen Pflichtangaben.
+
+   Die minimale Startseite vom 14.08.2026 ist seit dem Gespräch vom 03.11.2026
+   abgelöst: Sie zeigt alle Leistungen und führt von dort in beide Bereiche.
+   Der Rechner bleibt im Privatkundenbereich.
    ================================================================== */
 
 const PREISSPANNE = /\d[\d.]*\s*€\s*–\s*\d[\d.]*\s*€/;
@@ -15,7 +18,7 @@ const LEISTUNGEN = [
   "Gebäudereinigung",
   "Grün- und Außenanlagenpflege",
   "Entrümpelung und Auflösung",
-  "Objektbetreuung",
+  "Hausmeisterservice & Objektbetreuung",
 ];
 
 const RECHNER_LEISTUNGEN = LEISTUNGEN.slice(0, 3);
@@ -26,10 +29,30 @@ const UNVERBINDLICHKEIT =
   "abweichen. Ein verbindliches Angebot entsteht erst nach individueller " +
   "Prüfung und Bestätigung durch ARIZU.";
 
-test("Startseite ist minimal, der Rechner liegt im Privatkundenbereich", async ({ page }) => {
+test("Startseite zeigt alle Leistungen, der Rechner liegt im Privatkundenbereich", async ({
+  page,
+}) => {
   await page.goto("/");
   await expect(page.getByRole("tablist")).toHaveCount(0);
   await expect(page.locator("#richtpreis")).toHaveCount(0);
+
+  const leistungen = page.locator("#leistungen");
+  expect(await leistungen.locator("h3").allInnerTexts()).toEqual(
+    expect.arrayContaining(LEISTUNGEN),
+  );
+  for (const slug of [
+    "gebaeudereinigung",
+    "gartenpflege",
+    "entruempelung",
+    "objektbetreuung",
+  ]) {
+    await expect(
+      leistungen.locator(`a[href="/leistungen/${slug}"]`),
+    ).toBeVisible();
+  }
+  await expect(
+    leistungen.locator('a[href="/leistungen/objektbetreuung#winterdienst"]'),
+  ).toBeVisible();
 
   await page.goto("/privatkunden");
   await expect(page.getByRole("tablist")).toHaveCount(1);
@@ -66,7 +89,7 @@ test("Privatkundenkacheln stehen in der vereinbarten Reihenfolge", async ({
   const objektbetreuung = leistungen.locator(
     'a[href="/leistungen/objektbetreuung"]',
   );
-  await expect(objektbetreuung).toContainText("Objektbetreuung anfragen");
+  await expect(objektbetreuung).toContainText("Hausmeisterservice anfragen");
 });
 
 test("Privatkunden nutzen den zentralen Kontaktweg statt eines zweiten Formulars", async ({
@@ -192,7 +215,7 @@ test("Objektbetreuung hat keinen öffentlichen Rechner und führt zur Anfrage", 
   expect(await page.locator("main").innerText()).not.toMatch(PREISSPANNE);
 
   await expect(
-    page.getByRole("link", { name: "Objektbetreuung anfragen" }),
+    page.getByRole("link", { name: "Hausmeisterservice anfragen" }),
   ).toHaveAttribute("href", "#anfrage");
   await expect(page.locator("#anfrage form")).toBeVisible();
   await expect(page.locator("#anfrage select[name='service']")).toHaveValue(

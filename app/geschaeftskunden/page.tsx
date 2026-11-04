@@ -3,14 +3,8 @@ import Link from "next/link";
 import {
   ArrowRight,
   BadgeCheck,
-  Building,
-  Building2,
   CalendarCheck,
-  GraduationCap,
   ReceiptText,
-  Shapes,
-  Store,
-  Stethoscope,
   UserCheck,
   Workflow,
   Zap,
@@ -19,6 +13,7 @@ import { B2bForm } from "@/components/site/b2b-form";
 import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
 import { HeroMedia } from "@/components/site/hero-media";
+import { ObjektartenGrid } from "@/components/site/objektarten";
 import { SectionHeading } from "@/components/site/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business, serviceArea } from "@/lib/business";
@@ -38,45 +33,13 @@ import { services, type Faq } from "@/lib/services";
    ================================================================== */
 
 export const metadata: Metadata = pageMetadata({
-  title: `Gebäudedienste für Unternehmen in ${serviceArea.center}`,
+  title: `Hausmeister & Reinigung für Firmen in ${serviceArea.center}`,
   description:
-    "Reinigung, Außenanlagenpflege, Entrümpelung und Objektbetreuung für " +
-    `Unternehmen in ${serviceArea.center}, ${serviceArea.region} und Hamburg.`,
+    "Hausmeisterservice, Büro- und Gebäudereinigung, Winterdienst, " +
+    "Außenanlagenpflege und Entrümpelung für Unternehmen und " +
+    `Hausverwaltungen in ${serviceArea.center}, ${serviceArea.region} und Hamburg.`,
   path: "/geschaeftskunden",
 });
-
-const objektarten = [
-  {
-    icon: Building2,
-    titel: "Bürogebäude",
-    text: "Unterhaltsreinigung nach Ihrem Takt, auch außerhalb der Arbeitszeiten.",
-  },
-  {
-    icon: Stethoscope,
-    titel: "Praxen und Gesundheitseinrichtungen",
-    text: "Erhöhte Anforderungen an Hygiene und Dokumentation, feste Kraft statt wechselndem Personal.",
-  },
-  {
-    icon: Building,
-    titel: "Wohnanlagen und Hausverwaltungen",
-    text: "Treppenhaus, Außenanlagen, Mülltonnen und Winterdienst aus einer Hand — je Objekt abgerechnet.",
-  },
-  {
-    icon: Store,
-    titel: "Ladenlokale und Gastronomie",
-    text: "Vor Öffnung oder nach Feierabend, damit der Betrieb nicht steht.",
-  },
-  {
-    icon: GraduationCap,
-    titel: "Bildung & öffentliche Einrichtungen",
-    text: "Zuverlässige Reinigung und Betreuung für Schulen, Kitas, Verwaltungsgebäude und öffentliche Einrichtungen – abgestimmt auf Nutzung und Betriebszeiten.",
-  },
-  {
-    icon: Shapes,
-    titel: "Weitere Objekte",
-    text: "Individuelle Dienstleistungen für Gewerbe-, Wohn- und Sonderobjekte – flexibel abgestimmt auf die jeweiligen Anforderungen.",
-  },
-];
 
 const arbeitsweise = [
   {
@@ -111,8 +74,8 @@ const arbeitsweise = [
   },
 ];
 
-/* Eigene Fragen, bewusst KEINE aus services[].faqs: Die sind bereits auf der
-   Startseite und den Leistungsseiten als FAQPage ausgezeichnet, und dieselbe
+/* Eigene Fragen, bewusst KEINE aus services[].faqs: Die sind bereits auf
+   /privatkunden und den Leistungsseiten als FAQPage ausgezeichnet, und dieselbe
    Frage zweimal strukturiert auszuzeichnen schadet mehr als es nützt. */
 const b2bFaqs: Faq[] = [
   {
@@ -210,15 +173,7 @@ export default function GeschaeftskundenPage() {
             title="Objekte, die wir betreuen"
             lead="Der Aufwand unterscheidet sich je nach Objektart deutlich — deshalb fragen wir ihn ab, statt zu schätzen."
           />
-          <div className="mt-12 grid gap-5 sm:grid-cols-2">
-            {objektarten.map((o) => (
-              <div key={o.titel} className="rounded-sm border border-mist bg-surface p-6">
-                <o.icon className="size-6 text-gold-deep" aria-hidden />
-                <h3 className="mt-4 font-display text-lg text-navy">{o.titel}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-muted">{o.text}</p>
-              </div>
-            ))}
-          </div>
+          <ObjektartenGrid className="mt-12" />
         </Container>
       </section>
 
@@ -229,16 +184,27 @@ export default function GeschaeftskundenPage() {
             title="Was wir für Geschäftskunden übernehmen"
             lead="Von einzelnen Dienstleistungen bis zur umfassenden Objektbetreuung – individuell auf Ihr Objekt und Ihren Bedarf abgestimmt."
           />
-          <div className="mt-12 grid gap-5 sm:grid-cols-2">
+          {/* Verlinkt seit 04.11.2026: Vorher führte von hier kein Weg auf die
+              Leistungsseiten, die Geschäftskunden-Suchbegriffe tragen. */}
+          <ul className="mt-12 grid gap-5 sm:grid-cols-2">
             {services.map((s) => (
-              <div key={s.slug} className="rounded-sm border border-mist bg-surface p-6">
-                <h3 className="font-display text-lg text-navy">{s.name}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-                  {s.businessTeaser}
-                </p>
-              </div>
+              <li key={s.slug}>
+                <Link
+                  href={`/leistungen/${s.slug}`}
+                  className="group flex h-full flex-col rounded-sm border border-mist bg-surface p-6 transition-colors hover:border-gold"
+                >
+                  <h3 className="font-display text-lg text-navy">{s.name}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                    {s.businessTeaser}
+                  </p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-deep group-hover:text-navy">
+                    Mehr zur Leistung
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                  </span>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </Container>
       </section>
 

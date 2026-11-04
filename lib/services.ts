@@ -20,6 +20,8 @@ export type Faq = { question: string; answer: string };
  * die Texte erscheinen sichtbar auf der Seite.
  */
 export type ServiceSection = {
+  /** Sprungziel, wenn andere Seiten auf genau diesen Abschnitt verlinken. */
+  id?: string;
   heading: string;
   paragraphs: string[];
   steps?: { title: string; text: string }[];
@@ -57,7 +59,7 @@ export type Service = {
   image: { src: string; alt: string; assetId: string; width: number; height: number };
   /** Seitentitel ohne Marke — das Root-Layout hängt „| ARIZU“ an. Max. 52 Zeichen. */
   seo: { title: string; description: string };
-  /** Vertiefende Abschnitte, bisher nur bei der Entrümpelung. */
+  /** Vertiefende Abschnitte (Entrümpelung, Winterdienst beim Hausmeisterservice). */
   sections?: ServiceSection[];
   /** faqs[0] erscheint zusätzlich auf /privatkunden — neue Fragen hinten anhängen. */
   faqs: Faq[];
@@ -67,8 +69,11 @@ const serviceCatalog: Service[] = [
   {
     slug: "objektbetreuung",
     hasPublicCalculator: false,
-    name: "Objektbetreuung",
-    heading: "Objektbetreuung und Hausmeisterservice",
+    /* Seit 04.11.2026 führt der Name mit „Hausmeisterservice“: Danach suchen
+       Hausverwaltungen und Gewerbe, nach „Objektbetreuung“ kaum jemand. Der
+       Slug bleibt, weil Preis-Spec, Tabelle `preise` und Leads daran hängen. */
+    name: "Hausmeisterservice & Objektbetreuung",
+    heading: "Hausmeisterservice, Objektbetreuung und Winterdienst",
     teaser:
       "Wir kümmern uns umfassend um Ihre Immobilie – von der Kontrolle über " +
       "die Wartung bis hin zur Werterhaltung.",
@@ -85,6 +90,7 @@ const serviceCatalog: Service[] = [
       "von Wohnanlagen, Gewerbeimmobilien und weiteren Objekten.",
     items: [
       "Hausmeister-Service",
+      "Winterdienst (Räum- und Streupflicht)",
       "Regelmäßige Objektkontrollen",
       "Überwachung & Dokumentation",
       "Schließ- & Öffnungsdienste",
@@ -104,11 +110,31 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Objektbetreuung & Hausmeisterservice in Elmshorn",
+      title: "Hausmeisterservice & Winterdienst in Elmshorn",
       description:
-        "Objektbetreuung und Hausmeisterservice in Elmshorn, Kreis Pinneberg " +
-        "und Hamburg: Kontrolle, Dokumentation und Kleinreparaturen.",
+        "Hausmeisterservice, Objektbetreuung und Winterdienst für " +
+        "Hausverwaltungen, Eigentümer und Gewerbe in Elmshorn, Kreis Pinneberg " +
+        "und Hamburg: Kontrolle, Dokumentation, Kleinreparaturen.",
     },
+    /* Nur Aussagen, die bereits belegt sind: Modul Räum- und Streupflicht,
+       saisonale Abrechnung (FAQ unten, lib/pricing/objektbetreuung.ts) und
+       Wohnanlagen/Hausverwaltungen (Geschäftskundenseite). Einsatzzeiten,
+       Haftung und Räumprotokolle erst nach Arians Bestätigung ergänzen. */
+    sections: [
+      {
+        id: "winterdienst",
+        heading: "Winterdienst für Wohnanlagen und Gewerbe",
+        paragraphs: [
+          "Wenn es friert oder schneit, müssen Gehwege und Zugänge geräumt und " +
+            "gestreut sein. Wir übernehmen die Räum- und Streupflicht für " +
+            "Wohnanlagen, Hausverwaltungen und Gewerbeobjekte, als Teil der " +
+            "Objektbetreuung oder als zubuchbares Modul.",
+          "Abgerechnet wird saisonal: Im Sommer fällt für den Winterdienst " +
+            "kein Anteil an. Welche Flächen dazugehören, klären wir bei der " +
+            "kostenlosen Besichtigung Ihres Objekts.",
+        ],
+      },
+    ],
     faqs: [
       {
         question: "Übernehmen Sie auch den Winterdienst?",
@@ -173,10 +199,11 @@ const serviceCatalog: Service[] = [
       height: 1168,
     },
     seo: {
-      title: "Gebäudereinigung & Treppenhausreinigung Elmshorn",
+      title: "Gebäudereinigung & Büroreinigung in Elmshorn",
       description:
-        "Gebäudereinigung, Treppenhaus- und Bauendreinigung in Elmshorn, Kreis " +
-        "Pinneberg und Hamburg. Preis online schätzen, Besichtigung kostenlos.",
+        "Gebäude-, Büro- und Treppenhausreinigung für Unternehmen, " +
+        "Hausverwaltungen und Privathaushalte in Elmshorn, Kreis Pinneberg und " +
+        "Hamburg. Besichtigung kostenlos.",
     },
     faqs: [
       {

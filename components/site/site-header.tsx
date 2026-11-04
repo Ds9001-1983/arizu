@@ -9,7 +9,10 @@ import { cn } from "@/lib/utils";
 import { Container } from "./container";
 import { LogoWordmark } from "./logo";
 
+/* „Leistungen“ seit 04.11.2026: Vorher führte der Header nur in die beiden
+   Bereiche, die Leistungen selbst waren von oben nicht erreichbar. */
 const nav = [
+  { href: "/#leistungen", label: "Leistungen" },
   { href: "/privatkunden", label: "Privatkunden" },
   { href: "/geschaeftskunden", label: "Geschäftskunden" },
   { href: "/kontakt", label: "Kontakt" },

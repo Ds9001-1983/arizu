@@ -20,8 +20,8 @@ import { cn } from "@/lib/utils";
 
    Eigene Komponente statt eines Schalters an LeadForm: Zehn zusätzliche
    bedingte Felder machten beide Fälle unlesbar, und die B2B-Felder lägen im
-   Bundle jeder Seite, die <AnfrageSection> rendert — also auf der Startseite,
-   der Kontaktseite und allen vier Leistungsseiten. So zahlt nur
+   Bundle jeder Seite, die <AnfrageSection> rendert — also auf der
+   Kontaktseite und allen vier Leistungsseiten. So zahlt nur
    /geschaeftskunden dafür.
 
    KEIN Richtpreis. Grundsatz aus dem Kundengespräch vom 14.08.2026: im

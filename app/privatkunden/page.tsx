@@ -17,7 +17,7 @@ export const metadata: Metadata = pageMetadata({
   title: `Gebäudedienste für Privatkunden in ${serviceArea.center}`,
   description:
     "Preise für Gebäudereinigung, Gartenpflege und Entrümpelung online und " +
-    "ohne Kontaktdaten schätzen. Objektbetreuung persönlich anfragen.",
+    "ohne Kontaktdaten schätzen. Hausmeisterservice persönlich anfragen.",
   path: "/privatkunden",
 });
 

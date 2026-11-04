@@ -30,17 +30,17 @@ export const B2B_LEISTUNGEN: B2bOption[] = [
   { id: "gebaeudereinigung", label: "Gebäudereinigung" },
   { id: "gartenpflege", label: "Grün- und Außenanlagenpflege" },
   { id: "entruempelung", label: "Entrümpelung und Auflösung" },
-  { id: "objektbetreuung", label: "Objektbetreuung" },
+  { id: "objektbetreuung", label: "Hausmeisterservice & Objektbetreuung" },
   { id: "mehreres", label: "Mehreres oder noch offen" },
 ];
 
 /** Zusätzliche Bereiche. Winterdienst gibt es nur hier — er ist im
-    Privatbereich ein Modul der Objektbetreuung, kein eigener Rechner. */
+    Privatbereich ein Modul des Hausmeisterservice, kein eigener Rechner. */
 export const B2B_WEITERE: B2bOption[] = [
   { id: "gebaeudereinigung", label: "Gebäudereinigung" },
   { id: "gartenpflege", label: "Grün- und Außenanlagenpflege" },
   { id: "entruempelung", label: "Entrümpelung und Auflösung" },
-  { id: "objektbetreuung", label: "Objektbetreuung" },
+  { id: "objektbetreuung", label: "Hausmeisterservice & Objektbetreuung" },
   { id: "winterdienst", label: "Winterdienst" },
 ];
 

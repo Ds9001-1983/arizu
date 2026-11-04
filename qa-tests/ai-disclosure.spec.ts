@@ -102,6 +102,24 @@ for (const asset of pflichtig) {
   });
 }
 
+/* Seit 04.11.2026 stehen die Leistungsbilder auch auf der Startseite. Die
+   Zuordnung oben bleibt bei /privatkunden; hier wird die zweite Fundstelle
+   geprüft, damit das Badge dort nicht still fehlen kann. */
+test("Leistungsbilder auf der Startseite tragen das KI-Badge", async ({ page }) => {
+  await page.goto("/");
+  for (const id of [
+    "img-gebaeudereinigung",
+    "img-gartenpflege",
+    "img-entruempelung",
+    "img-objektbetreuung",
+  ]) {
+    const badge = page.locator(`#leistungen [data-ai-badge="${id}"]`);
+    await badge.scrollIntoViewIfNeeded();
+    await expect(badge).toBeVisible();
+    await expect(badge).toContainText(/KI-generiert|mit KI erstellt/i);
+  }
+});
+
 test("Startseitenmotiv wird im Geschäftskunden-Hero korrekt wiederverwendet", async ({
   page,
 }, testInfo) => {

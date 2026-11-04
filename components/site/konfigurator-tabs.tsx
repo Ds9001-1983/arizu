@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Konfigurator } from "./konfigurator";
 
 /**
- * Konfigurator-Auswahl für die Startseite.
+ * Konfigurator-Auswahl für den Privatkundenbereich (/privatkunden#richtpreis).
  *
  * Auf den Leistungsseiten steht jeweils nur der passende Rechner. Hier kann
  * der Besucher wechseln, ohne die Seite zu verlassen — er soll die Zahl

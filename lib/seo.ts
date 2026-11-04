@@ -26,12 +26,13 @@ const DAYS: Record<string, string> = {
 
 const BUSINESS_ID = `${SITE_URL}/#business`;
 
-/* Titel der Startseite, zugleich Fallback im Root-Layout. Die beiden
-   meistgesuchten Leistungen plus Ort statt des Slogans: Laut Search Console
-   (18.08.–20.09.2026) kommen Impressionen fast nur über „entrümpelung
-   elmshorn/pinneberg“. 51 Zeichen, unter der 60er-Grenze. */
+/* Titel der Startseite, zugleich Fallback im Root-Layout. Leistungen plus
+   Ort statt des Slogans. Seit 04.11.2026 führt Hausmeisterservice: Der
+   SEO-Fokus liegt auf Geschäftskunden und Hausverwaltungen, und „Entrümpelung
+   Elmshorn“ trägt die eigene Leistungsseite. 58 Zeichen, unter der
+   60er-Grenze. */
 export const HOME_TITLE =
-  `Gebäudereinigung & Entrümpelung in ${business.address.city} | ${business.shortName}`;
+  `Hausmeister, Reinigung & Entrümpelung in ${business.address.city} | ${business.shortName}`;
 
 /* Profile, die dieselbe Firma zeigen: das Google-Unternehmensprofil und —
    sobald es sie gibt — die Social-Media-Konten. Leere Einträge fallen heraus,
