@@ -16,7 +16,7 @@ const LAST_CONTENT_UPDATE = {
   home: "2026-11-04",
   privatkunden: "2026-08-19",
   geschaeftskunden: "2026-11-04",
-  kontakt: "2026-09-24",
+  kontakt: "2026-11-04",
   impressum: "2026-08-17",
   datenschutz: "2026-08-19",
 } as const;

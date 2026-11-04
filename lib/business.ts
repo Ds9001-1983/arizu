@@ -78,10 +78,11 @@ export const business = {
   // Service-Schemas der Leistungsseiten.
   geo: { latitude: 53.7406567, longitude: 9.6684892 },
 
-  // Deckungsgleich mit den Zeiten im Google-Unternehmensprofil (23.09.2026).
+  // Deckungsgleich mit den Zeiten im Google-Unternehmensprofil. Dort am
+  // 03.11.2026 auf Dennis' Wunsch auf 21 Uhr und den Sonntag erweitert.
   openingHours: [
-    { days: ["Mo", "Di", "Mi", "Do", "Fr"], opens: "07:00", closes: "18:00" },
-    { days: ["Sa"], opens: "09:00", closes: "14:00" },
+    { days: ["Mo", "Di", "Mi", "Do", "Fr"], opens: "07:00", closes: "21:00" },
+    { days: ["Sa", "So"], opens: "09:00", closes: "21:00" },
   ],
 
   // Privat- und Geschaeftskunden sind seit 14.08.2026 gleichwertige Wege.
