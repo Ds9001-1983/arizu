@@ -172,14 +172,14 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap gap-3">
               <a
                 href="#leistungen"
-                className="inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
+                className="inline-flex items-center gap-2 rounded-sm bg-white px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-white/85"
               >
                 Leistungen ansehen
                 <ArrowRight className="size-4" aria-hidden />
               </a>
               <Link
                 href="/kontakt#anfrage"
-                className="inline-flex items-center gap-2 rounded-sm border border-white/35 px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:border-gold"
+                className="inline-flex items-center gap-2 rounded-sm border border-white/40 bg-white/10 px-6 py-3.5 font-display text-sm font-bold text-white backdrop-blur-md transition-colors hover:border-white/80 hover:bg-white/20"
               >
                 Anfrage stellen
               </Link>
@@ -231,7 +231,7 @@ export default function Home() {
       <KundenartWeiche />
 
       {/* ------------------------------------------------------ Objektarten */}
-      <section className="bg-mist/40 py-20 sm:py-24">
+      <section className="py-20 sm:py-24">
         <Container>
           <SectionHeading
             eyebrow="Für Geschäftskunden"
@@ -314,14 +314,17 @@ export default function Home() {
       </section>
 
       {/* ------------------------------------------------------- Abschluss */}
-      <section className="bg-navy-band py-16 sm:py-20">
+      {/* Hell statt Navy-Band (Arians Wunsch vom 04.11.2026): Der Footer
+          darunter ist bereits Navy, zwei dunkle Flächen hintereinander
+          wirkten schwer. Der goldene Strich oben ist der einzige Akzent. */}
+      <section className="pb-20 sm:pb-24">
         <Container>
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col gap-8 rounded-sm border border-mist border-t-2 border-t-gold bg-surface p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
-              <h2 className="font-display text-3xl text-white sm:text-4xl">
+              <h2 className="font-display text-3xl text-navy sm:text-4xl">
                 Sprechen Sie mit uns über Ihr Objekt
               </h2>
-              <p className="mt-3 text-[1.05rem] leading-relaxed text-white/75">
+              <p className="mt-3 text-[1.05rem] leading-relaxed text-ink-muted">
                 Die Besichtigung vor Ort ist kostenlos und unverbindlich. Wir
                 melden uns in der Regel noch am selben Werktag.
               </p>
@@ -329,7 +332,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-3">
               <a
                 href={business.phone.href}
-                className="inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
+                className="inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
               >
                 <Phone className="size-4" aria-hidden />
                 {business.phone.display}
@@ -341,7 +344,7 @@ export default function Home() {
                   )}
                   target="_blank"
                   rel="noopener"
-                  className="inline-flex items-center gap-2 rounded-sm border border-white/35 px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:border-gold"
+                  className="inline-flex items-center gap-2 rounded-sm border border-navy/20 bg-white px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:border-navy"
                 >
                   <MessageCircle className="size-4" aria-hidden />
                   WhatsApp
@@ -349,7 +352,7 @@ export default function Home() {
               )}
               <Link
                 href="/kontakt#anfrage"
-                className="inline-flex items-center gap-2 rounded-sm border border-white/35 px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:border-gold"
+                className="inline-flex items-center gap-2 rounded-sm border border-navy/20 bg-white px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:border-navy"
               >
                 Anfrage stellen
                 <ArrowRight className="size-4" aria-hidden />

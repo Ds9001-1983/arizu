@@ -51,7 +51,9 @@ export function SiteHeader() {
       className={cn(
         "sticky top-0 z-50 transition-colors duration-300",
         solid || open
-          ? "bg-shell/95 backdrop-blur border-b border-mist"
+          // Leicht durchscheinend (Arians Wunsch nach Transparenz, 04.11.2026);
+          // die starke Unschärfe hält die Navigation trotzdem lesbar.
+          ? "bg-shell/80 backdrop-blur-md border-b border-mist"
           : "bg-transparent",
       )}
     >

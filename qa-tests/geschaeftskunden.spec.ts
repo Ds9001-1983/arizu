@@ -103,7 +103,9 @@ test("Privatkunden nutzen den zentralen Kontaktweg statt eines zweiten Formulars
   await expect(kontakt).toHaveAttribute("href", "/kontakt");
 });
 
-test("weiße Grundfläche und warme Karten bilden die vereinbarte Farbrolle", async ({
+/* Weiß außen seit 19.08.2026, kühle Karten seit Arians Wunsch vom
+   04.11.2026 (heller, Navy und Weiß, Gold nur als Akzent). */
+test("weiße Grundfläche und kühle helle Karten bilden die vereinbarte Farbrolle", async ({
   page,
 }) => {
   await page.goto("/privatkunden");
@@ -111,7 +113,7 @@ test("weiße Grundfläche und warme Karten bilden die vereinbarte Farbrolle", as
   await expect(page.locator("body")).toHaveCSS("background-color", "rgb(255, 255, 255)");
   await expect(
     page.locator('a[href="/leistungen/gebaeudereinigung"]').first(),
-  ).toHaveCSS("background-color", "rgb(245, 243, 239)");
+  ).toHaveCSS("background-color", "rgb(244, 246, 249)");
 });
 
 test("genau drei Live-Rechner zeigen Preisrahmen, Hinweise und Anfrage-CTA", async ({

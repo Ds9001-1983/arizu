@@ -63,17 +63,18 @@ export function KundenartWeiche() {
   return (
     <section
       aria-labelledby="kundenart-titel"
-      // Dunkles Band zwischen Leistungen und Objektarten: Hier fällt die
-      // Entscheidung, wohin es weitergeht.
-      className="bg-navy-band py-16 sm:py-20"
+      // Abgesetzte helle Fläche zwischen Leistungen und Objektarten: Hier
+      // fällt die Entscheidung, wohin es weitergeht. Bis 04.11.2026 ein
+      // Navy-Band; Arian wünschte die Seite heller.
+      className="border-y border-mist bg-surface py-16 sm:py-20"
     >
       <Container>
-        <p className="font-sans text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-gold-soft">
+        <p className="font-sans text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-gold-deep">
           Für wen arbeiten wir?
         </p>
         <h2
           id="kundenart-titel"
-          className="mt-3 font-display text-3xl text-white sm:text-4xl"
+          className="mt-3 font-display text-3xl text-navy sm:text-4xl"
         >
           Privat oder Unternehmen: Wählen Sie Ihren Bereich
         </h2>
@@ -81,14 +82,14 @@ export function KundenartWeiche() {
           {wege.map((w) => (
             <li
               key={w.id}
-              className="flex flex-col rounded-sm border border-white/15 bg-white/5 p-7"
+              className="flex flex-col rounded-sm border border-mist bg-shell p-7"
             >
               <w.icon className="size-7 text-gold" strokeWidth={1.5} aria-hidden />
-              <h3 className="mt-4 font-display text-xl text-white">{w.titel}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">{w.text}</p>
+              <h3 className="mt-4 font-display text-xl text-navy">{w.titel}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-muted">{w.text}</p>
               <ul className="mt-5 space-y-2.5">
                 {w.punkte.map((punkt) => (
-                  <li key={punkt} className="flex gap-3 text-[0.95rem] text-white/90">
+                  <li key={punkt} className="flex gap-3 text-[0.95rem] text-navy">
                     <Check className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
                     <span>{punkt}</span>
                   </li>
@@ -99,7 +100,7 @@ export function KundenartWeiche() {
               <form action={actionFuer(w.id)} className="mt-auto pt-7">
                 <button
                   type="submit"
-                  className="group inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
+                  className="group inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
                 >
                   {w.cta}
                   <ArrowRight

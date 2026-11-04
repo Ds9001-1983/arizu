@@ -354,7 +354,7 @@ export function Konfigurator({
           <button
             type="button"
             onClick={() => setSchritt("angaben")}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-gold px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-white px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-white/85"
           >
             Unverbindliche Anfrage stellen
             <ArrowRight className="size-4" aria-hidden />

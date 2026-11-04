@@ -24,11 +24,15 @@
      und erreicht 4,6–5,7:1 auf allen hellen Flächen. */
   --color-gold-deep: #875e27;
 
-  /* Flächen — nach Arians Review vom 19.08.2026 liegt Weiß außen, der
-     bisherige warme Ton hebt Karten und abgegrenzte Inhalte davon ab. */
+  /* Flächen — Weiß liegt außen (Arians Review vom 19.08.2026). Seit seinem
+     Wunsch vom 04.11.2026 („heller, Navy mit Weiß und goldenem Akzent“) sind
+     Karten und abgesetzte Bereiche kühl statt warm: ein sehr helles Grau mit
+     Navy-Stich, damit Navy und Weiß den Ton angeben und Gold nur Akzent
+     bleibt. Gefüllte Gold-Buttons gibt es seitdem nicht mehr; auf Fotos und
+     dunklen Flächen stehen weiße bzw. durchscheinende Buttons. */
   --color-shell: #ffffff;
-  --color-mist: #e8e5df;
-  --color-surface: #f5f3ef;
+  --color-mist: #e2e7ee;
+  --color-surface: #f4f6f9;
 
   /* Text */
   --color-ink: #0b1a2f;

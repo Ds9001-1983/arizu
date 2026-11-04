@@ -28,7 +28,8 @@ import { cn } from "@/lib/utils";
  * - Geschäftskunden: „Bedarf schildern“ — dort gibt es bewusst keinen
  *   öffentlichen Preis (Kundengespräch 14.08.2026)
  * - Hausmeisterservice: „Anfragen“, die Leistung hat keinen Rechner
- * Sie steht rechts, im Daumenbereich der meisten Nutzer.
+ * Sie steht rechts, im Daumenbereich der meisten Nutzer, weiß auf Navy —
+ * hervorgehoben ohne Goldfläche (Arians Wunsch vom 04.11.2026).
  *
  * Solange ein Eingabefeld den Fokus hat, verschwindet die Leiste: Auf dem
  * Handy schiebt die Tastatur sie sonst über das Feld, in das man gerade
@@ -89,7 +90,7 @@ export function StickyCallBar({ rechnerSlugs }: { rechnerSlugs: string[] }) {
       aria-label="Schnellkontakt"
       data-sticky-bar
       className={cn(
-        "fixed inset-x-0 bottom-0 z-40 border-t border-navy-deep/40 bg-navy/97 pb-[env(safe-area-inset-bottom)] backdrop-blur transition-transform duration-200 lg:hidden",
+        "fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-navy/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-md transition-transform duration-200 lg:hidden",
         tippt && "translate-y-full",
       )}
     >
@@ -109,7 +110,7 @@ export function StickyCallBar({ rechnerSlugs }: { rechnerSlugs: string[] }) {
           <MessageCircle className="size-5 text-gold" aria-hidden />
           WhatsApp
         </a>
-        <a href={aktion.href} className={cn(zelle, "bg-gold text-navy")}>
+        <a href={aktion.href} className={cn(zelle, "bg-white text-navy")}>
           <aktion.icon className="size-5" aria-hidden />
           {aktion.label}
         </a>

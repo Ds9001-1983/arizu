@@ -151,14 +151,14 @@ export default function GeschaeftskundenPage() {
           <div className="mt-9 flex flex-wrap gap-4">
             <a
               href="#bedarf"
-              className="inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
+              className="inline-flex items-center gap-2 rounded-sm bg-white px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-white/85"
             >
               Bedarf schildern
               <ArrowRight className="size-4" aria-hidden />
             </a>
             <a
               href={business.phone.href}
-              className="inline-flex items-center gap-2 rounded-sm border border-white/35 px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:border-gold"
+              className="inline-flex items-center gap-2 rounded-sm border border-white/40 bg-white/10 px-6 py-3.5 font-display text-sm font-bold text-white backdrop-blur-md transition-colors hover:border-white/80 hover:bg-white/20"
             >
               {business.phone.display}
             </a>

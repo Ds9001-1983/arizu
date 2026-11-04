@@ -91,7 +91,7 @@ export default async function PrivatkundenPage() {
 
           <a
             href="#richtpreis"
-            className="mt-9 inline-flex items-center gap-2 rounded-sm bg-gold px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-gold-soft"
+            className="mt-9 inline-flex items-center gap-2 rounded-sm bg-white px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-white/85"
           >
             Preisschätzung ansehen
             <ArrowRight className="size-4" aria-hidden />
@@ -99,7 +99,8 @@ export default async function PrivatkundenPage() {
         </Container>
       </section>
 
-      <section className="bg-navy py-16 text-white">
+      {/* Hell statt Navy seit Arians Wunsch vom 04.11.2026. */}
+      <section className="border-y border-mist bg-surface py-16">
         <Container>
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-14">
             <BadgeEuro
@@ -108,10 +109,10 @@ export default async function PrivatkundenPage() {
               aria-hidden
             />
             <div className="max-w-3xl">
-              <h2 className="font-display text-2xl text-white sm:text-3xl">
+              <h2 className="font-display text-2xl text-navy sm:text-3xl">
                 20 % der Arbeitskosten holen Sie vom Finanzamt zurück
               </h2>
-              <p className="mt-4 text-[1.02rem] leading-relaxed text-white/75">
+              <p className="mt-4 text-[1.02rem] leading-relaxed text-ink-muted">
                 Reinigung, Grün- und Außenanlagenpflege sowie Hausmeisterleistungen
                 im Privathaushalt gelten als haushaltsnahe Dienstleistungen. Sie können
                 20 % der Arbeitskosten von der Steuer absetzen, bis zu 4.000 € im
