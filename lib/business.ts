@@ -108,9 +108,15 @@ export const business = {
  * Vertrauensblock auf Startseite und Geschäftskundenseite, das Impressum und
  * memberOf im JSON-LD.
  *
- * Bewusst ohne die Logos der Verbände: Deren Nutzung braucht deren
- * Zustimmung. Liefert Arian ein freigegebenes Mitgliedssignet, kann es hier
- * dazukommen.
+ * Logos seit 04.11.2026, Entscheidung von Dennis („geht auf meine Kappe“).
+ * Beide Dateien stammen von den Websites der Verbände selbst (Kopf-Logo von
+ * hwk-luebeck.de und bgbau.de), nicht aus einem Mitgliederportal. Die BG BAU
+ * vergibt für Mitglieder eigentlich ein eigenes Signet auf Antrag
+ * (bgbau.de → Presse → Hinweise zu Pressebildern und BG BAU Signet) und
+ * verlangt einen Link auf ihre Seite. Kommt das Signet, ersetzt es
+ * public/logos/bg-bau.svg. `w`/`h` sind die Seitenverhältnisse der Dateien;
+ * das flache Kammer-Logo wird in der Komponente niedriger gesetzt, damit
+ * beide Marken optisch gleich groß wirken.
  */
 export const mitgliedschaften = [
   {
@@ -118,12 +124,14 @@ export const mitgliedschaften = [
     kurz: "Mitglied der Handwerkskammer Lübeck",
     text: "Eingetragener Handwerksbetrieb bei der Kammer, die für Elmshorn und den Kreis Pinneberg zuständig ist.",
     url: "https://www.hwk-luebeck.de",
+    logo: { src: "/logos/hwk-luebeck.svg", w: 234, h: 39 },
   },
   {
     name: "BG BAU – Berufsgenossenschaft der Bauwirtschaft",
     kurz: "Mitglied der BG BAU",
     text: "Unser Team ist über die Berufsgenossenschaft der Bauwirtschaft gesetzlich unfallversichert.",
     url: "https://www.bgbau.de",
+    logo: { src: "/logos/bg-bau.svg", w: 216, h: 74 },
   },
 ] as const;
 

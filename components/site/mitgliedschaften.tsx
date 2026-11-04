@@ -1,4 +1,3 @@
-import { HardHat, Landmark } from "lucide-react";
 import { mitgliedschaften } from "@/lib/business";
 import { cn } from "@/lib/utils";
 import { Container } from "./container";
@@ -6,10 +5,9 @@ import { Container } from "./container";
 /* Vertrauensblock nach Arians Wunsch vom 04.11.2026 („für den Trust“).
    Steht auf der Startseite und bei den Geschäftskunden — für Hausverwaltungen
    und Firmen ist die Kammer-Eintragung und die Unfallversicherung des Teams
-   oft eine Vorbedingung für den Auftrag. Text statt Verbandslogos, Grund in
-   lib/business.ts. */
-const icons = [Landmark, HardHat];
-
+   oft eine Vorbedingung für den Auftrag. Herkunft der Logos in
+   lib/business.ts. Jedes Logo verlinkt auf den Verband, so verlangt es die
+   BG BAU für ihr Signet. */
 export function Mitgliedschaften({ className }: { className?: string }) {
   return (
     <section aria-labelledby="mitgliedschaften" className={cn("py-14 sm:py-16", className)}>
@@ -21,21 +19,33 @@ export function Mitgliedschaften({ className }: { className?: string }) {
           >
             Eingetragen und versichert
           </h2>
-          <ul className="grid gap-6 sm:grid-cols-2">
-            {mitgliedschaften.map((m, i) => {
-              const Icon = icons[i] ?? Landmark;
-              return (
-                <li key={m.name} className="flex gap-4">
-                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full border border-mist bg-surface">
-                    <Icon className="size-6 text-gold-deep" strokeWidth={1.5} aria-hidden />
-                  </span>
-                  <div>
-                    <p className="font-semibold text-navy">{m.kurz}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-ink-muted">{m.text}</p>
-                  </div>
-                </li>
-              );
-            })}
+          <ul className="grid gap-8 sm:grid-cols-2">
+            {mitgliedschaften.map((m) => (
+              <li key={m.name}>
+                <a
+                  href={m.url}
+                  target="_blank"
+                  rel="noopener"
+                  className="flex h-14 w-fit items-center"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element -- SVG, kleiner als jeder Optimizer-Umweg; Bildoptimierung ist ohnehin aus (next.config.ts) */}
+                  <img
+                    src={m.logo.src}
+                    width={m.logo.w}
+                    height={m.logo.h}
+                    alt={`Logo ${m.name}`}
+                    loading="lazy"
+                    decoding="async"
+                    className={cn(
+                      "w-auto",
+                      m.logo.h < 50 ? "h-9" : "h-14",
+                    )}
+                  />
+                </a>
+                <p className="mt-4 font-semibold text-navy">{m.kurz}</p>
+                <p className="mt-1 text-sm leading-relaxed text-ink-muted">{m.text}</p>
+              </li>
+            ))}
           </ul>
         </div>
       </Container>
