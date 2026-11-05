@@ -25,6 +25,21 @@ const nextConfig: NextConfig = {
   // Vom Client aus nicht erreichbar, aber sauber dokumentiert: Diese Seite
   // liefert keine fremden Skripte aus, daher greifen die Standard-Header.
   poweredByHeader: false,
+
+  async headers() {
+    return [
+      {
+        // noindex auf allen Nebenadressen (arizu.vercel.app, Vorschauen),
+        // indexierbar bleibt nur die Hauptdomain. Next.js liest den Host-Wert
+        // als verankerten regulären Ausdruck (^…$), daher die escapten Punkte.
+        source: "/:path*",
+        missing: [
+          { type: "host", value: "www\\.arizu-gebaeudedienstleistungen\\.de" },
+        ],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
