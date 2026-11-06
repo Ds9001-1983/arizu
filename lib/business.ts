@@ -90,10 +90,10 @@ export const business = {
 
   social: {
     // Aufbau im Rahmen von Angebot AG2026037 (Meta-Kundengewinnung, von Arian
-    // am 05.11.2026 angenommen). Instagram steht seit 06.11.2026. Die
-    // Facebook-Seite entsteht gerade (Cowork); bis ihre Adresse vorliegt,
-    // bleibt der Eintrag null und fehlt in Footer und sameAs.
-    facebook: null as string | null,
+    // am 05.11.2026 angenommen). Beide Profile stehen seit 06.11.2026 und
+    // speisen Footer, sameAs im JSON-LD und den Abschnitt zu den Profilen in
+    // der Datenschutzerklärung. Ein null blendet das Profil überall aus.
+    facebook: "https://www.facebook.com/arizu.gebaeudedienstleistungen" as string | null,
     instagram: "https://www.instagram.com/arizu.gebaeudedienstleistungen/" as string | null,
   },
 
