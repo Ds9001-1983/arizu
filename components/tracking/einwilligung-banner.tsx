@@ -187,11 +187,13 @@ function Banner({ zustand }: { zustand: Exclude<BannerZustand, "zu"> }) {
               Auswahl speichern
             </button>
           )}
-          <button type="button" className={KNOPF} onClick={() => einwilligungSpeichern(true)}>
-            Alle akzeptieren
-          </button>
+          {/* „Alle akzeptieren“ steht rechts (Wunsch Dennis, 06.11.2026).
+              Gestaltung bleibt für beide Knöpfe identisch. */}
           <button type="button" className={KNOPF} onClick={() => einwilligungSpeichern(false)}>
             Nur notwendige
+          </button>
+          <button type="button" className={KNOPF} onClick={() => einwilligungSpeichern(true)}>
+            Alle akzeptieren
           </button>
         </div>
 

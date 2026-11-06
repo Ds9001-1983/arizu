@@ -103,6 +103,11 @@ test.describe("Banner beim ersten Besuch", () => {
     expect(await stil(ja)).toEqual(await stil(nein));
     expect((await stil(ja)).hoehe).toBeGreaterThanOrEqual(44);
 
+    // „Alle akzeptieren“ steht rechts neben „Nur notwendige“ (06.11.2026),
+    // auf schmalen Handys darunter.
+    const [rJa, rNein] = [await ja.boundingBox(), await nein.boundingBox()];
+    expect(rJa!.x > rNein!.x || rJa!.y > rNein!.y).toBe(true);
+
     await banner(page).getByRole("button", { name: "Einstellungen" }).click();
     const titel = banner(page).getByRole("heading", { name: "Cookie-Einstellungen" });
     await expect(titel).toBeFocused();
