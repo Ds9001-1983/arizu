@@ -27,13 +27,18 @@ export function neueEventId(): string {
 }
 
 /**
- * Pixel-Code von Meta, ausgeschrieben statt als Inline-Skript. Zwei
- * Abweichungen vom Standard-Schnipsel:
- * - autoConfig aus: Der Pixel sammelt keine Klicks und Seitendaten auf
- *   eigene Faust („automatische Ereignisse“), nur was hier gemeldet wird.
- * - disablePushState: Seitenwechsel im Browser meldet die Seite selbst
- *   (mit event_id), sonst zählte der Pixel jeden Wechsel ein zweites Mal.
- * Ein PageView steht hier nicht drin; den meldet MetaTracking.
+ * Pixel-Code von Meta, ausgeschrieben statt als Inline-Skript. Eine
+ * Abweichung vom Standard-Schnipsel: autoConfig aus. Der Pixel sammelt
+ * keine Klicks und Seitendaten auf eigene Faust („automatische Ereignisse“),
+ * nur was hier gemeldet wird.
+ *
+ * Seitenwechsel ohne Neuladen meldet der Pixel selbst (er hängt sich an
+ * history.pushState). Ein manueller PageView kommt pro Seitenaufruf nur
+ * einmal durch: fbevents.js führt dafür ein Set und lässt weitere nur für
+ * seine eigenen automatischen PageViews zu (geprüft am 06.11.2026 an
+ * Version 2.9.437). disablePushState war deshalb ein Fehler, danach fehlten
+ * die PageViews aller Folgeseiten. Den ersten PageView mit event_id meldet
+ * MetaTracking.
  */
 export function pixelLaden() {
   if (!marketingErlaubtJetzt()) return;
@@ -49,13 +54,7 @@ export function pixelLaden() {
     if (self.callMethod) self.callMethod(...args);
     else self.queue.push(args);
   } as NonNullable<Window["fbq"]>;
-  Object.assign(fbq, {
-    push: fbq,
-    loaded: true,
-    version: "2.0",
-    queue: [],
-    disablePushState: true,
-  });
+  Object.assign(fbq, { push: fbq, loaded: true, version: "2.0", queue: [] });
   window.fbq = fbq;
   if (!window._fbq) window._fbq = fbq;
 

@@ -283,8 +283,9 @@ export default function DatenschutzPage() {
         Ihr Browser von Servern von Meta lädt. Er setzt die Cookies „_fbp“
         (zufällige Kennung Ihres Browsers) und, wenn Sie über eine Anzeige
         kommen, „_fbc“ (Kennung des Anzeigenklicks), und meldet Ereignisse an
-        Meta. Über die Conversions API meldet unser Server dieselben Ereignisse
-        zusätzlich direkt an Meta. Beide Meldungen tragen dieselbe zufällige
+        Meta. Über die Conversions API meldet unser Server diese Ereignisse
+        zusätzlich direkt an Meta, nur Seitenwechsel innerhalb der Website
+        meldet allein der Pixel. Beide Meldungen tragen dieselbe zufällige
         Ereignis-ID, damit Meta sie nur einmal zählt.
       </p>
       <p>

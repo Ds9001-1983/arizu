@@ -81,8 +81,19 @@ export function einwilligungSpeichern(marketing: boolean) {
     `Max-Age=${EINWILLIGUNG_MAX_AGE_S}; SameSite=Lax${sicher}`;
 
   // Lief der Pixel schon auf dieser Seite, erfährt er die neue Auswahl sofort.
+  const pixelGeladen = typeof window.fbq === "function";
   window.fbq?.("consent", marketing ? "grant" : "revoke");
-  if (!marketing) metaCookiesLoeschen();
+  if (!marketing) {
+    metaCookiesLoeschen();
+    // Gesperrt hält der Pixel Ereignisse zurück und schickt sie nach einem
+    // erneuten „grant“ im selben Seitenaufruf nach (fbevents.js, fire bei
+    // isLocked). Neu laden entfernt ihn ganz; ohne Einwilligung lädt er
+    // danach nicht mehr.
+    if (pixelGeladen) {
+      location.reload();
+      return;
+    }
+  }
 
   schliessen();
 }

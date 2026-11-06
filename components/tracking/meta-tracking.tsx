@@ -9,7 +9,8 @@ import { META_EREIGNISSE } from "@/lib/tracking/meta";
 /* ==================================================================
    Messung über Meta, nur mit Marketing-Einwilligung.
 
-   - PageView bei jedem Seitenaufruf, auch bei Wechseln ohne Neuladen
+   - PageView: der erste mit event_id von hier, Wechsel ohne Neuladen meldet
+     der Pixel selbst
    - ViewContent auf den Leistungsseiten, content_name = Name der Leistung
    - Contact bei Klick auf einen Telefon- oder WhatsApp-Link, egal wo er
      steht (Header, Footer, Handy-Leiste, Formulare). Ein einziger Zuhörer
@@ -38,10 +39,16 @@ export function MetaTracking({ leistungen }: { leistungen: Record<string, string
 
   // Steht hinter dem Laden des Pixels: Effekte laufen in Reihenfolge, der
   // Pixel kennt die ID also schon, wenn der erste PageView kommt.
+  //
+  // PageView mit event_id (Pixel und Conversions API) nur beim ersten Mal
+  // in diesem Seitenaufruf. Folgeseiten ohne Neuladen meldet der Pixel
+  // selbst; einen zweiten manuellen PageView würde er verwerfen, und die
+  // Conversions API zählte ihn dann ohne Gegenstück doppelt (siehe
+  // pixelLaden in lib/tracking/meta-client.ts).
   useEffect(() => {
     if (!erlaubt || intern || zuletzt.current === pfad) return;
+    if (zuletzt.current === null) metaEreignis(META_EREIGNISSE.seitenaufruf);
     zuletzt.current = pfad;
-    metaEreignis(META_EREIGNISSE.seitenaufruf);
     const slug = /^\/leistungen\/([^/]+)/.exec(pfad)?.[1];
     if (slug && leistungen[slug]) {
       metaEreignis(META_EREIGNISSE.leistung, {

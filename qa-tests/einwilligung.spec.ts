@@ -183,6 +183,18 @@ test.describe("Banner beim ersten Besuch", () => {
 
     const cookie = (await context.cookies()).find((c) => c.name === EINWILLIGUNG_COOKIE);
     expect(leseEinwilligung(cookie?.value)?.marketing).toBe(true);
+
+    // Wechsel ohne Neuladen: ViewContent für die neue Leistung, aber kein
+    // zweiter PageView von uns. Den meldet der Pixel selbst; fbevents.js
+    // verwirft einen zweiten manuellen PageView pro Seitenaufruf.
+    await page.locator("footer").getByRole("link", { name: getService("gebaeudereinigung")!.name }).click();
+    await expect(page).toHaveURL(/gebaeudereinigung/);
+    await expect.poll(() => anMeta.length).toBe(3);
+    expect(anMeta.filter((e) => e.name === "PageView")).toHaveLength(1);
+    expect(anMeta[2]).toMatchObject({
+      name: "ViewContent",
+      daten: { content_name: getService("gebaeudereinigung")!.name },
+    });
   });
 });
 
@@ -265,7 +277,7 @@ test.describe("mit Marketing-Einwilligung", () => {
     expect(anfrage?.eventId).toBe(lead?.eventId);
   });
 
-  test("Widerruf über Cookie-Einstellungen: Fokus, Escape, Meta-Cookies weg", async ({
+  test("Widerruf über Cookie-Einstellungen: Fokus, Escape, Meta-Cookies weg, Pixel entladen", async ({
     page,
     context,
     baseURL,
@@ -286,17 +298,36 @@ test.describe("mit Marketing-Einwilligung", () => {
     await expect(banner(page)).toHaveCount(0);
     await expect(ausloeser).toBeFocused();
 
+    // Lief der Pixel, lädt die Seite beim Widerruf neu: Gesperrt hielte er
+    // Ereignisse zurück und schickte sie nach einer neuen Zustimmung nach.
     await ausloeser.click();
-    await banner(page).getByRole("button", { name: "Nur notwendige" }).click();
+    await Promise.all([
+      page.waitForEvent("load"),
+      banner(page).getByRole("button", { name: "Nur notwendige" }).click(),
+    ]);
+    await page.waitForLoadState("networkidle");
     await expect(banner(page)).toHaveCount(0);
-    await expect(ausloeser).toBeFocused();
+    expect(await page.evaluate(() => typeof window.fbq)).toBe("undefined");
 
     const cookies = await context.cookies();
     expect(cookies.map((c) => c.name)).not.toContain("_fbp");
     expect(
       leseEinwilligung(cookies.find((c) => c.name === EINWILLIGUNG_COOKIE)?.value)?.marketing,
     ).toBe(false);
-    expect(await fbqAufrufe(page)).toContainEqual(["consent", "revoke"]);
+  });
+
+  test("Auswahl ändern ohne laufenden Pixel gibt den Fokus zurück", async ({ page, context }) => {
+    // Ohne Marketing lädt kein Pixel, ein Wechsel der Auswahl braucht dann
+    // kein Neuladen, und der Fokus geht zurück auf den Auslöser.
+    await context.clearCookies();
+    await page.goto("/");
+    await banner(page).getByRole("button", { name: "Nur notwendige" }).click();
+    const ausloeser = page.locator("footer").getByRole("button", { name: "Cookie-Einstellungen" });
+    await ausloeser.click();
+    await expect(banner(page).getByLabel("Marketing")).not.toBeChecked();
+    await banner(page).getByRole("button", { name: "Auswahl speichern" }).click();
+    await expect(banner(page)).toHaveCount(0);
+    await expect(ausloeser).toBeFocused();
   });
 });
 
