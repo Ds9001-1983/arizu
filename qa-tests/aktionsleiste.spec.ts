@@ -50,7 +50,7 @@ test("Aktionsleiste zeigt je Seite die passende dritte Aktion", async ({
       ]
     : [
         ["/", "Anfragen", "/kontakt#anfrage"],
-        ["/privatkunden", "Anfragen", "/kontakt#anfrage"],
+        ["/privatkunden", "Anfragen", "#anfrage"],
         ["/leistungen/gebaeudereinigung", "Anfragen", "#anfrage"],
         ["/leistungen/entruempelung", "Anfragen", "#anfrage"],
         ["/leistungen/objektbetreuung", "Anfragen", "#anfrage"],

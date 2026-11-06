@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/site/legal-layout";
 import { business, mitgliedschaften } from "@/lib/business";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -70,9 +71,11 @@ export default function ImpressumPage() {
       <p>
         Die Inhalte dieser Seiten wurden mit Sorgfalt erstellt. Für die
         Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir
-        jedoch keine Gewähr übernehmen. Die im Preisrechner ausgegebenen Beträge
-        sind unverbindliche Schätzungen und stellen kein Angebot im Sinne des
-        § 145 BGB dar.
+        jedoch keine Gewähr übernehmen.
+        {/* Ohne Preisrechner (lib/features.ts, seit 06.11.2026) entfällt der Satz. */}
+        {PREISRECHNER_AKTIV &&
+          " Die im Preisrechner ausgegebenen Beträge sind unverbindliche " +
+            "Schätzungen und stellen kein Angebot im Sinne des § 145 BGB dar."}
       </p>
 
       <h2>Haftung für Links</h2>

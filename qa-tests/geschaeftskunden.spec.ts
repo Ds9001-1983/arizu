@@ -105,6 +105,9 @@ test("Privatkundenkacheln stehen in der vereinbarten Reihenfolge", async ({
 test("Privatkunden nutzen den zentralen Kontaktweg statt eines zweiten Formulars", async ({
   page,
 }) => {
+  // Gilt nur mit Rechner. Ohne Rechner hat die Seite ein eigenes Formular
+  // (Dennis, 06.11.2026), das prüft preisrechner-aus.spec.ts.
+  test.skip(!PREISRECHNER_AKTIV, "Preisrechner ist ausgeschaltet (lib/features.ts).");
   await page.goto("/privatkunden");
 
   await expect(page.locator("#anfrage")).toHaveCount(0);

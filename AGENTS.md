@@ -31,7 +31,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
   Ob eine Leistung gerade einen Rechner zeigt, entscheidet
   `zeigtPreisrechner(service)` aus `lib/services.ts`, nie
   `hasPublicCalculator` allein. Texte, die den Rechner erwähnen, stehen in
-  beiden Fassungen im Code (`mitRechner(an, aus)`). Konfigurator, Specs,
+  beiden Fassungen im Code (`mitRechner(an, aus)`), auch in Datenschutz,
+  AGB und Impressum. Ohne Rechner hat `/privatkunden` ein eigenes
+  Anfrageformular (Dennis, 06.11.2026), mit Rechner gilt wieder „kein
+  zweites Formular“ (Meeting 19.08.2026). Konfigurator, Specs,
   `check:pricing` und `/intern/preise` bleiben bewusst erhalten.
 - `calc` bekommt die Sätze als **zweiten Pflichtparameter**. Kein
   Default-Wert: Ein Default machte aus einer vergessenen Aufrufstelle einen

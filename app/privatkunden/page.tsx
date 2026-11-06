@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BadgeEuro } from "lucide-react";
 import { JsonLd } from "@/components/seo/json-ld";
+import { AnfrageSection } from "@/components/site/anfrage-section";
 import { Container } from "@/components/site/container";
 import { FaqList } from "@/components/site/faq-section";
 import { HeroMedia } from "@/components/site/hero-media";
@@ -33,10 +34,11 @@ const privateFaqs = services.map((s) => s.faqs[0]);
 export const revalidate = 86_400;
 
 export default async function PrivatkundenPage() {
-  /* Rechner aus (lib/features.ts): keine Datenbankabfrage, kein Rechner-
-     Abschnitt. Ein eigenes Formular bekommt die Seite trotzdem nicht — seit
-     dem Meeting vom 19.08.2026 läuft die Privatkunden-Anfrage über das
-     zentrale Formular auf /kontakt. */
+  /* Mit Rechner läuft die Privatkunden-Anfrage über den Rechner und das
+     zentrale Formular auf /kontakt, ein zweites Formular gibt es hier nicht
+     (Meeting vom 19.08.2026). Ist der Rechner aus (lib/features.ts), steht an
+     seiner Stelle das Anfrageformular, damit der Weg zur Anfrage auf der Seite
+     selbst endet (Dennis, 06.11.2026). Keine Datenbankabfrage in dem Fall. */
   const allRates = PREISRECHNER_AKTIV ? await getAllRates() : null;
   const publicRates = allRates && {
     gebaeudereinigung: allRates.gebaeudereinigung,
@@ -108,7 +110,7 @@ export default async function PrivatkundenPage() {
           />
 
           <a
-            href={PREISRECHNER_AKTIV ? "#richtpreis" : "/kontakt#anfrage"}
+            href={PREISRECHNER_AKTIV ? "#richtpreis" : "#anfrage"}
             className="mt-9 inline-flex items-center gap-2 rounded-sm bg-white px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-white/85"
           >
             {PREISRECHNER_AKTIV ? "Preisschätzung ansehen" : "Jetzt anfragen"}
@@ -157,7 +159,7 @@ export default async function PrivatkundenPage() {
         </Container>
       </section>
 
-      {publicRates && (
+      {publicRates ? (
         <section id="richtpreis" className="scroll-mt-20 bg-mist/40 py-20 sm:py-24">
           <Container>
             <SectionHeading
@@ -170,6 +172,8 @@ export default async function PrivatkundenPage() {
             </div>
           </Container>
         </section>
+      ) : (
+        <AnfrageSection />
       )}
 
       <section className="py-20 sm:py-24">
@@ -188,8 +192,11 @@ export default async function PrivatkundenPage() {
                 Sie möchten Ihr Vorhaben persönlich besprechen?
               </h2>
               <p className="mt-3 text-[0.95rem] leading-relaxed text-ink-muted">
-                Auf der Kontaktseite erreichen Sie uns telefonisch, per WhatsApp
-                oder über das zentrale Anfrageformular.
+                {PREISRECHNER_AKTIV
+                  ? "Auf der Kontaktseite erreichen Sie uns telefonisch, per " +
+                    "WhatsApp oder über das zentrale Anfrageformular."
+                  : "Auf der Kontaktseite erreichen Sie uns telefonisch, per " +
+                    "WhatsApp oder per E-Mail."}
               </p>
             </div>
             <Link

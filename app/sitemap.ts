@@ -17,8 +17,8 @@ const LAST_CONTENT_UPDATE = {
   privatkunden: "2026-11-06",
   geschaeftskunden: "2026-11-06",
   kontakt: "2026-11-04",
-  impressum: "2026-11-04",
-  datenschutz: "2026-08-19",
+  impressum: "2026-11-06",
+  datenschutz: "2026-11-06",
 } as const;
 
 // Record über alle Slugs: Kommt eine Leistung dazu, fehlt ihr Datum hier als

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fehlt, LegalLayout } from "@/components/site/legal-layout";
 import { business } from "@/lib/business";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -30,13 +31,16 @@ export const metadata: Metadata = pageMetadata({
       Frist gearbeitet werden, braucht es die ausdrückliche Zustimmung des
       Kunden plus dessen Kenntnisnahme, dass er sein Widerrufsrecht bei
       vollständiger Leistung verliert.
+
+   Solange der Preisrechner aus ist (lib/features.ts, seit 06.11.2026),
+   entfällt in § 2 der Satz zu seinen Beträgen.
    ================================================================== */
 
 export default function AgbPage() {
   return (
     <LegalLayout
       title="Allgemeine Geschäftsbedingungen"
-      updated="Entwurf, August 2026"
+      updated={PREISRECHNER_AKTIV ? "Entwurf, August 2026" : "Entwurf, November 2026"}
       todo={
         "Dies ist ein ENTWURF als Diskussionsgrundlage, keine Rechtsberatung. " +
         "Vor der Verwendung anwaltlich prüfen lassen — insbesondere § 8 " +
@@ -56,8 +60,10 @@ export default function AgbPage() {
 
       <h2>§ 2 Angebot und Vertragsschluss</h2>
       <p>
-        Die auf unserer Website im Preisrechner ausgegebenen Beträge sind
-        unverbindliche Schätzungen und kein Angebot. Ein Vertrag kommt erst
+        {PREISRECHNER_AKTIV &&
+          "Die auf unserer Website im Preisrechner ausgegebenen Beträge sind " +
+            "unverbindliche Schätzungen und kein Angebot. "}
+        Ein Vertrag kommt erst
         zustande, wenn der Auftraggeber ein von uns erstelltes schriftliches
         Angebot annimmt — schriftlich, per E-Mail oder über die Annahmefunktion
         im Kundencenter unseres Rechnungssystems.

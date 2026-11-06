@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/site/legal-layout";
 import { business } from "@/lib/business";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Datenschutzerklärung",
-  description:
-    `Wie ${business.name} Ihre Anfrage verarbeitet, warum der Preisrechner ` +
-    "nichts überträgt, wie lange wir speichern und welche Rechte Sie haben.",
+  description: PREISRECHNER_AKTIV
+    ? `Wie ${business.name} Ihre Anfrage verarbeitet, warum der Preisrechner ` +
+      "nichts überträgt, wie lange wir speichern und welche Rechte Sie haben."
+    : `Wie ${business.name} Ihre Anfrage verarbeitet, wie lange wir ` +
+      "speichern und welche Rechte Sie haben.",
   path: "/datenschutz",
 });
 
@@ -24,11 +27,24 @@ export const metadata: Metadata = pageMetadata({
    Die Angaben zu Cookies und Drittanbietern sind am 14.08.2026 an der
    Live-Seite gemessen worden, nicht angenommen: kein einziger Fremdhost,
    kein Cookie, leerer localStorage und sessionStorage.
+
+   Solange der Preisrechner aus ist (lib/features.ts, seit 06.11.2026),
+   entfallen Abschnitt 4 und die übrigen Hinweise auf ihn, die folgenden
+   Abschnitte rücken eine Nummer auf. Der Text beschreibt so weiter nur, was
+   tatsächlich passiert. Querverweise auf Abschnittsnummern gibt es keine.
    ================================================================== */
+
+/** Abschnittsnummer: ohne Rechner fällt Abschnitt 4 weg. */
+function nr(n: number): number {
+  return PREISRECHNER_AKTIV || n < 4 ? n : n - 1;
+}
 
 export default function DatenschutzPage() {
   return (
-    <LegalLayout title="Datenschutzerklärung" updated="August 2026">
+    <LegalLayout
+      title="Datenschutzerklärung"
+      updated={PREISRECHNER_AKTIV ? "August 2026" : "November 2026"}
+    >
       <h2>1. Verantwortlicher</h2>
       <p>
         {business.legalName}
@@ -65,8 +81,10 @@ export default function DatenschutzPage() {
       </p>
       <p>
         Eine automatisierte Entscheidungsfindung einschließlich Profiling nach
-        Art. 22 DSGVO findet nicht statt. Der Preisrechner erzeugt lediglich
-        eine unverbindliche Schätzung und trifft keine Entscheidung über Sie.
+        Art. 22 DSGVO findet nicht statt.
+        {PREISRECHNER_AKTIV &&
+          " Der Preisrechner erzeugt lediglich eine unverbindliche Schätzung " +
+            "und trifft keine Entscheidung über Sie."}
       </p>
 
       <h2>3. Aufruf dieser Website (Server-Logs)</h2>
@@ -89,21 +107,26 @@ export default function DatenschutzPage() {
         Sie erkennen das am Schlosssymbol in der Adresszeile Ihres Browsers.
       </p>
 
-      <h2>4. Preisrechner</h2>
-      <p>
-        Der Preisrechner läuft vollständig in Ihrem Browser. Ihre Eingaben
-        werden dabei <strong>nicht</strong> an uns übertragen und nicht
-        gespeichert. Erst wenn Sie auf „Unverbindliche Anfrage stellen“ klicken
-        und das Formular absenden, werden die Angaben zusammen mit Ihren
-        Kontaktdaten übermittelt.
-      </p>
+      {PREISRECHNER_AKTIV && (
+        <>
+          <h2>4. Preisrechner</h2>
+          <p>
+            Der Preisrechner läuft vollständig in Ihrem Browser. Ihre Eingaben
+            werden dabei <strong>nicht</strong> an uns übertragen und nicht
+            gespeichert. Erst wenn Sie auf „Unverbindliche Anfrage stellen“
+            klicken und das Formular absenden, werden die Angaben zusammen mit
+            Ihren Kontaktdaten übermittelt.
+          </p>
+        </>
+      )}
 
-      <h2>5. Anfrageformular</h2>
+      <h2>{nr(5)}. Anfrageformular</h2>
       <p>
         Wir verarbeiten die von Ihnen eingegebenen Daten, um Ihre Anfrage zu
         bearbeiten. Als Privatkunde sind das Name, Telefonnummer, optional
-        E-Mail-Adresse, die Anschrift des Einsatzortes, Ihre Nachricht sowie
-        die Angaben aus dem Preisrechner. Fragen Sie über den
+        E-Mail-Adresse, die Anschrift des Einsatzortes und Ihre Nachricht
+        {PREISRECHNER_AKTIV && " sowie die Angaben aus dem Preisrechner"}. Fragen
+        Sie über den
         Geschäftskundenbereich an, kommen die dort erhobenen Angaben hinzu:
         Unternehmen, Ansprechpartner und Funktion, Art und Anzahl der Objekte,
         Einheiten oder Fläche, gewünschter Rhythmus und Wunschtermin. Wir
@@ -134,7 +157,7 @@ export default function DatenschutzPage() {
         etwa aus einem Telefonat oder dem Termin vor Ort.
       </p>
 
-      <h2>6. Speicherdauer</h2>
+      <h2>{nr(6)}. Speicherdauer</h2>
       <p>
         Führt Ihre Anfrage nicht zu einem Auftrag, löschen wir sie spätestens{" "}
         <strong>24 Monate nach dem letzten Kontakt</strong>. Die Frist ist so
@@ -154,7 +177,7 @@ export default function DatenschutzPage() {
         soweit keine der genannten Aufbewahrungspflichten entgegensteht.
       </p>
 
-      <h2>7. E-Mail-Versand</h2>
+      <h2>{nr(7)}. E-Mail-Versand</h2>
       <p>
         Für den Versand von Benachrichtigungen und Bestätigungen nutzen wir den
         Mailserver der Hetzner Online GmbH, Industriestraße 25, 91710
@@ -163,7 +186,7 @@ export default function DatenschutzPage() {
         unterstützt; eine Ende-zu-Ende-Verschlüsselung findet nicht statt.
       </p>
 
-      <h2>8. Cookies und Tracking</h2>
+      <h2>{nr(8)}. Cookies und Tracking</h2>
       <p>
         Diese Website setzt beim Besuch <strong>keine Cookies</strong> und legt
         weder im lokalen Speicher noch im Sitzungsspeicher Ihres Browsers etwas
@@ -187,7 +210,7 @@ export default function DatenschutzPage() {
         öffentlichen Seiten entsteht es nicht.
       </p>
 
-      <h2>9. Keine Einbindung externer Dienste</h2>
+      <h2>{nr(9)}. Keine Einbindung externer Dienste</h2>
       <p>
         Beim Aufruf dieser Website wird <strong>kein einziger fremder Server
         kontaktiert</strong>. Schriften, Bilder und Videos in den Seitenköpfen
@@ -201,7 +224,7 @@ export default function DatenschutzPage() {
         Klick entsteht eine Verbindung zum jeweiligen Anbieter.
       </p>
 
-      <h2>10. WhatsApp</h2>
+      <h2>{nr(10)}. WhatsApp</h2>
       <p>
         Wenn Sie uns über den WhatsApp-Link kontaktieren, verlassen Sie diese
         Website. Die WhatsApp Ireland Limited verarbeitet Ihre Daten dann nach
@@ -211,7 +234,7 @@ export default function DatenschutzPage() {
         oder die E-Mail.
       </p>
 
-      <h2>11. KI-generierte Medien auf dieser Website</h2>
+      <h2>{nr(11)}. KI-generierte Medien auf dieser Website</h2>
       <p>
         Ein Teil der Bilder und Videos auf dieser Website wurde mit Hilfe
         künstlicher Intelligenz erzeugt. Diese Medien sind sichtbar als

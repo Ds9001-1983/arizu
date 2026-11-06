@@ -42,7 +42,7 @@ for (const slug of RECHNER_LEISTUNGEN) {
   });
 }
 
-test("Privatkundenseite führt zum zentralen Formular", async ({ page }) => {
+test("Privatkundenseite zeigt ein eigenes Anfrageformular", async ({ page }) => {
   await page.goto("/privatkunden");
   const main = page.locator("main");
 
@@ -54,9 +54,18 @@ test("Privatkundenseite führt zum zentralen Formular", async ({ page }) => {
     /schätzen/,
   );
 
+  // Dennis, 06.11.2026: Ohne Rechner endet der Weg auf der Seite selbst.
+  // Die Seite richtet sich an Privatkunden, also keine Auswahl privat/geschäftlich.
   await main.getByRole("link", { name: "Jetzt anfragen" }).click();
-  await expect(page).toHaveURL(/\/kontakt#anfrage$/);
+  await expect(page).toHaveURL(/\/privatkunden#anfrage$/);
+  await expect(page.locator("#anfrage")).toHaveCount(1);
   await expect(page.locator("#anfrage form")).toBeVisible();
+  await expect(page.locator("#anfrage input[name='kundenart']")).toHaveCount(0);
+
+  // Der Kontaktweg für Telefon und WhatsApp bleibt.
+  await expect(
+    page.getByRole("link", { name: "Zum Kontakt", exact: true }),
+  ).toHaveAttribute("href", "/kontakt");
 });
 
 test("Startseite und Weiche werben nicht mehr mit einer Preisschätzung", async ({
@@ -83,6 +92,25 @@ test("Header bietet keinen Preisrechner mehr an", async ({ page }, testInfo) => 
     }
     await expect(page.locator('a[href*="richtpreis"]')).toHaveCount(0);
   }
+});
+
+test("Rechtstexte erwähnen keinen Preisrechner", async ({ page }) => {
+  for (const pfad of ["/datenschutz", "/agb", "/impressum"]) {
+    await page.goto(pfad);
+    expect(await page.locator("main").innerText(), pfad).not.toContain("Preisrechner");
+  }
+
+  // Abschnitt 4 fällt weg, die Nummern bleiben lückenlos.
+  await page.goto("/datenschutz");
+  const nummern = (await page.locator("main h2").allInnerTexts())
+    .map((t) => t.match(/^(\d+)\./)?.[1])
+    .filter(Boolean)
+    .map(Number);
+  expect(nummern).toEqual(nummern.map((_, i) => i + 1));
+  expect(nummern).toHaveLength(10);
+  await expect(page.locator("main h2", { hasText: "Anfrageformular" })).toHaveText(
+    "4. Anfrageformular",
+  );
 });
 
 test("llms.txt verspricht keine Online-Preisschätzung", async ({ request }) => {
