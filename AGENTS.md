@@ -26,6 +26,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Editierbar ist, was in **Euro** ausgedrückt ist. Rechengrößen bleiben im
   Code: Turnus-Faktoren, der Objektart-Faktor, der Einmal-Zuschlag von 20 %,
   die Spanne von −4/+18 %, die 20 Freikilometer und der MwSt.-Satz.
+- **Preisrechner seit 06.11.2026 ausgeschaltet** (Arian, 05.11.: erst einmal
+  nur Anfragen). Schalter ist `PREISRECHNER_AKTIV` in `lib/features.ts`.
+  Ob eine Leistung gerade einen Rechner zeigt, entscheidet
+  `zeigtPreisrechner(service)` aus `lib/services.ts`, nie
+  `hasPublicCalculator` allein. Texte, die den Rechner erwähnen, stehen in
+  beiden Fassungen im Code (`mitRechner(an, aus)`). Konfigurator, Specs,
+  `check:pricing` und `/intern/preise` bleiben bewusst erhalten.
 - `calc` bekommt die Sätze als **zweiten Pflichtparameter**. Kein
   Default-Wert: Ein Default machte aus einer vergessenen Aufrufstelle einen
   stillen Fehler mit alten Preisen statt eines Compilerfehlers.

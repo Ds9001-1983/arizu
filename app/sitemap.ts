@@ -13,9 +13,9 @@ import { services } from "@/lib/services";
    Reine Metadaten-, Design- oder Preisänderungen zählen nicht — Google
    ignoriert lastmod, sobald es nicht zum sichtbaren Inhalt passt. */
 const LAST_CONTENT_UPDATE = {
-  home: "2026-11-04",
-  privatkunden: "2026-08-19",
-  geschaeftskunden: "2026-11-04",
+  home: "2026-11-06",
+  privatkunden: "2026-11-06",
+  geschaeftskunden: "2026-11-06",
   kontakt: "2026-11-04",
   impressum: "2026-11-04",
   datenschutz: "2026-08-19",
@@ -24,9 +24,9 @@ const LAST_CONTENT_UPDATE = {
 // Record über alle Slugs: Kommt eine Leistung dazu, fehlt ihr Datum hier als
 // Compilerfehler statt still.
 const SERVICE_UPDATE: Record<ConfiguratorSlug, string> = {
-  gebaeudereinigung: "2026-11-04",
-  gartenpflege: "2026-11-04",
-  entruempelung: "2026-11-04",
+  gebaeudereinigung: "2026-11-06",
+  gartenpflege: "2026-11-06",
+  entruempelung: "2026-11-06",
   objektbetreuung: "2026-11-04",
 };
 

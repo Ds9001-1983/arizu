@@ -29,6 +29,7 @@ import {
   serviceArea,
   whatsappHref,
 } from "@/lib/business";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { faqSchema, HOME_TITLE, pageMetadata } from "@/lib/seo";
 import type { Faq } from "@/lib/services";
 
@@ -101,9 +102,14 @@ const homeFaqs: Faq[] = [
     question: "Arbeiten Sie für Privatkunden und für Unternehmen?",
     answer:
       "Ja. Wir arbeiten für Privathaushalte, Eigentümer, Hausverwaltungen und " +
-      "Unternehmen. Privatkunden sehen für Reinigung, Gartenpflege und " +
-      "Entrümpelung vorab online einen Preisrahmen. Geschäftskunden bekommen " +
-      "ein Angebot nach einer kostenlosen Begehung.",
+      "Unternehmen. " +
+      (PREISRECHNER_AKTIV
+        ? "Privatkunden sehen für Reinigung, Gartenpflege und Entrümpelung " +
+          "vorab online einen Preisrahmen. Geschäftskunden bekommen ein " +
+          "Angebot nach einer kostenlosen Begehung."
+        : "Privatkunden bekommen nach einer kostenlosen Besichtigung einen " +
+          "verbindlichen Festpreis, Geschäftskunden ein Angebot nach einer " +
+          "kostenlosen Begehung."),
   },
   {
     question: "Übernehmen Sie mehrere Leistungen für dasselbe Objekt?",

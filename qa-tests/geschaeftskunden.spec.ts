@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { PREISRECHNER_AKTIV } from "../lib/features";
 
 /* ==================================================================
    Trennung Privat- und Geschäftskunden (Kundengespräch 14.08.2026).
@@ -55,8 +56,13 @@ test("Startseite zeigt alle Leistungen, der Rechner liegt im Privatkundenbereich
   ).toBeVisible();
 
   await page.goto("/privatkunden");
-  await expect(page.getByRole("tablist")).toHaveCount(1);
-  await expect(page.locator("#richtpreis")).toBeVisible();
+  if (PREISRECHNER_AKTIV) {
+    await expect(page.getByRole("tablist")).toHaveCount(1);
+    await expect(page.locator("#richtpreis")).toBeVisible();
+  } else {
+    await expect(page.getByRole("tablist")).toHaveCount(0);
+    await expect(page.locator("#richtpreis")).toHaveCount(0);
+  }
 });
 
 test("Weiche führt in den Geschäftskundenbereich", async ({ page }) => {
@@ -72,7 +78,11 @@ test("Weiche führt in den Privatkundenbereich", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /Zum Privatkundenbereich/ }).click();
   await expect(page).toHaveURL(/\/privatkunden$/);
-  await expect(page.getByRole("tablist")).toBeVisible();
+  if (PREISRECHNER_AKTIV) {
+    await expect(page.getByRole("tablist")).toBeVisible();
+  } else {
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Klare Leistungen.");
+  }
 });
 
 test("Privatkundenkacheln stehen in der vereinbarten Reihenfolge", async ({
@@ -119,6 +129,7 @@ test("weiße Grundfläche und kühle helle Karten bilden die vereinbarte Farbrol
 test("genau drei Live-Rechner zeigen Preisrahmen, Hinweise und Anfrage-CTA", async ({
   page,
 }) => {
+  test.skip(!PREISRECHNER_AKTIV, "Preisrechner ist ausgeschaltet (lib/features.ts).");
   await page.goto("/privatkunden");
   const tablist = page.getByRole("tablist", { name: "Leistung wählen" });
 
@@ -189,7 +200,9 @@ test("vereinbarte Haupt- und Anfrage-Texte stehen vollständig auf den Seiten", 
     "Wir bieten Ihnen professionelle Dienstleistungen aus einer Hand. Wir stehen für zuverlässige Ausführung, transparente Abläufe und faire Preise.",
   );
   await expect(privatHero).toContainText(
-    "Dank unserer digitalen Preiseinschätzung können Sie sich direkt einen ersten Eindruck von den Kosten verschaffen – schnell, unkompliziert und ohne Kontaktdaten.",
+    PREISRECHNER_AKTIV
+      ? "Dank unserer digitalen Preiseinschätzung können Sie sich direkt einen ersten Eindruck von den Kosten verschaffen – schnell, unkompliziert und ohne Kontaktdaten."
+      : "Schildern Sie uns kurz Ihr Vorhaben. Die Besichtigung vor Ort ist kostenlos und unverbindlich.",
   );
 
   await page.goto("/kontakt");
@@ -477,6 +490,7 @@ test("Kostenfragen fehlen sichtbar und in den strukturierten FAQ-Daten", async (
 test("Büro- und Praxisreinigung ist aus dem Privatrechner verschwunden", async ({
   page,
 }) => {
+  test.skip(!PREISRECHNER_AKTIV, "Preisrechner ist ausgeschaltet (lib/features.ts).");
   await page.goto("/leistungen/gebaeudereinigung");
   const rechner = page.locator("#rechner");
   await expect(rechner.getByText("Büro- oder Praxisreinigung")).toHaveCount(0);

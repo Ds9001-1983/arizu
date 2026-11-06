@@ -1,5 +1,6 @@
 import { business, einsatzorteText, serviceArea, SITE_URL } from "@/lib/business";
-import { services } from "@/lib/services";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
+import { services, zeigtPreisrechner } from "@/lib/services";
 
 /* ==================================================================
    llms.txt — der GEO-Teil des Auftrags.
@@ -37,8 +38,12 @@ export function GET() {
     `- Privatkundenbereich: ${SITE_URL}/privatkunden`,
     "- Kundschaft: Privathaushalte sowie Unternehmen, Praxen, " +
       "Hausverwaltungen und Eigentümergemeinschaften. Die Website trennt " +
-      "beide Wege: Privatkunden erhalten für drei Leistungen direkt eine " +
-      "unverbindliche Preisschätzung, " +
+      "beide Wege: " +
+      (PREISRECHNER_AKTIV
+        ? "Privatkunden erhalten für drei Leistungen direkt eine " +
+          "unverbindliche Preisschätzung, "
+        : "Privatkunden fragen direkt an und erhalten nach einer kostenlosen " +
+          "Besichtigung einen Festpreis, ") +
       "Geschäftskunden schildern ihren Bedarf und erhalten ein Angebot nach " +
       "Begehung.",
     "",
@@ -54,7 +59,7 @@ export function GET() {
     lines.push(`Umfasst: ${s.items.join(", ")}.`);
     lines.push("");
     lines.push(
-      `${s.hasPublicCalculator ? "Details und Preisschätzung" : "Details und Anfrage"}: ` +
+      `${zeigtPreisrechner(s) ? "Details und Preisschätzung" : "Details und Anfrage"}: ` +
         `${SITE_URL}/leistungen/${s.slug}`,
     );
     lines.push("");
@@ -79,13 +84,17 @@ export function GET() {
     "",
     "## Preise",
     "",
-    "Für Gebäudereinigung, Grün- und Außenanlagenpflege sowie Entrümpelung " +
-      "und Auflösung gibt es einen Rechner, der sofort einen voraussichtlichen " +
-      "Preisrahmen ausgibt — ohne dass Kontaktdaten nötig sind. Hausmeisterservice " +
-      "und Objektbetreuung (inklusive Winterdienst) werden nach einer " +
-      "persönlichen Anfrage kalkuliert. " +
-      "Angezeigt wird eine Spanne inklusive 19 % Mehrwertsteuer. Der " +
-      "verbindliche Festpreis folgt nach einer kostenlosen Besichtigung.",
+    PREISRECHNER_AKTIV
+      ? "Für Gebäudereinigung, Grün- und Außenanlagenpflege sowie Entrümpelung " +
+        "und Auflösung gibt es einen Rechner, der sofort einen voraussichtlichen " +
+        "Preisrahmen ausgibt — ohne dass Kontaktdaten nötig sind. Hausmeisterservice " +
+        "und Objektbetreuung (inklusive Winterdienst) werden nach einer " +
+        "persönlichen Anfrage kalkuliert. " +
+        "Angezeigt wird eine Spanne inklusive 19 % Mehrwertsteuer. Der " +
+        "verbindliche Festpreis folgt nach einer kostenlosen Besichtigung."
+      : "Alle Leistungen werden nach einer persönlichen Anfrage kalkuliert. " +
+        "Eine Online-Preisschätzung gibt es derzeit nicht. Der verbindliche " +
+        "Festpreis folgt nach einer kostenlosen Besichtigung.",
     "",
     "Privathaushalte können 20 % der Arbeitskosten als haushaltsnahe " +
       "Dienstleistung von der Steuer absetzen (§ 35a EStG, bis 4.000 € pro " +

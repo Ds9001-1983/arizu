@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { business, whatsappHref } from "@/lib/business";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { cn } from "@/lib/utils";
 
 /**
@@ -28,6 +29,9 @@ import { cn } from "@/lib/utils";
  * - Geschäftskunden: „Bedarf schildern“ — dort gibt es bewusst keinen
  *   öffentlichen Preis (Kundengespräch 14.08.2026)
  * - Hausmeisterservice: „Anfragen“, die Leistung hat keinen Rechner
+ * Solange der Rechner aus ist (lib/features.ts), heißt die Aktion überall
+ * außer bei Geschäftskunden „Anfragen“: auf Leistungsseiten zum Formular
+ * der Seite, sonst zum zentralen Formular auf /kontakt.
  * Sie steht rechts, im Daumenbereich der meisten Nutzer, weiß auf Navy —
  * hervorgehoben ohne Goldfläche (Arians Wunsch vom 04.11.2026).
  *
@@ -44,7 +48,7 @@ function aktionFuer(pfad: string, rechnerSlugs: string[]): Aktion {
   if (pfad.startsWith("/geschaeftskunden")) {
     return { href: "#bedarf", label: "Bedarf schildern", icon: ClipboardList };
   }
-  if (pfad === "/privatkunden") {
+  if (pfad === "/privatkunden" && PREISRECHNER_AKTIV) {
     return { href: "#richtpreis", label: "Preis schätzen", icon: Calculator };
   }
   if (pfad.startsWith("/leistungen/")) {
@@ -53,7 +57,9 @@ function aktionFuer(pfad: string, rechnerSlugs: string[]): Aktion {
       ? { href: "#rechner", label: "Preis schätzen", icon: Calculator }
       : { href: "#anfrage", label: "Anfragen", icon: Send };
   }
-  return { href: "/privatkunden#richtpreis", label: "Preis schätzen", icon: Calculator };
+  return PREISRECHNER_AKTIV
+    ? { href: "/privatkunden#richtpreis", label: "Preis schätzen", icon: Calculator }
+    : { href: "/kontakt#anfrage", label: "Anfragen", icon: Send };
 }
 
 function istEingabe(el: EventTarget | null): boolean {

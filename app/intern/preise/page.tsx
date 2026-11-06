@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Container } from "@/components/site/container";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { dbConfigured, listRateOverrides, type PreisZeile } from "@/lib/db";
 import {
   configurators,
@@ -89,6 +90,14 @@ export default async function PreisePage({
         </Link>
 
         <h1 className="mt-6 font-display text-2xl text-navy">Preise</h1>
+        {!PREISRECHNER_AKTIV && (
+          <p className="mt-4 max-w-2xl rounded-sm border border-gold/40 bg-gold/8 px-4 py-3 text-sm leading-relaxed text-navy">
+            <strong>Der Preisrechner ist auf der Website zurzeit ausgeschaltet.</strong>{" "}
+            Besucher sehen keine Preise, sondern fragen direkt an. Ihre Sätze
+            bleiben hier gespeichert und gelten wieder, sobald der Rechner
+            eingeschaltet wird.
+          </p>
+        )}
         <div className="mt-3 max-w-2xl space-y-2 text-sm leading-relaxed text-ink-muted">
           <p>
             <strong className="text-navy">Leer heißt: der Standard daneben gilt.</strong>{" "}

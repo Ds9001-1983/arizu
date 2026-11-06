@@ -9,15 +9,18 @@ import { KonfiguratorTabs } from "@/components/site/konfigurator-tabs";
 import { SectionHeading } from "@/components/site/section-heading";
 import { ServiceGrid } from "@/components/site/service-grid";
 import { serviceArea } from "@/lib/business";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { getAllRates } from "@/lib/rates-server";
 import { breadcrumbSchema, faqSchema, pageMetadata } from "@/lib/seo";
 import { services } from "@/lib/services";
 
 export const metadata: Metadata = pageMetadata({
   title: `Gebäudedienste für Privatkunden in ${serviceArea.center}`,
-  description:
-    "Preise für Gebäudereinigung, Gartenpflege und Entrümpelung online und " +
-    "ohne Kontaktdaten schätzen. Hausmeisterservice persönlich anfragen.",
+  description: PREISRECHNER_AKTIV
+    ? "Preise für Gebäudereinigung, Gartenpflege und Entrümpelung online und " +
+      "ohne Kontaktdaten schätzen. Hausmeisterservice persönlich anfragen."
+    : "Gebäudereinigung, Gartenpflege, Entrümpelung und Hausmeisterservice " +
+      "für Privathaushalte in Elmshorn und Umgebung. Besichtigung kostenlos.",
   path: "/privatkunden",
 });
 
@@ -30,8 +33,12 @@ const privateFaqs = services.map((s) => s.faqs[0]);
 export const revalidate = 86_400;
 
 export default async function PrivatkundenPage() {
-  const allRates = await getAllRates();
-  const publicRates = {
+  /* Rechner aus (lib/features.ts): keine Datenbankabfrage, kein Rechner-
+     Abschnitt. Ein eigenes Formular bekommt die Seite trotzdem nicht — seit
+     dem Meeting vom 19.08.2026 läuft die Privatkunden-Anfrage über das
+     zentrale Formular auf /kontakt. */
+  const allRates = PREISRECHNER_AKTIV ? await getAllRates() : null;
+  const publicRates = allRates && {
     gebaeudereinigung: allRates.gebaeudereinigung,
     gartenpflege: allRates.gartenpflege,
     entruempelung: allRates.entruempelung,
@@ -74,26 +81,37 @@ export default async function PrivatkundenPage() {
             as="h1"
             invert
             eyebrow="Privatkunden"
-            title="Klare Leistungen. Eine Preisschätzung vor der Anfrage."
+            title={
+              PREISRECHNER_AKTIV
+                ? "Klare Leistungen. Eine Preisschätzung vor der Anfrage."
+                : "Klare Leistungen. Ein Ansprechpartner."
+            }
             lead={
               <>
                 Wir bieten Ihnen professionelle Dienstleistungen aus einer Hand. Wir
                 stehen für zuverlässige Ausführung, transparente Abläufe und faire
                 Preise.
-                <span className="mt-4 block">
-                  Dank unserer digitalen Preiseinschätzung können Sie sich direkt
-                  einen ersten Eindruck von den Kosten verschaffen – schnell,
-                  unkompliziert und ohne Kontaktdaten.
-                </span>
+                {PREISRECHNER_AKTIV ? (
+                  <span className="mt-4 block">
+                    Dank unserer digitalen Preiseinschätzung können Sie sich direkt
+                    einen ersten Eindruck von den Kosten verschaffen – schnell,
+                    unkompliziert und ohne Kontaktdaten.
+                  </span>
+                ) : (
+                  <span className="mt-4 block">
+                    Schildern Sie uns kurz Ihr Vorhaben. Die Besichtigung vor Ort
+                    ist kostenlos und unverbindlich.
+                  </span>
+                )}
               </>
             }
           />
 
           <a
-            href="#richtpreis"
+            href={PREISRECHNER_AKTIV ? "#richtpreis" : "/kontakt#anfrage"}
             className="mt-9 inline-flex items-center gap-2 rounded-sm bg-white px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:bg-white/85"
           >
-            Preisschätzung ansehen
+            {PREISRECHNER_AKTIV ? "Preisschätzung ansehen" : "Jetzt anfragen"}
             <ArrowRight className="size-4" aria-hidden />
           </a>
         </Container>
@@ -139,18 +157,20 @@ export default async function PrivatkundenPage() {
         </Container>
       </section>
 
-      <section id="richtpreis" className="scroll-mt-20 bg-mist/40 py-20 sm:py-24">
-        <Container>
-          <SectionHeading
-            eyebrow="Preisschätzung in 60 Sekunden"
-            title="Was kostet das? Sehen Sie selbst."
-            lead="Sie bekommen sofort eine Zahl — ohne Ihre Daten abzugeben. Erst danach entscheiden Sie, ob Sie anfragen möchten."
-          />
-          <div className="mt-12">
-            <KonfiguratorTabs rates={publicRates} />
-          </div>
-        </Container>
-      </section>
+      {publicRates && (
+        <section id="richtpreis" className="scroll-mt-20 bg-mist/40 py-20 sm:py-24">
+          <Container>
+            <SectionHeading
+              eyebrow="Preisschätzung in 60 Sekunden"
+              title="Was kostet das? Sehen Sie selbst."
+              lead="Sie bekommen sofort eine Zahl — ohne Ihre Daten abzugeben. Erst danach entscheiden Sie, ob Sie anfragen möchten."
+            />
+            <div className="mt-12">
+              <KonfiguratorTabs rates={publicRates} />
+            </div>
+          </Container>
+        </section>
+      )}
 
       <section className="py-20 sm:py-24">
         <Container>

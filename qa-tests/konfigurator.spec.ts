@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { PREISRECHNER_AKTIV } from "../lib/features";
 
 /* ==================================================================
    Der Konfigurator ist das Alleinstellungsmerkmal des Projekts — er wird
@@ -30,134 +31,194 @@ async function angabenAusfuellen(page: import("@playwright/test").Page, slug: st
   await page.locator(`#k-${slug}-consent`).check();
 }
 
-test("Privatkundenbereich: Preis ändert sich bei Eingabe", async ({ page }) => {
-  await page.goto("/privatkunden");
-  const panel = page.getByRole("tabpanel");
-  await panel.scrollIntoViewIfNeeded();
+test.describe("Preisrechner", () => {
+  // Ausgeschaltet seit 06.11.2026 (Arian, 05.11.). Die Tests bleiben, damit
+  // der Rechner beim Wiedereinschalten sofort wieder geprüft wird.
+  test.skip(!PREISRECHNER_AKTIV, "Preisrechner ist ausgeschaltet (lib/features.ts).");
 
-  const preis = panel.locator("p[aria-live='polite']");
-  await expect(preis).toHaveText(PREIS);
-  const vorher = await preis.textContent();
+  test("Privatkundenbereich: Preis ändert sich bei Eingabe", async ({ page }) => {
+    await page.goto("/privatkunden");
+    const panel = page.getByRole("tabpanel");
+    await panel.scrollIntoViewIfNeeded();
 
-  const flaeche = panel.getByLabel("Zu reinigende Fläche");
-  await flaeche.fill("300");
-  await flaeche.blur();
+    const preis = panel.locator("p[aria-live='polite']");
+    await expect(preis).toHaveText(PREIS);
+    const vorher = await preis.textContent();
 
-  await expect(preis).not.toHaveText(vorher!);
-  const untergrenze = (text: string) =>
-    Number(text.match(/([\d.]+)\s*€/)?.[1].replaceAll(".", ""));
-  expect(untergrenze((await preis.textContent())!)).toBeGreaterThan(
-    untergrenze(vorher!),
-  );
-});
+    const flaeche = panel.getByLabel("Zu reinigende Fläche");
+    await flaeche.fill("300");
+    await flaeche.blur();
 
-test("Leistung wechseln lädt den passenden Rechner", async ({ page }) => {
-  await page.goto("/privatkunden");
-  await page.getByRole("tab", { name: "Grün- und Außenanlagenpflege" }).click();
-  await expect(page.getByRole("tabpanel")).toContainText(
-    "Grün- und Außenanlagenpflege berechnen",
-  );
-  await expect(page.getByLabel("Rasenfläche")).toBeVisible();
-});
+    await expect(preis).not.toHaveText(vorher!);
+    const untergrenze = (text: string) =>
+      Number(text.match(/([\d.]+)\s*€/)?.[1].replaceAll(".", ""));
+    expect(untergrenze((await preis.textContent())!)).toBeGreaterThan(
+      untergrenze(vorher!),
+    );
+  });
 
-test("Grün- und Außenanlagenpflege weist Einmalposten getrennt aus", async ({
-  page,
-}) => {
-  await page.goto("/leistungen/gartenpflege");
-  const hecke = page.getByLabel("Heckenschnitt");
-  await hecke.scrollIntoViewIfNeeded();
-  await hecke.fill("50");
-  await hecke.blur();
-  await expect(page.getByText(/Zusätzlich einmalig ca\./)).toBeVisible();
-});
+  test("Leistung wechseln lädt den passenden Rechner", async ({ page }) => {
+    await page.goto("/privatkunden");
+    await page.getByRole("tab", { name: "Grün- und Außenanlagenpflege" }).click();
+    await expect(page.getByRole("tabpanel")).toContainText(
+      "Grün- und Außenanlagenpflege berechnen",
+    );
+    await expect(page.getByLabel("Rasenfläche")).toBeVisible();
+  });
 
-test("Anfragen führt zu Schritt 2, der Preis bleibt sichtbar", async ({ page }) => {
-  await page.goto("/leistungen/entruempelung");
-  await expect(page.getByText("Schritt 1 von 2")).toBeVisible();
+  test("Grün- und Außenanlagenpflege weist Einmalposten getrennt aus", async ({
+    page,
+  }) => {
+    await page.goto("/leistungen/gartenpflege");
+    const hecke = page.getByLabel("Heckenschnitt");
+    await hecke.scrollIntoViewIfNeeded();
+    await hecke.fill("50");
+    await hecke.blur();
+    await expect(page.getByText(/Zusätzlich einmalig ca\./)).toBeVisible();
+  });
 
-  await page
-    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-    .click();
+  test("Anfragen führt zu Schritt 2, der Preis bleibt sichtbar", async ({ page }) => {
+    await page.goto("/leistungen/entruempelung");
+    await expect(page.getByText("Schritt 1 von 2")).toBeVisible();
 
-  await expect(page.getByRole("heading", { name: "Fast geschafft." })).toBeVisible();
-  await expect(page.getByText("Schritt 2 von 2")).toBeVisible();
-  // Der Preisrahmen muss stehen bleiben — sonst weiß der Kunde nicht mehr,
-  // worauf er sich gerade einlässt.
-  await expect(page.locator("p[aria-live='polite']")).toHaveText(PREIS);
-  await expect(page.getByText("Ihre Angaben", { exact: true })).toBeVisible();
-});
+    await page
+      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+      .click();
 
-test("Schritt 2 verlangt Name, Adresse, Telefon und Einwilligung", async ({ page }) => {
-  await page.goto("/leistungen/entruempelung");
-  const k = rechner(page);
-  await k
-    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-    .click();
-  await k.getByRole("button", { name: "Anfrage senden" }).click();
+    await expect(page.getByRole("heading", { name: "Fast geschafft." })).toBeVisible();
+    await expect(page.getByText("Schritt 2 von 2")).toBeVisible();
+    // Der Preisrahmen muss stehen bleiben — sonst weiß der Kunde nicht mehr,
+    // worauf er sich gerade einlässt.
+    await expect(page.locator("p[aria-live='polite']")).toHaveText(PREIS);
+    await expect(page.getByText("Ihre Angaben", { exact: true })).toBeVisible();
+  });
 
-  await expect(k.getByText("Bitte geben Sie Ihren Namen an.")).toBeVisible();
-  await expect(k.getByText("Bitte Straße und Hausnummer angeben.")).toBeVisible();
-  await expect(k.getByText("Fünfstellige Postleitzahl.")).toBeVisible();
-  await expect(k.getByText("Bitte den Ort angeben.")).toBeVisible();
-  await expect(
-    k.getByText(/Ohne Ihre Einwilligung dürfen wir die Anfrage nicht verarbeiten/),
-  ).toBeVisible();
-});
+  test("Schritt 2 verlangt Name, Adresse, Telefon und Einwilligung", async ({ page }) => {
+    await page.goto("/leistungen/entruempelung");
+    const k = rechner(page);
+    await k
+      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+      .click();
+    await k.getByRole("button", { name: "Anfrage senden" }).click();
 
-/* Die Nachricht wird aus dem href gelesen, NICHT aus der geöffneten Seite:
-   wa.me leitet weiter, und dabei ändert sich die Kodierung der Emojis. Der
-   href ist der Wert, den der Browser tatsächlich verschickt. */
-async function whatsappNachricht(page: import("@playwright/test").Page) {
-  const href = await rechner(page).locator("a[data-whatsapp]").getAttribute("href");
-  return decodeURIComponent(new URL(href!).searchParams.get("text") ?? "");
-}
+    await expect(k.getByText("Bitte geben Sie Ihren Namen an.")).toBeVisible();
+    await expect(k.getByText("Bitte Straße und Hausnummer angeben.")).toBeVisible();
+    await expect(k.getByText("Fünfstellige Postleitzahl.")).toBeVisible();
+    await expect(k.getByText("Bitte den Ort angeben.")).toBeVisible();
+    await expect(
+      k.getByText(/Ohne Ihre Einwilligung dürfen wir die Anfrage nicht verarbeiten/),
+    ).toBeVisible();
+  });
 
-test("WhatsApp-Nachricht enthält Name, Adresse und die Konfigurator-Daten", async ({
-  page,
-}) => {
-  await page.goto("/leistungen/entruempelung");
-  await rechner(page)
-    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-    .click();
-  await angabenAusfuellen(page, "entruempelung");
+  /* Die Nachricht wird aus dem href gelesen, NICHT aus der geöffneten Seite:
+     wa.me leitet weiter, und dabei ändert sich die Kodierung der Emojis. Der
+     href ist der Wert, den der Browser tatsächlich verschickt. */
+  async function whatsappNachricht(page: import("@playwright/test").Page) {
+    const href = await rechner(page).locator("a[data-whatsapp]").getAttribute("href");
+    return decodeURIComponent(new URL(href!).searchParams.get("text") ?? "");
+  }
 
-  const text = await whatsappNachricht(page);
+  test("WhatsApp-Nachricht enthält Name, Adresse und die Konfigurator-Daten", async ({
+    page,
+  }) => {
+    await page.goto("/leistungen/entruempelung");
+    await rechner(page)
+      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+      .click();
+    await angabenAusfuellen(page, "entruempelung");
 
-  // Struktur: Leistung mit Emoji, Eckdaten als Liste, Preisrahmen, Kontaktblock
-  expect(text).toContain("📦 *Entrümpelung und Auflösung*");
-  expect(text).toMatch(/^• Zu räumende Fläche: \d+ m²$/m);
-  expect(text).toMatch(
-    /💶 Voraussichtlicher Preisrahmen: \*.* € – .* €\* einmalig, inkl\. MwSt\./,
-  );
-  expect(text).not.toContain("Ihr Rechner nennt");
-  expect(text).not.toContain("Richtpreis");
-  // Einsatzort gehört zum Auftrag, nicht zu den Kontaktdaten — er ist oft
-  // nicht die Wohnadresse des Anfragenden.
-  expect(text).toContain("📍 *Einsatzort*");
-  // Straße vor Ort — deutsche Lesereihenfolge
-  expect(text).toContain("Römerstraße 23, 51674 Wiehl");
-  expect(text.indexOf("*Einsatzort*")).toBeLessThan(text.indexOf("*Meine Kontaktdaten*"));
-  expect(text).toContain("*Meine Kontaktdaten*");
-  expect(text).toContain("👤 Dennis Sasse");
-  expect(text).toContain("📞 0179 5272126");
-  expect(text).toContain("Bitte melden Sie sich für einen Termin vor Ort.");
-});
+    const text = await whatsappNachricht(page);
 
-test("Vorschau zeigt genau die Nachricht, die verschickt wird", async ({ page }) => {
-  await page.goto("/leistungen/gartenpflege");
-  await rechner(page)
-    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-    .click();
-  await angabenAusfuellen(page, "gartenpflege");
+    // Struktur: Leistung mit Emoji, Eckdaten als Liste, Preisrahmen, Kontaktblock
+    expect(text).toContain("📦 *Entrümpelung und Auflösung*");
+    expect(text).toMatch(/^• Zu räumende Fläche: \d+ m²$/m);
+    expect(text).toMatch(
+      /💶 Voraussichtlicher Preisrahmen: \*.* € – .* €\* einmalig, inkl\. MwSt\./,
+    );
+    expect(text).not.toContain("Ihr Rechner nennt");
+    expect(text).not.toContain("Richtpreis");
+    // Einsatzort gehört zum Auftrag, nicht zu den Kontaktdaten — er ist oft
+    // nicht die Wohnadresse des Anfragenden.
+    expect(text).toContain("📍 *Einsatzort*");
+    // Straße vor Ort — deutsche Lesereihenfolge
+    expect(text).toContain("Römerstraße 23, 51674 Wiehl");
+    expect(text.indexOf("*Einsatzort*")).toBeLessThan(text.indexOf("*Meine Kontaktdaten*"));
+    expect(text).toContain("*Meine Kontaktdaten*");
+    expect(text).toContain("👤 Dennis Sasse");
+    expect(text).toContain("📞 0179 5272126");
+    expect(text).toContain("Bitte melden Sie sich für einen Termin vor Ort.");
+  });
 
-  await page.getByText("Nachricht ansehen, die verschickt wird").click();
-  const vorschau = (await rechner(page).locator("pre").innerText()).trim();
-  expect(vorschau).toContain("🌿 *Grün- und Außenanlagenpflege*");
-  expect(vorschau).toContain("💶 Voraussichtlicher Preisrahmen:");
+  test("Vorschau zeigt genau die Nachricht, die verschickt wird", async ({ page }) => {
+    await page.goto("/leistungen/gartenpflege");
+    await rechner(page)
+      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+      .click();
+    await angabenAusfuellen(page, "gartenpflege");
 
-  // Die Vorschau darf kein Marketing sein, sondern muss der Nachricht
-  // entsprechen — sonst ist sie schlimmer als keine.
-  expect((await whatsappNachricht(page)).trim()).toBe(vorschau);
+    await page.getByText("Nachricht ansehen, die verschickt wird").click();
+    const vorschau = (await rechner(page).locator("pre").innerText()).trim();
+    expect(vorschau).toContain("🌿 *Grün- und Außenanlagenpflege*");
+    expect(vorschau).toContain("💶 Voraussichtlicher Preisrahmen:");
+
+    // Die Vorschau darf kein Marketing sein, sondern muss der Nachricht
+    // entsprechen — sonst ist sie schlimmer als keine.
+    expect((await whatsappNachricht(page)).trim()).toBe(vorschau);
+  });
+
+  test("WhatsApp-Link ohne Angaben schickt nichts los", async ({ page }) => {
+    await page.goto("/leistungen/entruempelung");
+    await rechner(page)
+      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+      .click();
+    // Ohne ausgefüllte Felder muss der Klick abgefangen werden, sonst ginge
+    // eine Anfrage ohne Namen und Adresse raus.
+    await rechner(page).locator("a[data-whatsapp]").click();
+    await expect(rechner(page).getByText("Bitte geben Sie Ihren Namen an.")).toBeVisible();
+    await expect(page).toHaveURL(/leistungen\/entruempelung/);
+  });
+
+  test("Abgeschickte Anfrage bestätigt mit Namen und Ort", async ({ page }) => {
+    await page.goto("/leistungen/entruempelung");
+    await rechner(page)
+      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+      .click();
+    await angabenAusfuellen(page, "entruempelung");
+    await rechner(page).getByRole("button", { name: "Anfrage senden" }).click();
+
+    await expect(page.getByRole("heading", { name: /Danke, Dennis/ })).toBeVisible();
+    await expect(page.getByText(/Termin am Objekt in Wiehl/)).toBeVisible();
+  });
+
+  test("Adressblock ist als Einsatzort ausgewiesen, nicht als Wohnadresse", async ({
+    page,
+  }) => {
+    await page.goto("/leistungen/entruempelung");
+    const k = rechner(page);
+    await k
+      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+      .click();
+
+    await expect(k.getByText("Wo soll gearbeitet werden?")).toBeVisible();
+    await expect(
+      k.getByText("Adresse des Objekts — muss nicht Ihre eigene Adresse sein."),
+    ).toBeVisible();
+    await expect(k.getByText("Wie erreichen wir Sie?")).toBeVisible();
+  });
+
+  test("Zurück zum Rechner behält die Eingaben", async ({ page }) => {
+    await page.goto("/leistungen/entruempelung");
+    const flaeche = page.getByLabel("Zu räumende Fläche");
+    await flaeche.fill("175");
+    await flaeche.blur();
+
+    await page
+      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+      .click();
+    await page.getByRole("button", { name: "Angaben im Rechner ändern" }).click();
+
+    await expect(page.getByLabel("Zu räumende Fläche")).toHaveValue("175");
+  });
 });
 
 test("Kein wa.me — WhatsApp läuft über api.whatsapp.com", async ({ page }) => {
@@ -175,60 +236,6 @@ test("Kein wa.me — WhatsApp läuft über api.whatsapp.com", async ({ page }) =
       expect(href).toContain("api.whatsapp.com/send");
     }
   }
-});
-
-test("WhatsApp-Link ohne Angaben schickt nichts los", async ({ page }) => {
-  await page.goto("/leistungen/entruempelung");
-  await rechner(page)
-    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-    .click();
-  // Ohne ausgefüllte Felder muss der Klick abgefangen werden, sonst ginge
-  // eine Anfrage ohne Namen und Adresse raus.
-  await rechner(page).locator("a[data-whatsapp]").click();
-  await expect(rechner(page).getByText("Bitte geben Sie Ihren Namen an.")).toBeVisible();
-  await expect(page).toHaveURL(/leistungen\/entruempelung/);
-});
-
-test("Abgeschickte Anfrage bestätigt mit Namen und Ort", async ({ page }) => {
-  await page.goto("/leistungen/entruempelung");
-  await rechner(page)
-    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-    .click();
-  await angabenAusfuellen(page, "entruempelung");
-  await rechner(page).getByRole("button", { name: "Anfrage senden" }).click();
-
-  await expect(page.getByRole("heading", { name: /Danke, Dennis/ })).toBeVisible();
-  await expect(page.getByText(/Termin am Objekt in Wiehl/)).toBeVisible();
-});
-
-test("Adressblock ist als Einsatzort ausgewiesen, nicht als Wohnadresse", async ({
-  page,
-}) => {
-  await page.goto("/leistungen/entruempelung");
-  const k = rechner(page);
-  await k
-    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-    .click();
-
-  await expect(k.getByText("Wo soll gearbeitet werden?")).toBeVisible();
-  await expect(
-    k.getByText("Adresse des Objekts — muss nicht Ihre eigene Adresse sein."),
-  ).toBeVisible();
-  await expect(k.getByText("Wie erreichen wir Sie?")).toBeVisible();
-});
-
-test("Zurück zum Rechner behält die Eingaben", async ({ page }) => {
-  await page.goto("/leistungen/entruempelung");
-  const flaeche = page.getByLabel("Zu räumende Fläche");
-  await flaeche.fill("175");
-  await flaeche.blur();
-
-  await page
-    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-    .click();
-  await page.getByRole("button", { name: "Angaben im Rechner ändern" }).click();
-
-  await expect(page.getByLabel("Zu räumende Fläche")).toHaveValue("175");
 });
 
 test("Kontaktformular verlangt Kundengruppe und sendet die gewählte kundenart", async ({

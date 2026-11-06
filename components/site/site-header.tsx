@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Phone, X } from "lucide-react";
 import { business } from "@/lib/business";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { cn } from "@/lib/utils";
 import { Container } from "./container";
 import { LogoWordmark } from "./logo";
@@ -12,10 +13,13 @@ import { LogoWordmark } from "./logo";
 /* „Leistungen“ und „Preisrechner“ seit 04.11.2026: Vorher führte der Header
    nur in die beiden Bereiche, die Leistungen und der Rechner waren von oben
    nicht erreichbar. Der Rechner gilt nur für Privatkunden, deshalb führt der
-   Punkt direkt dorthin. */
+   Punkt direkt dorthin. Solange der Rechner aus ist (lib/features.ts),
+   entfällt der Punkt. */
 const nav = [
   { href: "/#leistungen", label: "Leistungen" },
-  { href: "/privatkunden#richtpreis", label: "Preisrechner" },
+  ...(PREISRECHNER_AKTIV
+    ? [{ href: "/privatkunden#richtpreis", label: "Preisrechner" }]
+    : []),
   { href: "/privatkunden", label: "Privatkunden" },
   { href: "/geschaeftskunden", label: "Geschäftskunden" },
   { href: "/kontakt", label: "Kontakt" },

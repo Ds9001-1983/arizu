@@ -1,6 +1,7 @@
 import { ArrowRight, Building2, Check, House } from "lucide-react";
 import { waehleKundenart } from "@/app/kundenart-actions";
 import type { LeadKundenart } from "@/lib/db";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { Container } from "./container";
 
 /* ==================================================================
@@ -26,15 +27,21 @@ import { Container } from "./container";
 
 /* Die Punkte stammen aus vorhandenen, abgestimmten Aussagen: Preisrechner und
    § 35a (Privatkunden, FAQ Gebäudereinigung), Sammelrechnung, Rahmenvertrag
-   und Arbeiten außerhalb der Öffnungszeiten (FAQ Geschäftskunden). */
+   und Arbeiten außerhalb der Öffnungszeiten (FAQ Geschäftskunden). Ohne
+   Rechner (lib/features.ts) treten an dessen Stelle der Festpreis nach der
+   Besichtigung und die Rückmeldung am selben Werktag (Anfrage-Abschnitt). */
 const wege = [
   {
     id: "privat" as const,
     icon: House,
     titel: "Für Privatkunden",
-    text: "Wohnung, Haus oder Garten: Sie sehen den Preisrahmen, bevor Sie anfragen.",
+    text: PREISRECHNER_AKTIV
+      ? "Wohnung, Haus oder Garten: Sie sehen den Preisrahmen, bevor Sie anfragen."
+      : "Wohnung, Haus oder Garten: Nach der Besichtigung nennen wir Ihnen einen verbindlichen Festpreis.",
     punkte: [
-      "Preis online schätzen, ohne Kontaktdaten",
+      PREISRECHNER_AKTIV
+        ? "Preis online schätzen, ohne Kontaktdaten"
+        : "Rückmeldung in der Regel am selben Werktag",
       "20 % der Arbeitskosten steuerlich absetzbar (§ 35a EStG)",
       "Besichtigung kostenlos und unverbindlich",
     ],

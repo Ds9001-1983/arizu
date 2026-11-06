@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { PREISRECHNER_AKTIV } from "../lib/features";
 
 /* ==================================================================
    Die Datenschutzerklärung macht zwei nachprüfbare Zusagen:
@@ -56,12 +57,19 @@ test("kein Cookie und kein Browserspeicher für Besucher", async ({ page, contex
     await page.goto(pfad, { waitUntil: "networkidle" });
   }
 
-  // Den Konfigurator bedienen — auch dabei darf nichts abgelegt werden.
+  // Den Konfigurator bzw. ohne Rechner das Formular der Leistungsseite
+  // bedienen — auch dabei darf nichts abgelegt werden.
   await page.goto("/leistungen/entruempelung");
-  await page
-    .locator("#rechner")
-    .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-    .click();
+  if (PREISRECHNER_AKTIV) {
+    await page
+      .locator("#rechner")
+      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+      .click();
+  } else {
+    const form = page.locator("#anfrage form");
+    await form.getByLabel(/^Name/).fill("Alex Muster");
+    await form.getByRole("button", { name: "Anfrage senden" }).click();
+  }
 
   const cookies = await context.cookies();
   expect(

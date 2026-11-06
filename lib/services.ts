@@ -10,7 +10,16 @@
    Keyword-Dichte — das ist der GEO-Teil des Auftrags.
    ================================================================== */
 
+import { PREISRECHNER_AKTIV } from "./features";
 import type { ConfiguratorSlug } from "./pricing";
+
+/* Texte, die den Preisrechner erwähnen, stehen in beiden Fassungen hier:
+   `mitRechner(an, aus)` liefert je nach Schalter in lib/features.ts die
+   passende. So kommt der Rechner mit einer Zeile zurück, ohne dass jemand
+   die alten Formulierungen aus Git zusammensuchen muss. */
+function mitRechner(an: string, aus = ""): string {
+  return PREISRECHNER_AKTIV ? an : aus;
+}
 
 export type Faq = { question: string; answer: string };
 
@@ -277,7 +286,8 @@ const serviceCatalog: Service[] = [
       title: "Gartenpflege & Heckenschnitt in Elmshorn",
       description:
         "Rasenmähen, Heckenschnitt und ganzjährige Grünanlagenpflege in " +
-        "Elmshorn, Kreis Pinneberg und Hamburg. Preis online schätzen.",
+        "Elmshorn, Kreis Pinneberg und Hamburg. " +
+        mitRechner("Preis online schätzen.", "Kostenlose Besichtigung."),
     },
     faqs: [
       {
@@ -291,9 +301,14 @@ const serviceCatalog: Service[] = [
       {
         question: "Übernehmen Sie auch die Entsorgung des Grünschnitts?",
         answer:
-          "Ja. Sie wählen im Konfigurator, ob eine kleine Menge per Anhänger " +
-          "oder eine größere Menge per Container abgeholt wird. Wenn Sie einen " +
-          "eigenen Kompost haben, lassen wir den Schnitt auf Wunsch vor Ort.",
+          mitRechner(
+            "Ja. Sie wählen im Konfigurator, ob eine kleine Menge per Anhänger " +
+              "oder eine größere Menge per Container abgeholt wird.",
+            "Ja. Eine kleine Menge holen wir per Anhänger ab, eine größere per " +
+              "Container.",
+          ) +
+          " Wenn Sie einen eigenen Kompost haben, lassen wir den Schnitt auf " +
+          "Wunsch vor Ort.",
       },
       {
         question: "Gibt es Verträge nur für die Saison?",
@@ -393,8 +408,13 @@ const serviceCatalog: Service[] = [
           "Was die Räumung kostet, hängt vor allem von drei Dingen ab: der " +
             "Fläche, wie voll die Räume sind und wie viele Treppen alles hinunter " +
             "muss. Erdgeschoss oder Aufzug ist am einfachsten, der dritte bis fünfte " +
-            "Stock ohne Aufzug deutlich aufwendiger. Mit dem Preisrechner auf dieser " +
-            "Seite sehen Sie Ihren Preisrahmen, ohne Kontaktdaten anzugeben.",
+            "Stock ohne Aufzug deutlich aufwendiger." +
+            mitRechner(
+              " Mit dem Preisrechner auf dieser Seite sehen Sie Ihren " +
+                "Preisrahmen, ohne Kontaktdaten anzugeben.",
+              " Bei der kostenlosen Besichtigung sehen wir uns all das an und " +
+                "nennen Ihnen danach einen Festpreis.",
+            ),
         ],
       },
       {
@@ -406,8 +426,11 @@ const serviceCatalog: Service[] = [
             "komplett oder nur den Teil, den Sie loswerden möchten.",
           "Neben der Fläche kommt es hier auf den Weg nach draußen an: " +
             "Eine enge Kellertreppe oder der Abstieg vom Dachboden kostet Zeit, " +
-            "jedes Stück muss einzeln getragen werden. Deshalb fragt der " +
-            "Preisrechner eigens nach Keller oder Dachboden.",
+            "jedes Stück muss einzeln getragen werden. " +
+            mitRechner(
+              "Deshalb fragt der Preisrechner eigens nach Keller oder Dachboden.",
+              "Deshalb sehen wir uns den Zugang bei der Besichtigung genau an.",
+            ),
           "Gerade in Kellern und Garagen stehen oft Reste von Farben, Ölen oder " +
             "Chemikalien. Das gehört nicht in den Hausmüll. Wir entsorgen " +
             "Sondermüll getrennt und fachgerecht und weisen die Entsorgung nach. " +
@@ -446,8 +469,10 @@ const serviceCatalog: Service[] = [
           {
             title: "Besichtigung",
             text:
-              "Wir sehen uns das Objekt vor Ort an, kostenlos und unverbindlich. " +
-              "Vorab können Sie mit dem Preisrechner einen ersten Preisrahmen schätzen.",
+              "Wir sehen uns das Objekt vor Ort an, kostenlos und unverbindlich." +
+              mitRechner(
+                " Vorab können Sie mit dem Preisrechner einen ersten Preisrahmen schätzen.",
+              ),
           },
           {
             title: "Festpreis",
@@ -496,9 +521,12 @@ const serviceCatalog: Service[] = [
         question: "Was kostet eine Haushaltsauflösung in Pinneberg?",
         answer:
           "Das hängt vor allem von der Fläche ab, davon, wie voll die Räume sind, " +
-          "und vom Zugang — also wie viele Treppen alles hinunter muss. Mit " +
-          "unserem Online-Preisrechner sehen Sie in einer Minute Ihren " +
-          "Preisrahmen, ohne Kontaktdaten anzugeben. Verbindlich wird es nach der " +
+          "und vom Zugang — also wie viele Treppen alles hinunter muss." +
+          mitRechner(
+            " Mit unserem Online-Preisrechner sehen Sie in einer Minute Ihren " +
+              "Preisrahmen, ohne Kontaktdaten anzugeben.",
+          ) +
+          " Verbindlich wird es nach der " +
           "kostenlosen Besichtigung: Dann nennen wir Ihnen einen Festpreis, in " +
           "dem verwertbares Mobiliar bereits angerechnet ist. Das gilt in " +
           "Pinneberg genauso wie in Elmshorn oder Hamburg.",
@@ -536,3 +564,15 @@ export function getService(slug: string): Service | undefined {
 }
 
 export const serviceSlugs = services.map((s) => s.slug);
+
+/**
+ * Ob die Leistung gerade öffentlich einen Preisrechner zeigt. Überall dort
+ * verwenden, wo bisher `hasPublicCalculator` allein entschieden hat:
+ * `hasPublicCalculator` sagt, ob es für die Leistung einen Rechner GIBT,
+ * der Schalter in lib/features.ts, ob er gerade an ist.
+ */
+export function zeigtPreisrechner(
+  service: Pick<Service, "hasPublicCalculator">,
+): boolean {
+  return PREISRECHNER_AKTIV && service.hasPublicCalculator;
+}

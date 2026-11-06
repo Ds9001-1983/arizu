@@ -4,7 +4,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { StickyCallBar } from "@/components/site/sticky-call-bar";
-import { services } from "@/lib/services";
+import { services, zeigtPreisrechner } from "@/lib/services";
 import { business, serviceArea, SITE_URL } from "@/lib/business";
 import { archivo, manrope } from "@/lib/fonts";
 import { HOME_TITLE, localBusinessSchema } from "@/lib/seo";
@@ -59,7 +59,7 @@ export default function RootLayout({
         {/* Nur die Slugs, nicht der Katalog: services.ts im Client-Bundle
             wären mehrere KB Text. */}
         <StickyCallBar
-          rechnerSlugs={services.filter((s) => s.hasPublicCalculator).map((s) => s.slug)}
+          rechnerSlugs={services.filter(zeigtPreisrechner).map((s) => s.slug)}
         />
       </body>
     </html>

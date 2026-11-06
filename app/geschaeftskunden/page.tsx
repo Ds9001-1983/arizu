@@ -18,6 +18,7 @@ import { ObjektartenGrid } from "@/components/site/objektarten";
 import { SectionHeading } from "@/components/site/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business, serviceArea } from "@/lib/business";
+import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { breadcrumbSchema, faqSchema, pageMetadata } from "@/lib/seo";
 import { services, type Faq } from "@/lib/services";
 
@@ -253,16 +254,26 @@ export default function GeschaeftskundenPage() {
 
       <section className="border-t border-mist py-12">
         <Container>
-          <p className="text-sm text-ink-muted">
-            Sie fragen für Ihren Privathaushalt an?{" "}
-            <Link
-              href="/privatkunden#richtpreis"
-              className="font-semibold text-navy underline"
-            >
-              Zur Preisschätzung
-            </Link>{" "}
-            — dort sehen Sie den Rahmen sofort, ohne Ihre Daten zu hinterlassen.
-          </p>
+          {PREISRECHNER_AKTIV ? (
+            <p className="text-sm text-ink-muted">
+              Sie fragen für Ihren Privathaushalt an?{" "}
+              <Link
+                href="/privatkunden#richtpreis"
+                className="font-semibold text-navy underline"
+              >
+                Zur Preisschätzung
+              </Link>{" "}
+              — dort sehen Sie den Rahmen sofort, ohne Ihre Daten zu hinterlassen.
+            </p>
+          ) : (
+            <p className="text-sm text-ink-muted">
+              Sie fragen für Ihren Privathaushalt an?{" "}
+              <Link href="/privatkunden" className="font-semibold text-navy underline">
+                Zum Privatkundenbereich
+              </Link>{" "}
+              — dort finden Sie alle Leistungen für Wohnung, Haus und Garten.
+            </p>
+          )}
         </Container>
       </section>
     </>

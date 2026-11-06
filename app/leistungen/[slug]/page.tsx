@@ -19,7 +19,7 @@ import {
   pageMetadata,
   serviceSchema,
 } from "@/lib/seo";
-import { getService, services } from "@/lib/services";
+import { getService, services, zeigtPreisrechner } from "@/lib/services";
 
 /* Alle vier Seiten sind statisch — es gibt keine dynamischen Slugs. */
 export function generateStaticParams() {
@@ -70,9 +70,11 @@ export default async function ServicePage({
   const spec = getConfigurator(slug);
   if (!service || !spec) notFound();
 
-  const rates = service.hasPublicCalculator
-    ? (await getAllRates())[service.slug]
-    : undefined;
+  /* Ohne Rechner (Hausmeisterservice, und alle Leistungen, solange der
+     Schalter in lib/features.ts aus ist) steht an seiner Stelle das
+     Anfrageformular. Die Datenbank wird dann gar nicht erst gefragt. */
+  const rechner = zeigtPreisrechner(service);
+  const rates = rechner ? (await getAllRates())[service.slug] : undefined;
 
   const others = services.filter((s) => s.slug !== service.slug);
 
@@ -133,12 +135,16 @@ export default async function ServicePage({
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
-                  href={service.hasPublicCalculator ? "#rechner" : "#anfrage"}
+                  href={rechner ? "#rechner" : "#anfrage"}
                   className="inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
                 >
-                  {service.hasPublicCalculator
+                  {/* Rechner nur ausgeschaltet: neutral „anfragen“. Der
+                      Hausmeisterservice hatte nie einen und behält seinen Text. */}
+                  {rechner
                     ? "Preisschätzung ansehen"
-                    : "Hausmeisterservice anfragen"}
+                    : service.hasPublicCalculator
+                      ? "Unverbindlich anfragen"
+                      : "Hausmeisterservice anfragen"}
                   <ArrowRight className="size-4" aria-hidden />
                 </Link>
                 <a
@@ -209,7 +215,7 @@ export default async function ServicePage({
       </section>
 
       {/* ------------------------------------------------------ Konfigurator */}
-      {service.hasPublicCalculator && rates ? (
+      {rechner && rates ? (
         <section id="rechner" className="scroll-mt-20 bg-mist/40 py-20 sm:py-24">
           <Container>
             <SectionHeading
@@ -332,9 +338,7 @@ export default async function ServicePage({
         </Container>
       </section>
 
-      {service.hasPublicCalculator && (
-        <AnfrageSection defaultService={service.slug} />
-      )}
+      {rechner && <AnfrageSection defaultService={service.slug} />}
     </>
   );
 }

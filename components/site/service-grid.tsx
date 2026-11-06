@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Building2, Sprout, SprayCan, Truck } from "lucide-react";
 import { AiMedia } from "@/components/ai/ai-media";
-import { services } from "@/lib/services";
+import { services, zeigtPreisrechner } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
 const icons = {
@@ -90,7 +90,7 @@ export function ServiceGrid({
                 </ul>
 
                 <span className="mt-6 inline-flex items-center gap-2 pt-1 font-display text-sm font-bold text-navy transition-colors group-hover:text-gold-deep">
-                  {uebersicht
+                  {uebersicht || (s.hasPublicCalculator && !zeigtPreisrechner(s))
                     ? `Mehr zu ${s.name}`
                     : s.hasPublicCalculator
                       ? "Preisschätzung ansehen"
