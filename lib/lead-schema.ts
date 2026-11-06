@@ -31,7 +31,14 @@ export const leadSchema = z.object({
     .union([z.string().trim().email("Bitte prüfen Sie die E-Mail-Adresse."), z.literal("")])
     .optional(),
   message: z.string().trim().max(3000).optional(),
-  service: z.enum(serviceSlugs as [string, ...string[]]).optional(),
+  /**
+   * "" heißt „Bitte wählen“: Das Kontaktformular hat keine vorbelegte
+   * Leistung, und das Feld ist freiwillig. Bis 06.11.2026 stand hier nur das
+   * Enum, und jede Anfrage ohne gewählte Leistung scheiterte mit „Invalid
+   * input“ (gefunden beim Test der Conversions API). Die Route macht aus ""
+   * ein undefined.
+   */
+  service: z.union([z.enum(serviceSlugs as [string, ...string[]]), z.literal("")]).optional(),
   /** Vom Konfigurator übergebener Ergebnistext. */
   konfigurator: z.string().trim().max(2000).optional(),
   /**

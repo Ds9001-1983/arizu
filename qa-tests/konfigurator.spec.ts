@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { PREISRECHNER_AKTIV } from "../lib/features";
+import { leadSchema } from "../lib/lead-schema";
 
 /* ==================================================================
    Der Konfigurator ist das Alleinstellungsmerkmal des Projekts — er wird
@@ -285,6 +286,13 @@ test("Kontaktformular verlangt Kundengruppe und sendet die gewählte kundenart",
     name: "Alex Muster",
     source: "formular",
   });
+  // Was das Formular wirklich schickt, muss die Prüfung der Route bestehen.
+  // Die Route ist hier abgefangen; bis 06.11.2026 fiel deshalb nicht auf,
+  // dass „Bitte wählen“ bei der Leistung (service: "") jede Anfrage scheitern
+  // ließ.
+  expect(payload?.service).toBe("");
+  const geprueft = leadSchema.safeParse(payload);
+  expect(geprueft.success, JSON.stringify(geprueft.error?.issues)).toBe(true);
 });
 
 test("interner Bereich ist ohne Anmeldung gesperrt", async ({ page }) => {
