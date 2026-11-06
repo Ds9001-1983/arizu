@@ -60,6 +60,31 @@ Jedes neue fotorealistische KI-Bild braucht dreierlei, sonst schlägt
 Auch Nein-Entscheide gehören ins story-spec — das ist der Nachweis, dass
 geprüft wurde.
 
+### Einwilligung und Meta-Tracking (seit 06.11.2026)
+- Vor einer Entscheidung im Banner lädt **nichts** von Meta, es entsteht kein
+  Cookie und nichts im Browserspeicher. Dasselbe gilt nach „Nur notwendige“.
+  `qa-tests/datenschutz.spec.ts` und `qa-tests/einwilligung.spec.ts` halten
+  das fest. Schlägt dort etwas fehl, lädt etwas ohne Einwilligung, und das
+  muss raus oder hinter den Banner, der Test wird nicht gelockert.
+- Ein neuer Dienst, der etwas auf dem Gerät speichert oder Daten an Dritte
+  schickt, braucht drei Dinge: eine Kategorie im Banner, einen Abschnitt in
+  der Datenschutzerklärung und einen Test. Danach `EINWILLIGUNG_VERSION` in
+  `lib/tracking/einwilligung.ts` erhöhen, damit der Banner neu fragt.
+- Bannertexte ändern heißt ebenfalls Version erhöhen. Die Texte je Version
+  stehen in Git. Das ist der Nachweis, welcher Text bei einer Einwilligung
+  zu sehen war (DSK-OH Digitale Dienste, Rn. 84 f.).
+- Die Ereignisnamen in `lib/tracking/meta.ts` (`META_EREIGNISSE`) sind die
+  Schnittstelle zu den Zielgruppen im Werbeanzeigenmanager. Umbenennen nur
+  zusammen mit den Zielgruppen.
+- `lib/tracking/meta-server.ts` liest `META_CAPI_TOKEN` und darf nur auf dem
+  Server landen (`import "server-only"`). Der Schlüssel steht im Body, nie
+  in der URL, und wird nie geloggt. Gesendet wird nur in Production oder
+  mit `META_TEST_EVENT_CODE`; den Testcode nie in Production setzen.
+- E-Mail und Telefon gehen nur beim Lead an Meta, nur als SHA-256, nur aus
+  `app/api/lead/route.ts`. Name, Anschrift und Nachricht nie.
+- Die Pixel-Ereignisse in den Tests laufen gegen ein leeres `fbevents.js`.
+  Kein Test darf echte Ereignisse an Meta schicken.
+
 ### Client-Bundle
 Das Performance-Budget liegt bei 150 KB Initial-JS. `react-hook-form`, `zod`
 und `@hookform/resolvers` wurden bewusst aus dem Client entfernt (waren rund

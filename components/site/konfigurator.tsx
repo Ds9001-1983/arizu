@@ -21,6 +21,8 @@ import {
   gross,
 } from "@/lib/pricing/types";
 import { getService } from "@/lib/services";
+import { neueEventId, pixelEreignis } from "@/lib/tracking/meta-client";
+import { META_EREIGNISSE } from "@/lib/tracking/meta";
 import { cn } from "@/lib/utils";
 
 /**
@@ -201,6 +203,8 @@ export function Konfigurator({
 
   /** Sendet den Datensatz an den Server. */
   async function uebermitteln(quelle: "formular" | "whatsapp") {
+    // Gemeinsame ID für Pixel und Conversions API (nur mit Einwilligung genutzt).
+    const eventId = neueEventId();
     const res = await fetch("/api/lead", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -212,6 +216,7 @@ export function Konfigurator({
         // Der Rechner steht ausschließlich im Privatkundenbereich.
         kundenart: "privat",
         consent: true,
+        eventId,
       }),
       // keepalive: Beim WhatsApp-Weg verlässt der Browser gleich die Seite.
       // Ohne das würde die Anfrage mitten im Flug abgebrochen und der Lead
@@ -220,6 +225,10 @@ export function Konfigurator({
     });
     const json = (await res.json()) as { ok: boolean; error?: string };
     if (!res.ok || !json.ok) throw new Error(json.error ?? "Unbekannter Fehler");
+    pixelEreignis(META_EREIGNISSE.anfrage, eventId, {
+      content_category: "Privatkunde",
+      content_name: slug,
+    });
   }
 
   async function absenden() {
@@ -756,6 +765,8 @@ export function Konfigurator({
                 rel="noopener"
                 onClick={whatsappKlick}
                 data-whatsapp
+                // Zählt als Anfrage (Lead), nicht zusätzlich als Kontaktklick.
+                data-meta-kein-kontakt
                 className="inline-flex items-center justify-center gap-2 rounded-sm border border-navy/20 px-6 py-3.5 font-display text-sm font-bold text-navy transition-colors hover:border-gold hover:text-gold-deep"
               >
                 <MessageCircle className="size-4" aria-hidden />

@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { bedarfText, serviceAusHauptleistung } from "@/lib/b2b";
 import { dbConfigured, insertLead } from "@/lib/db";
 import { leadSchema } from "@/lib/lead-schema";
 import { sendLeadMails } from "@/lib/mail";
+import { META_EREIGNISSE } from "@/lib/tracking/meta";
+import { metaAnfrageKontext, sendeAnMeta } from "@/lib/tracking/meta-server";
 
 /* nodemailer und der Neon-Treiber brauchen die Node-Runtime, nicht Edge. */
 export const runtime = "nodejs";
@@ -112,6 +114,30 @@ export async function POST(request: Request) {
         { status: 502 },
       );
     }
+  }
+
+  // Lead an Meta nur mit Marketing-Einwilligung (Cookie) und nur, wenn der
+  // Browser eine event_id mitgeschickt hat: Er meldet denselben Lead per
+  // Pixel, die ID verbindet beide. E-Mail und Telefon gehen ausschließlich
+  // als SHA-256-Hash raus, Name, Adresse und Nachricht gar nicht.
+  // after(): Der Besucher wartet nicht auf Meta.
+  const metaKontext = await metaAnfrageKontext();
+  if (metaKontext.erlaubt && data.eventId) {
+    const eventId = data.eventId;
+    after(() =>
+      sendeAnMeta({
+        name: META_EREIGNISSE.anfrage,
+        eventId,
+        kontext: metaKontext,
+        url: metaKontext.referer,
+        email: lead.email,
+        telefon: lead.phone,
+        daten: {
+          content_category: lead.kundenart === "geschaeft" ? "Geschäftskunde" : "Privatkunde",
+          ...(lead.service ? { content_name: lead.service } : {}),
+        },
+      }),
+    );
   }
 
   return NextResponse.json({ ok: true, id });

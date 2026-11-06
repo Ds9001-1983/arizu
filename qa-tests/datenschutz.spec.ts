@@ -1,25 +1,28 @@
 import { expect, test } from "@playwright/test";
 import { PREISRECHNER_AKTIV } from "../lib/features";
+import { EINWILLIGUNG_COOKIE, leseEinwilligung } from "../lib/tracking/einwilligung";
 
 /* ==================================================================
    Die Datenschutzerklärung macht zwei nachprüfbare Zusagen:
 
-     "Diese Website setzt beim Besuch keine Cookies und legt weder im
-      lokalen Speicher noch im Sitzungsspeicher Ihres Browsers etwas ab."
+     "Solange Sie keine Auswahl getroffen haben, setzt diese Website keine
+      Cookies, legt nichts im lokalen Speicher oder im Sitzungsspeicher
+      Ihres Browsers ab und lädt nichts von fremden Servern."
 
-     "Beim Aufruf dieser Website wird kein einziger fremder Server
-      kontaktiert."
+     "Ohne Ihre Einwilligung wird beim Aufruf dieser Website kein fremder
+      Server kontaktiert."
 
-   Daran hängt, dass die Seite ohne Cookie-Banner auskommt (§ 25 TDDDG
-   verlangt eine Einwilligung nur, wenn auf dem Endgerät gespeichert oder
-   ausgelesen wird). Beides ist hier als Test festgeschrieben — nicht aus
+   Seit 06.11.2026 gibt es einen Einwilligungsbanner für den Meta-Pixel.
+   Die Zusagen gelten deshalb für zwei Zustände: ohne Entscheidung (leerer
+   Browser) und nach „Nur notwendige“ (Voreinstellung aller Tests, siehe
+   playwright.config.ts). Beides ist hier festgeschrieben — nicht aus
    Ordnungsliebe, sondern weil eine eingebundene Google-Schrift, eine Karte
-   oder eine Reichweitenmessung die Aussage still falsch machen würde. Dann
-   stünde eine unzutreffende Behauptung in einem Rechtstext.
+   oder ein Pixel, der zu früh lädt, die Aussage still falsch machen würde.
+   Dann stünde eine unzutreffende Behauptung in einem Rechtstext.
 
    Schlägt einer dieser Tests fehl, ist nicht der Test das Problem: Dann
-   braucht die Seite entweder eine Einwilligungslösung, oder der eingebaute
-   Dienst muss wieder raus.
+   lädt etwas ohne Einwilligung, und das muss raus oder hinter den Banner.
+   Was nach „Alle akzeptieren“ passiert, prüft einwilligung.spec.ts.
    ================================================================== */
 
 const SEITEN = [
@@ -32,8 +35,8 @@ const SEITEN = [
   "/impressum",
 ];
 
-test("kein fremder Host wird kontaktiert", async ({ page, baseURL }) => {
-  const eigen = new URL(baseURL!).host;
+async function fremdeHosts(page: import("@playwright/test").Page, baseURL: string) {
+  const eigen = new URL(baseURL).host;
   const fremde = new Set<string>();
 
   page.on("request", (r) => {
@@ -45,44 +48,69 @@ test("kein fremder Host wird kontaktiert", async ({ page, baseURL }) => {
   for (const pfad of SEITEN) {
     await page.goto(pfad, { waitUntil: "networkidle" });
   }
+  return [...fremde];
+}
 
-  expect(
-    [...fremde],
-    "Die Datenschutzerklärung sagt zu, dass kein fremder Server kontaktiert wird.",
-  ).toEqual([]);
+test.describe("ohne Entscheidung im Banner", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("kein fremder Host wird kontaktiert", async ({ page, baseURL }) => {
+    expect(
+      await fremdeHosts(page, baseURL!),
+      "Die Datenschutzerklärung sagt zu, dass ohne Einwilligung kein fremder Server kontaktiert wird.",
+    ).toEqual([]);
+  });
+
+  test("kein Cookie und kein Browserspeicher", async ({ page, context }) => {
+    for (const pfad of SEITEN) {
+      await page.goto(pfad, { waitUntil: "networkidle" });
+    }
+
+    // Den Konfigurator bzw. ohne Rechner das Formular der Leistungsseite
+    // bedienen — auch dabei darf nichts abgelegt werden.
+    await page.goto("/leistungen/entruempelung");
+    if (PREISRECHNER_AKTIV) {
+      await page
+        .locator("#rechner")
+        .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
+        .dispatchEvent("click");
+    } else {
+      const form = page.locator("#anfrage form");
+      await form.getByLabel(/^Name/).fill("Alex Muster");
+      // requestSubmit statt Klick: Der offene Banner liegt auf dem Handy über
+      // dem Knopf, und genau dieser Zustand (keine Entscheidung) wird geprüft.
+      await form.evaluate((f) => (f as HTMLFormElement).requestSubmit());
+    }
+
+    const cookies = await context.cookies();
+    expect(
+      cookies.map((c) => c.name),
+      "Vor einer Entscheidung im Banner darf kein Cookie entstehen.",
+    ).toEqual([]);
+
+    const speicher = await page.evaluate(() => ({
+      lokal: Object.keys(localStorage),
+      sitzung: Object.keys(sessionStorage),
+    }));
+    expect(speicher.lokal).toEqual([]);
+    expect(speicher.sitzung).toEqual([]);
+  });
 });
 
-test("kein Cookie und kein Browserspeicher für Besucher", async ({ page, context }) => {
-  for (const pfad of SEITEN) {
-    await page.goto(pfad, { waitUntil: "networkidle" });
-  }
+test.describe("nach „Nur notwendige“", () => {
+  test("kein fremder Host wird kontaktiert", async ({ page, baseURL }) => {
+    expect(await fremdeHosts(page, baseURL!)).toEqual([]);
+  });
 
-  // Den Konfigurator bzw. ohne Rechner das Formular der Leistungsseite
-  // bedienen — auch dabei darf nichts abgelegt werden.
-  await page.goto("/leistungen/entruempelung");
-  if (PREISRECHNER_AKTIV) {
-    await page
-      .locator("#rechner")
-      .getByRole("button", { name: "Unverbindliche Anfrage stellen" })
-      .click();
-  } else {
-    const form = page.locator("#anfrage form");
-    await form.getByLabel(/^Name/).fill("Alex Muster");
-    await form.getByRole("button", { name: "Anfrage senden" }).click();
-  }
-
-  const cookies = await context.cookies();
-  expect(
-    cookies.map((c) => c.name),
-    "Ohne Cookies kommt die Seite ohne Einwilligungsbanner aus.",
-  ).toEqual([]);
-
-  const speicher = await page.evaluate(() => ({
-    lokal: Object.keys(localStorage),
-    sitzung: Object.keys(sessionStorage),
-  }));
-  expect(speicher.lokal).toEqual([]);
-  expect(speicher.sitzung).toEqual([]);
+  test("nur das Einwilligungs-Cookie, ohne Marketing", async ({ page, context }) => {
+    for (const pfad of SEITEN) {
+      await page.goto(pfad, { waitUntil: "networkidle" });
+    }
+    const cookies = await context.cookies();
+    expect(cookies.map((c) => c.name)).toEqual([EINWILLIGUNG_COOKIE]);
+    expect(leseEinwilligung(cookies[0].value)?.marketing).toBe(false);
+    expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([]);
+  });
 });
 
 test("Datenschutzerklärung nennt die Speicherdauer und hat keine offenen Stellen", async ({

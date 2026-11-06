@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/site/legal-layout";
 import { business } from "@/lib/business";
+import { EINWILLIGUNG_COOKIE } from "@/lib/tracking/einwilligung";
 import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { pageMetadata } from "@/lib/seo";
 
@@ -8,9 +9,9 @@ export const metadata: Metadata = pageMetadata({
   title: "Datenschutzerklärung",
   description: PREISRECHNER_AKTIV
     ? `Wie ${business.name} Ihre Anfrage verarbeitet, warum der Preisrechner ` +
-      "nichts überträgt, wie lange wir speichern und welche Rechte Sie haben."
-    : `Wie ${business.name} Ihre Anfrage verarbeitet, wie lange wir ` +
-      "speichern und welche Rechte Sie haben.",
+      "nichts überträgt, wann der Meta-Pixel läuft und welche Rechte Sie haben."
+    : `Wie ${business.name} Ihre Anfrage verarbeitet, wann der Meta-Pixel ` +
+      "läuft, wie lange wir speichern und welche Rechte Sie haben.",
   path: "/datenschutz",
 });
 
@@ -28,11 +29,25 @@ export const metadata: Metadata = pageMetadata({
    Live-Seite gemessen worden, nicht angenommen: kein einziger Fremdhost,
    kein Cookie, leerer localStorage und sessionStorage.
 
+   Seit 06.11.2026 (Angebot AG2026037, Positionen 3 und 4) gibt es einen
+   Einwilligungsbanner, den Meta-Pixel und die Conversions API. Ohne
+   Entscheidung gilt die Messung vom 14.08. weiter, und qa-tests/
+   einwilligung.spec.ts hält das fest: kein Cookie, kein fremder Host. Erst
+   „Alle akzeptieren“ bzw. das Häkchen bei Marketing lädt etwas von Meta.
+   Rechtsstand und Quellen stehen im Commit-Text vom 06.11.2026. Offene
+   Punkte tragen VERIFY-Kommentare im Quelltext, sichtbar ist davon nichts.
+
    Solange der Preisrechner aus ist (lib/features.ts, seit 06.11.2026),
    entfallen Abschnitt 4 und die übrigen Hinweise auf ihn, die folgenden
    Abschnitte rücken eine Nummer auf. Der Text beschreibt so weiter nur, was
    tatsächlich passiert. Querverweise auf Abschnittsnummern gibt es keine.
    ================================================================== */
+
+/** Vorhandene Profile aus lib/business.ts, leere Einträge fallen heraus. */
+const profilLinks = [
+  { name: "Instagram", url: business.social.instagram },
+  { name: "Facebook", url: business.social.facebook },
+].filter((p): p is { name: string; url: string } => Boolean(p.url));
 
 /** Abschnittsnummer: ohne Rechner fällt Abschnitt 4 weg. */
 function nr(n: number): number {
@@ -151,6 +166,13 @@ export default function DatenschutzPage() {
         Sie eine E-Mail-Adresse angeben, erhalten Sie eine Bestätigungsmail.
       </p>
       <p>
+        Haben Sie in die Kategorie „Marketing“ eingewilligt, melden wir das
+        erfolgreiche Absenden zusätzlich als Ereignis „Lead“ an Meta. Ihre
+        E-Mail-Adresse und Telefonnummer gehen dabei nur als Hashwert mit, Name,
+        Anschrift und Nachricht gar nicht. Einzelheiten stehen unten unter
+        „Meta-Pixel und Conversions API“.
+      </p>
+      <p>
         Im internen Bereich kann zu einer Anfrage eine abweichende
         Rechnungsanschrift ergänzt werden, außerdem der Bearbeitungsstand und
         eine interne Notiz. Diese Angaben stammen aus dem Kontakt mit Ihnen,
@@ -186,45 +208,201 @@ export default function DatenschutzPage() {
         unterstützt; eine Ende-zu-Ende-Verschlüsselung findet nicht statt.
       </p>
 
-      <h2>{nr(8)}. Cookies und Tracking</h2>
+      <h2 id="cookies">{nr(8)}. Cookies und Einwilligung</h2>
       <p>
-        Diese Website setzt beim Besuch <strong>keine Cookies</strong> und legt
-        weder im lokalen Speicher noch im Sitzungsspeicher Ihres Browsers etwas
-        ab. Wenn Sie auf der Startseite „Privatkunde“ oder „Geschäftskunde“
-        auswählen, wird ausschließlich der jeweilige Gesamtzähler um eins
-        erhöht. Wir speichern dabei kein einzelnes Ereignis, keinen Zeitpunkt,
-        keine IP-Adresse, keine Gerätekennung und kein Nutzerprofil. Die beiden
-        anonymen Summen zeigen uns lediglich, welcher Seitenweg häufiger gewählt
-        wird. Ein externer Analysedienst ist nicht beteiligt.
+        Solange Sie keine Auswahl getroffen haben, setzt diese Website{" "}
+        <strong>keine Cookies</strong>, legt nichts im lokalen Speicher oder im
+        Sitzungsspeicher Ihres Browsers ab und lädt nichts von fremden Servern.
+        Beim ersten Besuch fragen wir Sie in einem Banner, ob wir den Meta-Pixel
+        und die Conversions API nutzen dürfen. Dabei gibt es zwei Kategorien:
+      </p>
+      <ul>
+        <li>
+          <strong>Notwendig</strong> (immer aktiv): speichert Ihre Auswahl.
+        </li>
+        <li>
+          <strong>Marketing</strong> (nur mit Ihrer Einwilligung): Meta-Pixel und
+          Conversions API, beschrieben im nächsten Abschnitt.
+        </li>
+      </ul>
+      <p>
+        „Alle akzeptieren“ und „Nur notwendige“ stehen gleichwertig
+        nebeneinander, unter „Einstellungen“ wählen Sie je Kategorie. Das Feld
+        für Marketing ist nie vorausgewählt.
       </p>
       <p>
-        Ein Cookie-Banner ist nicht erforderlich, weil dabei keine Information
-        auf Ihrem Endgerät gespeichert oder daraus ausgelesen wird (§ 25 TDDDG).
-        Eine Wiedererkennung einzelner Besucher findet nicht statt.
+        Ihre Auswahl speichern wir im Cookie „{EINWILLIGUNG_COOKIE}“ in Ihrem
+        Browser: die Version des Banners, ob Sie Marketing erlaubt haben, und
+        den Zeitpunkt Ihrer Entscheidung. Das Cookie gilt zwölf Monate, danach
+        fragen wir erneut. Auf unserem Server legen wir kein eigenes Protokoll
+        Ihrer Entscheidung an. Das Speichern ist unbedingt erforderlich, damit
+        die Website sich Ihre Auswahl merkt und nicht bei jedem Aufruf erneut
+        fragt (§ 25 Abs. 2 Nr. 2 TDDDG). Rechtsgrundlage der Verarbeitung ist
+        Art. 6 Abs. 1 lit. c DSGVO in Verbindung mit Art. 7 Abs. 1 DSGVO, der
+        uns verpflichtet, eine Einwilligung nachweisen zu können.
       </p>
       <p>
-        Ein einziges Cookie wird gesetzt, wenn sich ein Mitarbeiter im internen
+        <strong>Widerruf:</strong> Über den Link „Cookie-Einstellungen“ am Ende
+        jeder Seite können Sie Ihre Auswahl jederzeit ändern und eine
+        Einwilligung mit Wirkung für die Zukunft widerrufen. Bei einem Widerruf
+        löschen wir die Meta-Cookies „_fbp“ und „_fbc“ in Ihrem Browser, und es
+        werden keine weiteren Daten an Meta übermittelt. Die Rechtmäßigkeit der
+        bis dahin erfolgten Verarbeitung bleibt unberührt.
+      </p>
+      <p>
+        Wenn Sie auf der Startseite „Privatkunde“ oder „Geschäftskunde“
+        auswählen, erhöhen wir unabhängig von Ihrer Auswahl im Banner den
+        jeweiligen Gesamtzähler um eins. Dabei speichern wir kein einzelnes
+        Ereignis, keinen Zeitpunkt, keine IP-Adresse, keine Gerätekennung und
+        kein Nutzerprofil. Die beiden anonymen Summen zeigen uns lediglich,
+        welcher Seitenweg häufiger gewählt wird. Nur wenn Sie in Marketing
+        eingewilligt haben, melden wir diese Wahl zusätzlich an Meta.
+      </p>
+      <p>
+        Ein weiteres Cookie wird gesetzt, wenn sich ein Mitarbeiter im internen
         Bereich anmeldet. Es ist für den Anmeldevorgang unbedingt erforderlich
-        (§ 25 Abs. 2 Nr. 2 TDDDG), enthält nur ein signiertes
-        Sitzungsmerkmal und keine personenbezogenen Daten. Für Besucher der
-        öffentlichen Seiten entsteht es nicht.
+        (§ 25 Abs. 2 Nr. 2 TDDDG), enthält nur ein signiertes Sitzungsmerkmal
+        und keine personenbezogenen Daten. Für Besucher der öffentlichen Seiten
+        entsteht es nicht.
       </p>
 
-      <h2>{nr(9)}. Keine Einbindung externer Dienste</h2>
+      <h2 id="meta">{nr(9)}. Meta-Pixel und Conversions API</h2>
       <p>
-        Beim Aufruf dieser Website wird <strong>kein einziger fremder Server
-        kontaktiert</strong>. Schriften, Bilder und Videos in den Seitenköpfen
-        werden von unserem eigenen Server geladen. Es besteht insbesondere
-        keine Verbindung zu Google-Servern, es wird also auch keine IP-Adresse
-        an Google übermittelt.
+        Nur wenn Sie in die Kategorie „Marketing“ eingewilligt haben, nutzen wir
+        den Meta-Pixel und die Conversions API der Meta Platforms Ireland
+        Limited, Merrion Road, Dublin 4, D04 X2K5, Irland („Meta“).
+        {/* VERIFY: Anschrift. Irisches Register (Firmennr. 462932) nennt Merrion
+            Road, die Meta-Business-Tools-Bedingungen vom 03.11.2025 nennen
+            Block J, Serpentine Avenue, Dublin 4. Recherche 06.11.2026. */}{" "}
+        Damit messen
+        wir, ob unsere Anzeigen auf Facebook und Instagram zu Anfragen führen,
+        und spielen Anzeigen an passende Zielgruppen aus.
+      </p>
+      <p>
+        <strong>So funktioniert es:</strong> Der Meta-Pixel ist ein Skript, das
+        Ihr Browser von Servern von Meta lädt. Er setzt die Cookies „_fbp“
+        (zufällige Kennung Ihres Browsers) und, wenn Sie über eine Anzeige
+        kommen, „_fbc“ (Kennung des Anzeigenklicks), und meldet Ereignisse an
+        Meta. Über die Conversions API meldet unser Server dieselben Ereignisse
+        zusätzlich direkt an Meta. Beide Meldungen tragen dieselbe zufällige
+        Ereignis-ID, damit Meta sie nur einmal zählt.
+      </p>
+      <p>
+        <strong>Diese Ereignisse melden wir:</strong>
+      </p>
+      <ul>
+        <li>Aufruf einer Seite</li>
+        <li>Aufruf einer Leistungsseite, mit dem Namen der Leistung</li>
+        <li>Wahl zwischen Privat- und Geschäftskundenbereich auf der Startseite</li>
+        <li>Klick auf unsere Telefonnummer oder den WhatsApp-Link</li>
+        <li>
+          erfolgreich abgeschickte Anfrage, mit der Angabe Privat- oder
+          Geschäftskunde und der gewählten Leistung
+        </li>
+      </ul>
+      <p>
+        <strong>Diese Daten werden dabei übermittelt:</strong> Ihre IP-Adresse,
+        Angaben zu Ihrem Browser (User-Agent), die Adresse der aufgerufenen
+        Seite, der Zeitpunkt, die Kennungen aus „_fbp“ und „_fbc“ sowie die
+        Ereignis-ID. Bei einer Anfrage zusätzlich Ihre E-Mail-Adresse und
+        Telefonnummer, aber nur als SHA-256-Hashwert. Meta kann diese Werte mit
+        den Angaben in einem Meta-Konto abgleichen. Name, Anschrift und den
+        Text Ihrer Nachricht übermitteln wir nicht. Automatische Ereignisse des
+        Pixels (etwa das selbständige Erfassen von Klicks) haben wir
+        abgeschaltet.
+      </p>
+      <p>
+        <strong>Zwecke:</strong> Messung der Wirkung unserer Werbung
+        (Conversion-Messung), Optimierung der Anzeigenauslieferung und Bildung
+        von Zielgruppen. Dazu gehören Zielgruppen aus Besuchern dieser Website,
+        etwa aus Besuchern, die den Geschäftskundenbereich gewählt haben, und
+        daraus abgeleitete ähnliche Zielgruppen („Lookalike Audiences“). Wir
+        erhalten von Meta nur zusammengefasste Auswertungen, keine Daten über
+        einzelne Personen. Haben Sie ein Konto bei Facebook oder Instagram,
+        kann Meta die Ereignisse Ihrem Konto zuordnen.
+      </p>
+      <p>
+        <strong>Rechtsgrundlage</strong> ist Ihre Einwilligung, für das Setzen
+        und Auslesen der Cookies nach § 25 Abs. 1 TDDDG, für die weitere
+        Verarbeitung nach Art. 6 Abs. 1 lit. a DSGVO.
+      </p>
+      <p>
+        <strong>Verantwortlichkeit:</strong> Für die Erhebung der Daten auf
+        dieser Website und ihre Übermittlung an Meta sind wir mit Meta gemeinsam
+        verantwortlich (Art. 26 DSGVO). Grundlage ist die{" "}
+        <a href="https://www.facebook.com/legal/controller_addendum" rel="noopener">
+          Zusatzvereinbarung für Verantwortliche
+        </a>{" "}
+        als Teil der{" "}
+        <a href="https://www.facebook.com/legal/businesstech" rel="noopener">
+          Nutzungsbedingungen für Meta Business Tools
+        </a>
+        . Danach informieren wir Sie und holen Ihre Einwilligung ein. Soweit
+        Meta die Daten für uns abgleicht und daraus Auswertungen erstellt,
+        handelt Meta als unser Auftragsverarbeiter (
+        <a href="https://www.facebook.com/legal/terms/dataprocessing" rel="noopener">
+          Datenverarbeitungsbedingungen
+        </a>
+        ). Für die weitere Verarbeitung zu eigenen Zwecken, etwa zur Auslieferung
+        und Verbesserung von Werbung, ist Meta allein verantwortlich. Ihre Rechte
+        können Sie bei uns und bei Meta geltend machen.
+        {/* VERIFY: Wortlaut des Controller Addendum war am 06.11.2026 nicht
+            abrufbar. Ziff. 5.a der Business-Tools-Bedingungen: gemeinsam für
+            Erhebung und Übermittlung (5.a.ii), Auftragsverarbeitung für Abgleich
+            und Messung (5.a.i). Ob CAPI-Übermittlungen unter 5.a.ii fallen, lässt
+            der Wortlaut offen. */}
+      </p>
+      <p>
+        <strong>Übermittlung in die USA:</strong> Meta kann die Daten an die
+        Meta Platforms, Inc. in den USA übermitteln. Grundlage ist der
+        Angemessenheitsbeschluss der Europäischen Kommission zum
+        EU-US Data Privacy Framework, unter dem Meta Platforms, Inc.
+        zertifiziert ist, ergänzend die Standardvertragsklauseln der
+        Europäischen Kommission.
+        {/* VERIFY vor dem Go-live: DPF-Liste am 06.11.2026 „Active –
+            Re-certification under Review“ (Meta Platforms, Inc.). EuG hat am
+            03.09.2025 die Klage Latombe abgewiesen (T-553/23), Rechtsmittel
+            beim EuGH anhängig (C-703/25 P). */}
+      </p>
+      <p>
+        <strong>Speicherdauer:</strong> Die Cookies „_fbp“ und „_fbc“ laufen
+        nach 90 Tagen ab, bei einem Widerruf löschen wir sie sofort.
+        {/* VERIFY: 90 Tage für _fbp nur in Fassungen der Meta-Cookie-Richtlinie
+            von 2022/23 belegt, für _fbc empfiehlt Metas Entwicklerdoku 90 Tage. */}{" "}
+        Wir selbst speichern die gemeldeten Ereignisse nicht. Wie lange Meta
+        die Daten speichert, richtet sich nach der{" "}
+        <a href="https://www.facebook.com/privacy/policy/" rel="noopener">
+          Datenschutzrichtlinie von Meta
+        </a>
+        . Website-Zielgruppen enthalten Besucher höchstens 180 Tage nach ihrem
+        letzten passenden Besuch.
+        {/* VERIFY: Höchstdauer 180 Tage für Website-Zielgruppen nicht per
+            Quelle geprüft. Cowork bestätigt beim Anlegen der Zielgruppen. */}
+      </p>
+      <p>
+        <strong>Widerruf und Widerspruch:</strong> über „Cookie-Einstellungen“
+        am Ende jeder Seite. Wenn Sie ein Meta-Konto haben, können Sie dort in
+        den Werbepräferenzen außerdem einstellen, ob Meta Ihre Aktivitäten
+        außerhalb seiner Dienste für Werbung nutzt.
+      </p>
+
+      <h2>{nr(10)}. Externe Dienste</h2>
+      <p>
+        Ohne Ihre Einwilligung wird beim Aufruf dieser Website{" "}
+        <strong>kein fremder Server kontaktiert</strong>. Schriften, Bilder und
+        Videos in den Seitenköpfen werden von unserem eigenen Server geladen. Es
+        besteht insbesondere keine Verbindung zu Google-Servern, es wird also
+        auch keine IP-Adresse an Google übermittelt. Erst mit einer Einwilligung
+        in Marketing lädt Ihr Browser den Meta-Pixel von Servern von Meta.
       </p>
       <p>
         Wir binden weder eine Google-Maps-Karte noch Social-Media-Plugins ein.
-        Verweise auf externe Dienste sind einfache Links — erst durch Ihren
-        Klick entsteht eine Verbindung zum jeweiligen Anbieter.
+        Verweise auf externe Dienste, auch auf unsere Social-Media-Profile, sind
+        einfache Links. Erst durch Ihren Klick entsteht eine Verbindung zum
+        jeweiligen Anbieter.
       </p>
 
-      <h2>{nr(10)}. WhatsApp</h2>
+      <h2>{nr(11)}. WhatsApp</h2>
       <p>
         Wenn Sie uns über den WhatsApp-Link kontaktieren, verlassen Sie diese
         Website. Die WhatsApp Ireland Limited verarbeitet Ihre Daten dann nach
@@ -234,7 +412,65 @@ export default function DatenschutzPage() {
         oder die E-Mail.
       </p>
 
-      <h2>{nr(11)}. KI-generierte Medien auf dieser Website</h2>
+      {/* Facebook erscheint hier, sobald social.facebook in lib/business.ts
+          gesetzt ist. Bis dahin beschreibt der Text nur, was es gibt. */}
+      <h2 id="profile">
+        {nr(12)}. Unsere Profile bei{" "}
+        {profilLinks.map((p) => p.name).join(" und ") || "Instagram und Facebook"}
+      </h2>
+      <p>
+        Wir unterhalten{" "}
+        {profilLinks.map((p, i) => (
+          <span key={p.name}>
+            {i > 0 && " und "}
+            <a href={p.url} rel="noopener">
+              {p.name === "Facebook" ? "eine Seite bei Facebook" : "ein Profil bei Instagram"}
+            </a>
+          </span>
+        ))}
+        . Anbieter ist die Meta Platforms Ireland Limited. Wenn Sie unser Profil
+        besuchen, verarbeitet Meta Ihre Daten nach eigenen Bestimmungen, siehe
+        die{" "}
+        <a href="https://www.facebook.com/privacy/policy/" rel="noopener">
+          Datenschutzrichtlinie von Meta
+        </a>
+        . Cookies holt Meta dort selbst über eine eigene Abfrage ein.
+      </p>
+      <p>
+        Meta stellt uns zu unserem Profil Statistiken bereit („Insights“), etwa
+        wie viele Personen unsere Beiträge gesehen haben. Für die Verarbeitung
+        zu diesen Statistiken sind wir mit Meta gemeinsam verantwortlich
+        (Art. 26 DSGVO). Die Einzelheiten regelt die{" "}
+        {/* VERIFY: URL und Geltung für Instagram-Profile prüfen (Page Insights
+            Controller Addendum), Stand Recherche im Commit. */}
+        <a
+          href="https://www.facebook.com/legal/terms/page_controller_addendum"
+          rel="noopener"
+        >
+          Vereinbarung zu Seiten-Insights
+        </a>{" "}
+        von Meta, weitere Angaben stehen in den{" "}
+        <a
+          href="https://www.facebook.com/legal/terms/information_about_page_insights_data"
+          rel="noopener"
+        >
+          Informationen zu Seiten-Insights
+        </a>
+        . Danach übernimmt Meta die Hauptverantwortung für diese Verarbeitung
+        und für die Erfüllung Ihrer Rechte. Wir erhalten nur zusammengefasste
+        Zahlen, keine Daten über einzelne Besucher. Rechtsgrundlage ist unser
+        berechtigtes Interesse an einem Auftritt dort, wo unsere Kunden
+        unterwegs sind, und an der Auswertung seiner Reichweite (Art. 6 Abs. 1
+        lit. f DSGVO).
+      </p>
+      <p>
+        Schreiben Sie uns dort eine Nachricht, verarbeiten wir sie, um Ihre
+        Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO). Meta kann Daten in
+        die USA übermitteln, gestützt auf das EU-US Data Privacy Framework.
+        Ihre Rechte können Sie bei uns und bei Meta geltend machen.
+      </p>
+
+      <h2>{nr(13)}. KI-generierte Medien auf dieser Website</h2>
       <p>
         Ein Teil der Bilder und Videos auf dieser Website wurde mit Hilfe
         künstlicher Intelligenz erzeugt. Diese Medien sind sichtbar als

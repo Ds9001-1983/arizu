@@ -4,6 +4,8 @@ import { useState } from "react";
 import { ArrowRight, CheckCircle2, Phone } from "lucide-react";
 import { business } from "@/lib/business";
 import { services } from "@/lib/services";
+import { neueEventId, pixelEreignis } from "@/lib/tracking/meta-client";
+import { META_EREIGNISSE } from "@/lib/tracking/meta";
 
 /* ==================================================================
    Allgemeines Anfrageformular am Seitenende.
@@ -95,6 +97,8 @@ export function LeadForm({
 
     setStatus("sending");
     setServerError(null);
+    // Gemeinsame ID für Pixel und Conversions API (nur mit Einwilligung genutzt).
+    const eventId = neueEventId();
     try {
       const res = await fetch("/api/lead", {
         method: "POST",
@@ -108,10 +112,15 @@ export function LeadForm({
           source: "formular",
           kundenart: data.kundenart,
           consent: true,
+          eventId,
         }),
       });
       const json = (await res.json()) as { ok: boolean; error?: string };
       if (!res.ok || !json.ok) throw new Error(json.error ?? "Unbekannter Fehler");
+      pixelEreignis(META_EREIGNISSE.anfrage, eventId, {
+        content_category: data.kundenart === "geschaeft" ? "Geschäftskunde" : "Privatkunde",
+        ...(data.service ? { content_name: data.service } : {}),
+      });
       setStatus("done");
       form.reset();
     } catch (err) {

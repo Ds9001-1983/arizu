@@ -13,6 +13,8 @@ import {
 } from "@/lib/b2b";
 import { business } from "@/lib/business";
 import { getService } from "@/lib/services";
+import { neueEventId, pixelEreignis } from "@/lib/tracking/meta-client";
+import { META_EREIGNISSE } from "@/lib/tracking/meta";
 import { cn } from "@/lib/utils";
 
 /* ==================================================================
@@ -124,6 +126,8 @@ export function B2bForm() {
   }
 
   async function uebermitteln(quelle: "formular" | "whatsapp") {
+    // Gemeinsame ID für Pixel und Conversions API (nur mit Einwilligung genutzt).
+    const eventId = neueEventId();
     const res = await fetch("/api/lead", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -140,12 +144,17 @@ export function B2bForm() {
         // Den lesbaren Text baut der Server aus diesen Angaben selbst.
         b2b: angaben,
         consent: true,
+        eventId,
       }),
       // Beim WhatsApp-Weg verlässt der Browser gleich die Seite.
       keepalive: quelle === "whatsapp",
     });
     const json = (await res.json()) as { ok: boolean; error?: string };
     if (!res.ok || !json.ok) throw new Error(json.error ?? "Unbekannter Fehler");
+    pixelEreignis(META_EREIGNISSE.anfrage, eventId, {
+      content_category: "Geschäftskunde",
+      ...(f.hauptleistung ? { content_name: f.hauptleistung } : {}),
+    });
   }
 
   function fokus(gefunden: Errors) {
@@ -614,6 +623,8 @@ export function B2bForm() {
           <a
             href={waHref}
             data-whatsapp
+            // Zählt als Anfrage (Lead), nicht zusätzlich als Kontaktklick.
+            data-meta-kein-kontakt
             target="_blank"
             rel="noopener"
             onClick={whatsappKlick}

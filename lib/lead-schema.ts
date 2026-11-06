@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { serviceSlugs } from "./services";
+import { EVENT_ID_MUSTER } from "./tracking/meta";
 
 /* ==================================================================
    Ein Schema für Client und Server.
@@ -88,6 +89,13 @@ export const leadSchema = z.object({
   }),
   /** Honeypot: für Menschen unsichtbar, Bots füllen es aus. */
   website: z.string().max(0).optional(),
+  /**
+   * Gemeinsame ID für das Lead-Ereignis an Meta (Pixel im Browser,
+   * Conversions API in der Route). Wird nur genutzt, wenn das
+   * Einwilligungs-Cookie Marketing erlaubt. Eine ungültige ID kostet keine
+   * Anfrage: Sie fällt einfach weg.
+   */
+  eventId: z.string().regex(EVENT_ID_MUSTER).optional().catch(undefined),
 }).refine((d) => d.kundenart !== "geschaeft" || Boolean(d.email), {
   // Bei Privatkunden genügt der Rückruf, deshalb ist die E-Mail oben optional.
   // Ein Angebot über mehrere Objekte geht dagegen nie am Telefon raus, sondern

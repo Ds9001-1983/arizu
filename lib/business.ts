@@ -89,10 +89,12 @@ export const business = {
   audience: "B2C+B2B",
 
   social: {
-    // VERIFY: Profile existieren noch nicht — Social-Setup ist auf Anfang 2027
-    // terminiert. Bis dahin bleiben die Footer-Icons aus.
+    // Aufbau im Rahmen von Angebot AG2026037 (Meta-Kundengewinnung, von Arian
+    // am 05.11.2026 angenommen). Instagram steht seit 06.11.2026. Die
+    // Facebook-Seite entsteht gerade (Cowork); bis ihre Adresse vorliegt,
+    // bleibt der Eintrag null und fehlt in Footer und sameAs.
     facebook: null as string | null,
-    instagram: null as string | null,
+    instagram: "https://www.instagram.com/arizu.gebaeudedienstleistungen/" as string | null,
   },
 
   // Verifiziertes Google-Unternehmensprofil. Die Adresse ist dort sichtbar

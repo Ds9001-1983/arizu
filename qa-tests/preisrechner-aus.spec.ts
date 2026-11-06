@@ -107,7 +107,8 @@ test("Rechtstexte erwähnen keinen Preisrechner", async ({ page }) => {
     .filter(Boolean)
     .map(Number);
   expect(nummern).toEqual(nummern.map((_, i) => i + 1));
-  expect(nummern).toHaveLength(10);
+  // Seit 06.11.2026 mit Einwilligung, Meta-Pixel und Social-Profilen: 12.
+  expect(nummern).toHaveLength(12);
   await expect(page.locator("main h2", { hasText: "Anfrageformular" })).toHaveText(
     "4. Anfrageformular",
   );

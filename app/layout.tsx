@@ -4,6 +4,8 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { StickyCallBar } from "@/components/site/sticky-call-bar";
+import { EinwilligungBanner } from "@/components/tracking/einwilligung-banner";
+import { MetaTracking } from "@/components/tracking/meta-tracking";
 import { services, zeigtPreisrechner } from "@/lib/services";
 import { business, serviceArea, SITE_URL } from "@/lib/business";
 import { archivo, manrope } from "@/lib/fonts";
@@ -53,6 +55,9 @@ export default function RootLayout({
             Stand sie nur auf der Startseite, lief die Referenz auf allen
             Unterseiten ins Leere. */}
         <JsonLd data={localBusinessSchema()} />
+        {/* Vor dem Header, damit die Tastatur zuerst hier ankommt. Sichtbar
+            erst nach der Hydration und nur ohne gespeicherte Entscheidung. */}
+        <EinwilligungBanner />
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
@@ -60,6 +65,11 @@ export default function RootLayout({
             wären mehrere KB Text. */}
         <StickyCallBar
           rechnerSlugs={services.filter(zeigtPreisrechner).map((s) => s.slug)}
+        />
+        {/* Lädt den Meta-Pixel erst nach der Marketing-Einwilligung. Auch
+            hier nur Slug und Name, nicht der ganze Katalog. */}
+        <MetaTracking
+          leistungen={Object.fromEntries(services.map((s) => [s.slug, s.name]))}
         />
       </body>
     </html>

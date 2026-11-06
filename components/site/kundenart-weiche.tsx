@@ -3,6 +3,7 @@ import { waehleKundenart } from "@/app/kundenart-actions";
 import type { LeadKundenart } from "@/lib/db";
 import { PREISRECHNER_AKTIV } from "@/lib/features";
 import { Container } from "./container";
+import { KundenartFormular } from "./kundenart-formular";
 
 /* ==================================================================
    Weiche Privat- oder Geschäftskunde. Seit 04.11.2026 unter der
@@ -19,10 +20,14 @@ import { Container } from "./container";
    1. Keine Tab-Rollen. Tabs schalten Bereiche derselben Seite um; diese
       Weiche sendet den Nutzer auf einen eigenständigen Seitenweg.
 
-   2. Kein Cookie, localStorage oder Drittanbieter-Tracking. Der bewusste
-      Klick wird als eine von zwei anonymen Summen serverseitig gezählt. Das
-      Formular ruft die Server Action erst beim Absenden auf — Link-Prefetch
-      und Suchmaschinenbesuche können die Statistik daher nicht aufblasen.
+   2. Der bewusste Klick wird als eine von zwei anonymen Summen serverseitig
+      gezählt. Das Formular ruft die Server Action erst beim Absenden auf —
+      Link-Prefetch und Suchmaschinenbesuche können die Statistik daher nicht
+      aufblasen. Nur mit Marketing-Einwilligung meldet die Weiche den Klick
+      zusätzlich an Meta (KundenartGeschaeft / KundenartPrivat, Pixel und
+      Conversions API mit gemeinsamer event_id, siehe KundenartFormular und
+      app/kundenart-actions.ts). Das ist der Messpunkt für die
+      Lookalike-Zielgruppe der zweiten Kampagne (seit 06.11.2026).
    ================================================================== */
 
 /* Die Punkte stammen aus vorhandenen, abgestimmten Aussagen: Preisrechner und
@@ -104,7 +109,11 @@ export function KundenartWeiche() {
               </ul>
               {/* Nur der Button sendet das Formular: Sein Name bleibt kurz, und
                   der Zähler zählt nur bewusste Klicks. */}
-              <form action={actionFuer(w.id)} className="mt-auto pt-7">
+              <KundenartFormular
+                action={actionFuer(w.id)}
+                kundenart={w.id}
+                className="mt-auto pt-7"
+              >
                 <button
                   type="submit"
                   className="group inline-flex items-center gap-2 rounded-sm bg-navy px-6 py-3.5 font-display text-sm font-bold text-white transition-colors hover:bg-navy-band"
@@ -115,7 +124,7 @@ export function KundenartWeiche() {
                     aria-hidden
                   />
                 </button>
-              </form>
+              </KundenartFormular>
             </li>
           ))}
         </ul>
