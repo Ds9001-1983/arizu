@@ -126,4 +126,12 @@ test("Datenschutzerklärung nennt die Speicherdauer und hat keine offenen Stelle
 
   // Die roten Marker aus der Prototypphase dürfen hier nicht mehr stehen.
   expect(text).not.toContain("[ergänzen:");
+
+  // Pflichtangaben, die am 06.11.2026 dazukamen: abgesetzter Hinweis auf das
+  // Widerspruchsrecht (Art. 21 Abs. 4 DSGVO) und die Speicherdauer der Logs.
+  expect(text).toContain("Ihr Widerspruchsrecht nach Art. 21 DSGVO");
+  expect(text).toContain("einen Tag lang einsehen");
+  // Meta-Cookies: gemessene Laufzeit, Widerruf auf jeder Seite.
+  expect(text).toContain("nach 90 Tagen ab");
+  expect(text).toContain("Cookie-Einstellungen");
 });

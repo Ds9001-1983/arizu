@@ -101,10 +101,9 @@ Die Seite ist online, aber noch nicht in jedem Punkt abgeschlossen. Offen:
    (Production) und `.env.local` hinterlegen, sonst läuft nur der Pixel. Im
    Events Manager den automatischen erweiterten Abgleich ausschalten: Die
    Datenschutzerklärung sagt zu, dass E-Mail und Telefon nur beim Lead und
-   nur gehasht übermittelt werden. Die `VERIFY`-Kommentare in
-   `app/datenschutz/page.tsx` (Meta-Anschrift, Rollen bei der CAPI,
-   DPF-Status, Laufzeit der Meta-Cookies, Page-Insights für Instagram) vor
-   dem Start der Kampagne klären.
+   nur gehasht übermittelt werden. (Beides am 06.11.2026 erledigt.) Die
+   Belege der Datenschutzerklärung stehen als Kommentare im Quelltext. Den
+   DPF-Status von Meta und den Vercel-Tarif bei Änderungen nachziehen.
 
 ### Erledigt
 

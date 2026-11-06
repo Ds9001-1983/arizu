@@ -34,8 +34,10 @@ export const metadata: Metadata = pageMetadata({
    Entscheidung gilt die Messung vom 14.08. weiter, und qa-tests/
    einwilligung.spec.ts hält das fest: kein Cookie, kein fremder Host. Erst
    „Alle akzeptieren“ bzw. das Häkchen bei Marketing lädt etwas von Meta.
-   Rechtsstand und Quellen stehen im Commit-Text vom 06.11.2026. Offene
-   Punkte tragen VERIFY-Kommentare im Quelltext, sichtbar ist davon nichts.
+   Rechtsstand und Quellen stehen im Commit-Text vom 06.11.2026. Am selben
+   Tag sind alle VERIFY-Punkte geklärt worden: Belege oder eigene Messungen
+   stehen als Kommentar an der jeweiligen Stelle. Ändert sich einer davon
+   (Vercel-Tarif, Meta-Bedingungen, DPF), muss der Text mit.
 
    Solange der Preisrechner aus ist (lib/features.ts, seit 06.11.2026),
    entfallen Abschnitt 4 und die übrigen Hinweise auf ihn, die folgenden
@@ -89,6 +91,27 @@ export default function DatenschutzPage() {
         bleibt davon unberührt. Eine formlose Nachricht an die oben genannte
         Adresse genügt.
       </p>
+      {/* Art. 21 Abs. 4 DSGVO verlangt den Hinweis auf das Widerspruchsrecht
+          „in einer verständlichen und von anderen Informationen getrennten
+          Form“, deshalb eigener, abgesetzter Block. */}
+      <div className="my-6 border-l-2 border-gold pl-4">
+        <p>
+          <strong>Ihr Widerspruchsrecht nach Art. 21 DSGVO</strong>
+        </p>
+        <p>
+          Soweit wir Daten auf Grundlage unseres berechtigten Interesses
+          verarbeiten (Art. 6 Abs. 1 lit. f DSGVO), etwa bei den Server-Logs und
+          den Statistiken zu unseren Social-Media-Profilen, können Sie dieser
+          Verarbeitung jederzeit aus Gründen widersprechen, die sich aus Ihrer
+          besonderen Situation ergeben. Wir verarbeiten die Daten dann nicht
+          mehr, es sei denn, wir können zwingende schutzwürdige Gründe
+          nachweisen, die Ihre Interessen, Rechte und Freiheiten überwiegen, oder
+          die Verarbeitung dient der Geltendmachung, Ausübung oder Verteidigung
+          von Rechtsansprüchen. Eine Einwilligung können Sie ohne Angabe von
+          Gründen widerrufen, für Cookies jederzeit über „Cookie-Einstellungen“
+          am Ende jeder Seite.
+        </p>
+      </div>
       <p>
         Außerdem können Sie sich bei einer Aufsichtsbehörde beschweren
         (Art. 77 DSGVO). Für uns zuständig ist das Unabhängige Landeszentrum
@@ -110,6 +133,15 @@ export default function DatenschutzPage() {
         DSGVO — unser berechtigtes Interesse am sicheren, stabilen Betrieb.
         Diese Daten werden nicht mit anderen Datenquellen zusammengeführt und
         nicht zur Identifizierung einzelner Personen ausgewertet.
+      </p>
+      <p>
+        {/* Vercel-Team „sassedennis-2652s-projects“ am 06.11.2026 auf Tarif Pro
+            ohne Observability Plus geprüft. Laufzeitprotokolle laut
+            vercel.com/docs/runtime-logs: Pro 1 Tag (Hobby 1 Stunde, mit
+            Observability Plus 30 Tage). Ändert sich der Tarif, Satz anpassen. */}
+        Diese Protokolle können wir in unserem Tarif einen Tag lang einsehen,
+        danach sind sie für uns nicht mehr abrufbar. Eine eigene Speicherung
+        darüber hinaus findet nicht statt.
       </p>
       <p>
         Gehostet wird die Seite bei der Vercel Inc., 440 N Barranca Ave #4133,
@@ -270,10 +302,11 @@ export default function DatenschutzPage() {
       <p>
         Nur wenn Sie in die Kategorie „Marketing“ eingewilligt haben, nutzen wir
         den Meta-Pixel und die Conversions API der Meta Platforms Ireland
-        Limited, Merrion Road, Dublin 4, D04 X2K5, Irland („Meta“).
-        {/* VERIFY: Anschrift. Irisches Register (Firmennr. 462932) nennt Merrion
-            Road, die Meta-Business-Tools-Bedingungen vom 03.11.2025 nennen
-            Block J, Serpentine Avenue, Dublin 4. Recherche 06.11.2026. */}{" "}
+        Limited, Block J, Serpentine Avenue, Dublin 4, Irland („Meta“).
+        {/* Anschrift wie in Metas eigenen Vertragstexten: Nutzungsbedingungen
+            für Meta Business Tools (Fassung 03.11.2025) und Seiten-Insights-
+            Ergänzung (25.04.2023), beide abgerufen am 06.11.2026. Das irische
+            Register (Firmennr. 462932) führt als Sitz Merrion Road, Dublin 4. */}{" "}
         Damit messen
         wir, ob unsere Anzeigen auf Facebook und Instagram zu Anfragen führen,
         und spielen Anzeigen an passende Zielgruppen aus.
@@ -347,29 +380,28 @@ export default function DatenschutzPage() {
         ). Für die weitere Verarbeitung zu eigenen Zwecken, etwa zur Auslieferung
         und Verbesserung von Werbung, ist Meta allein verantwortlich. Ihre Rechte
         können Sie bei uns und bei Meta geltend machen.
-        {/* VERIFY: Wortlaut des Controller Addendum war am 06.11.2026 nicht
-            abrufbar. Ziff. 5.a der Business-Tools-Bedingungen: gemeinsam für
-            Erhebung und Übermittlung (5.a.ii), Auftragsverarbeitung für Abgleich
-            und Messung (5.a.i). Ob CAPI-Übermittlungen unter 5.a.ii fallen, lässt
-            der Wortlaut offen. */}
+        {/* Rollen nach Ziff. 5.a der Nutzungsbedingungen für Meta Business Tools
+            (Fassung 03.11.2025): gemeinsam verantwortlich für Erhebung und
+            Übermittlung (5.a.ii), Auftragsverarbeitung für Abgleich und Messung
+            (5.a.i). Die Bedingungen nennen Pixel und Conversions API
+            ausdrücklich als Business Tools, beide Wege fallen also darunter. */}
       </p>
       <p>
         <strong>Übermittlung in die USA:</strong> Meta kann die Daten an die
         Meta Platforms, Inc. in den USA übermitteln. Grundlage ist der
         Angemessenheitsbeschluss der Europäischen Kommission zum
         EU-US Data Privacy Framework, unter dem Meta Platforms, Inc.
-        zertifiziert ist, ergänzend die Standardvertragsklauseln der
-        Europäischen Kommission.
-        {/* VERIFY vor dem Go-live: DPF-Liste am 06.11.2026 „Active –
-            Re-certification under Review“ (Meta Platforms, Inc.). EuG hat am
-            03.09.2025 die Klage Latombe abgewiesen (T-553/23), Rechtsmittel
-            beim EuGH anhängig (C-703/25 P). */}
+        zertifiziert ist.
+        {/* DPF-Liste (dataprivacyframework.gov, Teilnehmer 4452) am 06.11.2026:
+            „Active – Re-certification under Review“. EuG hat die Klage Latombe
+            am 03.09.2025 abgewiesen (T-553/23), Rechtsmittel beim EuGH anhängig
+            (C-703/25 P). Fällt der Beschluss, muss dieser Absatz neu. */}
       </p>
       <p>
         <strong>Speicherdauer:</strong> Die Cookies „_fbp“ und „_fbc“ laufen
         nach 90 Tagen ab, bei einem Widerruf löschen wir sie sofort.
-        {/* VERIFY: 90 Tage für _fbp nur in Fassungen der Meta-Cookie-Richtlinie
-            von 2022/23 belegt, für _fbc empfiehlt Metas Entwicklerdoku 90 Tage. */}{" "}
+        {/* Gemessen am 06.11.2026: fbevents.js 2.9.437 setzt _fbp und _fbc mit
+            einer Laufzeit von 90,0 Tagen. */}{" "}
         Wir selbst speichern die gemeldeten Ereignisse nicht. Wie lange Meta
         die Daten speichert, richtet sich nach der{" "}
         <a href="https://www.facebook.com/privacy/policy/" rel="noopener">
@@ -377,8 +409,9 @@ export default function DatenschutzPage() {
         </a>
         . Website-Zielgruppen enthalten Besucher höchstens 180 Tage nach ihrem
         letzten passenden Besuch.
-        {/* VERIFY: Höchstdauer 180 Tage für Website-Zielgruppen nicht per
-            Quelle geprüft. Cowork bestätigt beim Anlegen der Zielgruppen. */}
+        {/* Metas Entwicklerdoku „Website Custom Audiences“: Aufbewahrung 1 bis
+            180 Tage (abgerufen 06.11.2026). Längere Fristen gibt es nur für
+            Kaufereignisse, die diese Seite nicht meldet. */}
       </p>
       <p>
         <strong>Widerruf und Widerspruch:</strong> über „Cookie-Einstellungen“
@@ -429,7 +462,8 @@ export default function DatenschutzPage() {
             </a>
           </span>
         ))}
-        . Anbieter ist die Meta Platforms Ireland Limited. Wenn Sie unser Profil
+        . Anbieter ist die Meta Platforms Ireland Limited, Block J, Serpentine
+        Avenue, Dublin 4, Irland. Wenn Sie unser Profil
         besuchen, verarbeitet Meta Ihre Daten nach eigenen Bestimmungen, siehe
         die{" "}
         <a href="https://www.facebook.com/privacy/policy/" rel="noopener">
@@ -438,31 +472,44 @@ export default function DatenschutzPage() {
         . Cookies holt Meta dort selbst über eine eigene Abfrage ein.
       </p>
       <p>
-        Meta stellt uns zu unserem Profil Statistiken bereit („Insights“), etwa
-        wie viele Personen unsere Beiträge gesehen haben. Für die Verarbeitung
-        zu diesen Statistiken sind wir mit Meta gemeinsam verantwortlich
-        (Art. 26 DSGVO). Die Einzelheiten regelt die{" "}
-        {/* VERIFY: URL und Geltung für Instagram-Profile prüfen (Page Insights
-            Controller Addendum), Stand Recherche im Commit. */}
-        <a
-          href="https://www.facebook.com/legal/terms/page_controller_addendum"
-          rel="noopener"
-        >
-          Vereinbarung zu Seiten-Insights
-        </a>{" "}
-        von Meta, weitere Angaben stehen in den{" "}
-        <a
-          href="https://www.facebook.com/legal/terms/information_about_page_insights_data"
-          rel="noopener"
-        >
-          Informationen zu Seiten-Insights
-        </a>
-        . Danach übernimmt Meta die Hauptverantwortung für diese Verarbeitung
-        und für die Erfüllung Ihrer Rechte. Wir erhalten nur zusammengefasste
-        Zahlen, keine Daten über einzelne Besucher. Rechtsgrundlage ist unser
-        berechtigtes Interesse an einem Auftritt dort, wo unsere Kunden
-        unterwegs sind, und an der Auswertung seiner Reichweite (Art. 6 Abs. 1
-        lit. f DSGVO).
+        Meta stellt uns zu unseren Profilen Statistiken bereit („Insights“),
+        etwa wie viele Personen unsere Beiträge gesehen haben. Wir erhalten nur
+        zusammengefasste Zahlen, keine Daten über einzelne Besucher, und können
+        die Erhebung selbst nicht beeinflussen. Für die Verarbeitung zu diesen
+        Statistiken sind wir nach der Rechtsprechung des Europäischen
+        Gerichtshofs (Urteil vom 05.06.2018, C-210/16) mit Meta gemeinsam
+        verantwortlich (Art. 26 DSGVO).
+        {business.social.facebook && (
+          <>
+            {" "}Für unsere Facebook-Seite regelt das die{" "}
+            <a
+              href="https://www.facebook.com/legal/terms/page_controller_addendum"
+              rel="noopener"
+            >
+              Seiten-Insights-Ergänzung
+            </a>{" "}
+            von Meta (weitere Angaben in den{" "}
+            <a
+              href="https://www.facebook.com/legal/terms/information_about_page_insights_data"
+              rel="noopener"
+            >
+              Informationen zu Seiten-Insights
+            </a>
+            ). Danach übernimmt Meta die Erfüllung Ihrer Rechte zu diesen Daten.
+          </>
+        )}{" "}
+        {/* Die Seiten-Insights-Ergänzung (25.04.2023) gilt nur für Facebook-
+            Seiten, Instagram nennt sie nicht (geprüft 06.11.2026). Deshalb hier
+            keine Behauptung, sie decke das Instagram-Profil ab. */}
+        Für Instagram-Profile hat Meta keine eigene Vereinbarung dazu
+        veröffentlicht. Ihre Rechte können Sie bei uns und bei Meta geltend
+        machen. Anfragen, die nur Meta beantworten kann, leiten wir unverzüglich
+        an Meta weiter.
+      </p>
+      <p>
+        Rechtsgrundlage ist unser berechtigtes Interesse an einem Auftritt dort,
+        wo unsere Kunden unterwegs sind, und an der Auswertung seiner Reichweite
+        (Art. 6 Abs. 1 lit. f DSGVO).
       </p>
       <p>
         Schreiben Sie uns dort eine Nachricht, verarbeiten wir sie, um Ihre
