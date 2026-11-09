@@ -30,7 +30,7 @@ import {
   whatsappHref,
 } from "@/lib/business";
 import { PREISRECHNER_AKTIV } from "@/lib/features";
-import { faqSchema, HOME_TITLE, pageMetadata } from "@/lib/seo";
+import { faqSchema, HOME_TITLE, pageMetadata, websiteSchema } from "@/lib/seo";
 import type { Faq } from "@/lib/services";
 
 /* ==================================================================
@@ -143,6 +143,7 @@ const homeFaqs: Faq[] = [
 export default function Home() {
   return (
     <>
+      <JsonLd data={websiteSchema()} />
       <JsonLd data={faqSchema(homeFaqs)} />
 
       <section className="relative isolate flex min-h-[clamp(34rem,80svh,44rem)] items-end overflow-hidden mt-[calc(var(--header-h)*-1)]">

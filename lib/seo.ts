@@ -167,6 +167,30 @@ export function localBusinessSchema() {
 }
 
 /**
+ * Seitenname für die Google-Suche. Ohne diesen Block zeigte Google über dem
+ * Treffer die Domain statt „ARIZU“ (Screenshot von Arian, 09.11.2026).
+ *
+ * Google liest ihn nur auf der Startseite der Domain, deshalb steht er in
+ * app/page.tsx und nicht im Root-Layout. `name` ist die Wunschangabe,
+ * `alternateName` die Ausweichnamen in absteigender Reihenfolge, die Domain
+ * zuletzt. Der Titel der Startseite endet ebenfalls auf „ARIZU“, damit die
+ * Signale übereinstimmen.
+ * https://developers.google.com/search/docs/appearance/site-names
+ */
+export function websiteSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    name: business.shortName,
+    alternateName: [business.name, new URL(SITE_URL).hostname.replace(/^www\./, "")],
+    url: `${SITE_URL}/`,
+    inLanguage: "de-DE",
+    publisher: { "@id": BUSINESS_ID },
+  };
+}
+
+/**
  * Kontaktseite als eigene Entität. `about` zeigt auf die Firma, die seit dem
  * SEO-Rollout vom 24.09.2026 auf jeder Seite im Root-Layout steht — die
  * Referenz löst also auf derselben Seite auf.
